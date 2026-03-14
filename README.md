@@ -37,7 +37,7 @@ bharatgraph/
 
 ## 🚀 Quick Start
 ```bash
-git clone https://github.com/YOUR_USERNAME/bharatgraph.git
+git clone https://github.com/abinaze/bharatgraph.git
 cd bharatgraph
 pip install -r requirements.txt
 cp .env.example .env
