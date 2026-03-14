@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual Environment
+venv/
+env/
+.env
+.venv/
+
+# Secrets
+*.env
+config/secrets.py
+config/.env
+
+# Data files (large)
+data/raw/*.csv
+data/raw/*.json
+data/raw/*.pdf
+data/processed/*.csv
+
+# Logs
+logs/*.log
+
+# IDE
+.vscode/settings.json
+.idea/
+*.DS_Store
+
+# Neo4j
+neo4j/data/
+
+# Node
+node_modules/
