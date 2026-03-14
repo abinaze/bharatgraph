@@ -37,7 +37,7 @@ bharatgraph/
 
 ## 🚀 Quick Start
 ```bash
-git clone https://github.com/YOUR_USERNAME/bharatgraph.git
+git clone https://github.com/abinaze/bharatgraph.git
 cd bharatgraph
 pip install -r requirements.txt
 cp .env.example .env
@@ -46,10 +46,10 @@ python scrapers/datagov_scraper.py
 ```
 
 ## 📅 Development Phases
-- Phase 1 (Days 1–30): Data collection & graph setup
-- Phase 2 (Days 31–60): AI risk scoring
-- Phase 3 (Days 61–90): Dashboard & API
-- Phase 4 (Days 91–120): Live monitoring & deployment
+- Phase 1 : Data collection & graph setup
+- Phase 2 : AI risk scoring
+- Phase 3 : Dashboard & API
+- Phase 4 : Live monitoring & deployment
 
 ## 🤝 Contributing
 Open source. PRs welcome. See docs/CONTRIBUTING.md
