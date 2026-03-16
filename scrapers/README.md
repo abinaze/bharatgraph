@@ -1,32 +1,42 @@
-cat > scrapers/README.md << 'EOF'
 # BharatGraph Scrapers
 
 All scrapers collect **public data only**. No private data, no logins.
 
 ## Scrapers
 
-| File | Source | Data Collected |
-|------|--------|----------------|
-| `base_scraper.py` | - | Base class, rate limiting, logging |
-| `datagov_scraper.py` | data.gov.in | MGNREGA, PM-KISAN datasets |
-| `pib_scraper.py` | pib.gov.in | Govt press releases, cabinet decisions |
-| `myneta_scraper.py` | myneta.info | Politician assets, criminal cases, education |
-| `mca_scraper.py` | MCA / data.gov.in | Company registrations, directors |
+| File | Source | Data Collected | Status |
+|------|--------|----------------|--------|
+| `base_scraper.py` | - | Base class, rate limiting, logging | ✅ |
+| `datagov_scraper.py` | data.gov.in | MGNREGA, PM-KISAN datasets | ✅ |
+| `pib_scraper.py` | pib.gov.in | Govt press releases, cabinet decisions | ✅ |
+| `myneta_scraper.py` | myneta.info | Politician assets, criminal cases, education | ✅ |
+| `mca_scraper.py` | MCA / data.gov.in | Company registrations, directors | ✅ |
+| `cag_scraper.py` | cag.gov.in | Audit reports, financial irregularities | ✅ |
+| `gem_scraper.py` | gem.gov.in | Govt contracts, procurement orders | ✅ |
 
-## How to run
+## Known Issues
+
+| Scraper | Issue | Fix |
+|---------|-------|-----|
+| `datagov_scraper.py` | 403 error with default key | Register at data.gov.in for free key |
+| `mca_scraper.py` | 403 error | Same - needs personal API key in .env |
+| `pib_scraper.py` | 0 articles | RSS URL under investigation |
+
+## Setup
 ```bash
-# Always activate venv first
+# 1. Activate venv
 source venv/Scripts/activate
 
-# Run any scraper
-python -m scrapers.datagov_scraper
-python -m scrapers.pib_scraper
+# 2. Copy env file and add your API key
+cp .env.example .env
+# Edit .env and add DATAGOV_API_KEY=your_key
+
+# 3. Run any scraper
+python -m scrapers.cag_scraper
+python -m scrapers.gem_scraper
 python -m scrapers.myneta_scraper
-python -m scrapers.mca_scraper
 ```
 
 ## Legal Note
-All data collected is from official government portals and public civic
-databases. No private data is collected. See project README for full
-legal disclaimer.
-EOF
+All data from official government portals and public civic databases.
+No private data collected. See project README for full legal disclaimer.
