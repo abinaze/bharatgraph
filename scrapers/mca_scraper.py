@@ -32,7 +32,7 @@ class MCAScraper(BaseScraper):
         # Note: We use the DataGov API to access MCA snapshots
     }
 
-    DATAGOV_API_KEY = "579b464db66ec23d9960025070515804"
+    DATAGOV_API_KEY =os.getenv("DATAGOV_API_KEY", "")
     DATAGOV_BASE = "https://api.data.gov.in/resource/"
 
     # Company status types we care about

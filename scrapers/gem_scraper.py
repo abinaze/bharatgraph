@@ -45,7 +45,7 @@ class GeMScraper(BaseScraper):
 
     # GeM data on data.gov.in
     DATAGOV_BASE   = "https://api.data.gov.in/resource/"
-    DATAGOV_APIKEY = "579b464db66ec23d9960025070515804"
+    DATAGOV_APIKEY = os.getenv("DATAGOV_API_KEY", "")
 
     # GeM dataset resource IDs on data.gov.in
     GEM_DATASETS = {
