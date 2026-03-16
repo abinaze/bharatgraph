@@ -27,7 +27,7 @@ class DataGovScraper(BaseScraper):
         super().__init__(name="datagov", delay=2.0)
         self.base_url = "https://api.data.gov.in/resource/"
         # This is a public key from data.gov.in - works for basic access
-        self.api_key = "579b464db66ec23d9960025070515804"
+        self.api_key =os.getenv("DATAGOV_API_KEY", "")
 
     def fetch_dataset(self, resource_id: str, limit: int = 100) -> dict:
         """
