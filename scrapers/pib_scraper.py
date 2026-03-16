@@ -28,11 +28,10 @@ class PIBScraper(BaseScraper):
 
     # PIB RSS feeds for different ministries/categories
     RSS_FEEDS = {
-        "all_ministries": "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
-        "finance":        "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
-        "home_affairs":   "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
-        "cabinet":        "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
-    }
+    "all_ministries": "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
+    "pib_main":       "https://pib.gov.in/Rss.aspx",
+    "pib_english":    "https://pib.gov.in/newsite/erelease.aspx",
+}
 
     # Keywords that could indicate schemes, contracts, or money flows
     ALERT_KEYWORDS = [
