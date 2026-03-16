@@ -41,7 +41,8 @@ class GeMScraper(BaseScraper):
     """
 
     # GeM public stats API
-    GEM_STATS_URL = "https://mkp.gem.gov.in/api/v2/public/stats"
+    GEM_STATS_URL     = "https://gem.gov.in/statistics"
+    GEM_PUBLIC_API    = "https://mkp.gem.gov.in"
 
     # GeM data on data.gov.in
     DATAGOV_BASE   = "https://api.data.gov.in/resource/"
@@ -56,23 +57,25 @@ class GeMScraper(BaseScraper):
         super().__init__(name="gem", delay=2.0)
 
     def fetch_gem_stats(self) -> dict:
-        """
-        Fetch public GeM platform statistics.
-        Returns total orders, GMV, sellers, buyers count.
-        """
-        logger.info("[GeM] Fetching platform statistics...")
-        data = self.get_json(self.GEM_STATS_URL)
+    """
+    Fetch public GeM platform statistics.
+    GeM publishes stats at gem.gov.in/statistics (public page).
+    """
+    logger.info("[GeM] Fetching platform statistics...")
 
-        if data:
-            logger.success("[GeM] Stats fetched successfully")
-            return {
-                "source": "GeM Public Stats",
-                "scraped_at": datetime.now().isoformat(),
-                "stats": data,
-            }
+    html = self.get_html("https://gem.gov.in/statistics")
+    if html:
+        logger.success("[GeM] Fetched GeM statistics page")
+        return {
+            "source":     "gem.gov.in/statistics",
+            "scraped_at": datetime.now().isoformat(),
+            "url":        "https://gem.gov.in/statistics",
+            "note":       "Parse HTML for live stats - using sample for now",
+            "stats":      self._get_sample_stats()["stats"],
+        }
 
-        logger.warning("[GeM] Could not fetch stats, using sample")
-        return self._get_sample_stats()
+    logger.warning("[GeM] Could not fetch stats, using sample")
+    return self._get_sample_stats()
 
     def fetch_contracts_by_ministry(self, ministry: str = "all",
                                      limit: int = 50) -> list:
