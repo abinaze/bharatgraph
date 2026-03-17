@@ -37,3 +37,13 @@ neo4j/data/
 
 # Node
 node_modules/
+
+# Scraped data - never commit raw data files
+data/samples/*.json
+data/raw/*.json
+data/raw/*.csv
+data/processed/*.json
+data/processed/*.csv
+
+# Logs
+logs/*.log
