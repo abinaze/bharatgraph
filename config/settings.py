@@ -30,7 +30,7 @@ LOGS_PATH = "logs/"
 
 # Data Sources URLs
 DATAGOV_BASE_URL = "https://api.data.gov.in/resource/"
-DATAGOV_API_KEY = os.getenv("DATAGOV_API_KEY", "579b464db66ec23d9960025070515804")
+DATAGOV_API_KEY = os.getenv("DATAGOV_API_KEY", "")
 PIB_RSS_URL = "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3"
 MYNETA_BASE_URL = "https://myneta.info"
 MCA_BASE_URL = "https://www.mca.gov.in"
