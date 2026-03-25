@@ -3,9 +3,13 @@ BharatGraph - Base Scraper
 All scrapers inherit from this class.
 """
 import time
+import os
 import requests
 from loguru import logger
-import os
+from dotenv import load_dotenv
+
+# Load .env file automatically for ALL scrapers that inherit this class
+load_dotenv()
 
 class BaseScraper:
     def __init__(self, name, delay=2.0):
