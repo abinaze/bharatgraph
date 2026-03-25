@@ -8,6 +8,7 @@ This links politicians → companies → contracts in the graph.
 """
 
 import json
+import os
 import re
 from datetime import datetime
 from scrapers.base_scraper import BaseScraper
