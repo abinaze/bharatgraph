@@ -1,156 +1,171 @@
 """
 BharatGraph - PIB (Press Information Bureau) Scraper
-Fetches official government press releases and cabinet decisions.
-Source: pib.gov.in (India's official govt press body)
-These are 100% public and legal to use.
+Fetches official government press releases.
+Source: pib.gov.in
+
+NOTE: PIB RSS feeds return empty XML (server blocks feedparser).
+Fix: Scrape pib.gov.in/allRel.aspx HTML page directly.
 """
 
-import feedparser
-import json
 import os
 from datetime import datetime
+from bs4 import BeautifulSoup
 from scrapers.base_scraper import BaseScraper
 from loguru import logger
 
 
 class PIBScraper(BaseScraper):
     """
-    Scrapes official press releases from Press Information Bureau (PIB).
-    PIB is the nodal agency of the Government of India
-    for disseminating information to print and electronic media.
-
-    Data includes:
-    - Cabinet decisions
-    - Ministry press releases
-    - Policy announcements
-    - Scheme launches
+    Scrapes press releases from PIB using direct HTML scraping.
+    RSS mode was abandoned - PIB server blocks feedparser.
     """
 
-    # PIB RSS feeds for different ministries/categories
-    RSS_FEEDS = {
-    "all_ministries": "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
-    "pib_main":       "https://pib.gov.in/Rss.aspx",
-    "pib_english":    "https://pib.gov.in/newsite/erelease.aspx",
-}
+    PIB_RELEASES_URL = "https://pib.gov.in/allRel.aspx"
+    PIB_BASE_URL     = "https://pib.gov.in"
 
-    # Keywords that could indicate schemes, contracts, or money flows
     ALERT_KEYWORDS = [
         "scheme", "crore", "lakh", "contract", "tender", "allocation",
         "fund", "grant", "subsidy", "project", "award", "procurement",
-        "budget", "expenditure", "beneficiary", "disburse",
+        "budget", "expenditure", "beneficiary", "disburse", "inaugurate",
+        "launch", "approve", "sanction", "release",
     ]
 
     def __init__(self):
         super().__init__(name="pib", delay=2.0)
+        # Browser User-Agent so PIB doesn't block the request
+        self.session.headers.update({
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+        })
 
-    def fetch_feed(self, feed_name: str = "all_ministries") -> list:
-        """
-        Fetch latest press releases from a PIB RSS feed.
-        Returns list of article dicts.
-        """
-        url = self.RSS_FEEDS.get(feed_name, self.RSS_FEEDS["all_ministries"])
-        logger.info(f"[PIB] Fetching feed: {feed_name}")
+    def fetch_releases(self, limit: int = 30) -> list:
+        """Fetch press releases by scraping pib.gov.in/allRel.aspx"""
+        logger.info(f"[PIB] Fetching from: {self.PIB_RELEASES_URL}")
+        html = self.get_html(self.PIB_RELEASES_URL)
 
-        try:
-            feed = feedparser.parse(url)
-            articles = []
+        if not html:
+            logger.error("[PIB] Could not fetch page")
+            return self._get_sample_articles()
 
-            for entry in feed.entries:
-                article = {
-                    "title":       entry.get("title", ""),
-                    "link":        entry.get("link", ""),
-                    "published":   entry.get("published", ""),
-                    "summary":     entry.get("summary", ""),
-                    "source":      "PIB",
-                    "feed_name":   feed_name,
-                    "scraped_at":  datetime.now().isoformat(),
-                    "alert_keywords": self._find_keywords(
-                        entry.get("title", "") + " " + entry.get("summary", "")
-                    ),
-                }
-                articles.append(article)
+        articles = self._parse_releases_page(html, limit)
 
-            logger.success(f"[PIB] Got {len(articles)} articles from: {feed_name}")
-            return articles
+        if not articles:
+            logger.warning("[PIB] No articles parsed — using sample data")
+            return self._get_sample_articles()
 
-        except Exception as e:
-            logger.error(f"[PIB] Error fetching feed {feed_name}: {e}")
-            return []
+        return articles
+
+    def _parse_releases_page(self, html: str, limit: int) -> list:
+        """Parse press release links from PIB HTML page."""
+        soup = BeautifulSoup(html, "lxml")
+        articles = []
+
+        for link in soup.find_all("a", href=True):
+            href  = link.get("href", "")
+            title = link.get_text(strip=True)
+
+            if not title or len(title) < 15:
+                continue
+            if not any(kw in href.lower() for kw in
+                       ["prid=", "pressrelease", "pressrelaseid", "newsite"]):
+                continue
+
+            if href.startswith("http"):
+                full_url = href
+            elif href.startswith("/"):
+                full_url = self.PIB_BASE_URL + href
+            else:
+                full_url = self.PIB_BASE_URL + "/" + href
+
+            articles.append({
+                "title":          title,
+                "link":           full_url,
+                "published":      "",
+                "source":         "PIB",
+                "scraped_at":     datetime.now().isoformat(),
+                "entity_type":    "press_release",
+                "alert_keywords": self._find_keywords(title),
+            })
+
+            if len(articles) >= limit:
+                break
+
+        logger.info(f"[PIB] Parsed {len(articles)} press releases")
+        return articles
 
     def _find_keywords(self, text: str) -> list:
-        """
-        Find alert keywords in article text.
-        Helps flag articles about money, schemes, contracts.
-        """
-        text_lower = text.lower()
-        found = [kw for kw in self.ALERT_KEYWORDS if kw in text_lower]
-        return found
+        """Find alert keywords in article title."""
+        return [kw for kw in self.ALERT_KEYWORDS if kw in text.lower()]
 
     def fetch_all_feeds(self, save: bool = True) -> list:
-        """
-        Fetch all configured feeds and combine results.
-        """
-        all_articles = []
-        seen_links = set()
+        """Main method used by pipeline — fetch all releases."""
+        articles = self.fetch_releases(limit=50)
 
-        for feed_name in self.RSS_FEEDS:
-            articles = self.fetch_feed(feed_name)
-            for article in articles:
-                if article["link"] not in seen_links:
-                    all_articles.append(article)
-                    seen_links.add(article["link"])
-
-        # Sort by date (newest first)
-        all_articles.sort(key=lambda x: x.get("published", ""), reverse=True)
-
-        if save and all_articles:
+        if save and articles:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filepath = f"data/samples/pib_articles_{timestamp}.json"
-            self.save_json(all_articles, filepath)
-            logger.success(f"[PIB] Saved {len(all_articles)} articles to {filepath}")
+            filepath  = f"data/samples/pib_articles_{timestamp}.json"
+            self.save_json(articles, filepath)
+            logger.success(f"[PIB] Saved {len(articles)} articles to {filepath}")
 
-        return all_articles
+        return articles
 
     def get_high_alert_articles(self, articles: list = None) -> list:
-        """
-        Filter articles that contain 3+ alert keywords.
-        These are most likely about money flows or schemes.
-        """
+        """Filter articles with 2+ alert keywords."""
         if articles is None:
             articles = self.fetch_all_feeds(save=False)
-
-        high_alert = [
-            a for a in articles
-            if len(a.get("alert_keywords", [])) >= 3
-        ]
-
-        logger.info(f"[PIB] High-alert articles: {len(high_alert)}/{len(articles)}")
+        high_alert = [a for a in articles if len(a.get("alert_keywords", [])) >= 2]
+        logger.info(f"[PIB] High-alert: {len(high_alert)}/{len(articles)}")
         return high_alert
 
+    def _get_sample_articles(self) -> list:
+        """Sample data used when site is unreachable."""
+        return [
+            {
+                "title":          "PM launches new rural infrastructure fund allocation scheme",
+                "link":           "https://pib.gov.in/PressReleasePage.aspx?PRID=1000001",
+                "published":      datetime.now().isoformat(),
+                "source":         "PIB (sample)",
+                "scraped_at":     datetime.now().isoformat(),
+                "entity_type":    "press_release",
+                "alert_keywords": ["scheme", "fund", "allocation"],
+                "note":           "SAMPLE - real PIB fetch failed",
+            },
+            {
+                "title":          "Cabinet approves procurement of medical equipment worth 500 crore",
+                "link":           "https://pib.gov.in/PressReleasePage.aspx?PRID=1000002",
+                "published":      datetime.now().isoformat(),
+                "source":         "PIB (sample)",
+                "scraped_at":     datetime.now().isoformat(),
+                "entity_type":    "press_release",
+                "alert_keywords": ["procurement", "crore", "approve"],
+                "note":           "SAMPLE - real PIB fetch failed",
+            },
+        ]
 
-# ── Run directly to test ──────────────────────────────────────────────────────
+
+# ── Run directly to test ─────────────────────────────────
 if __name__ == "__main__":
     print("=" * 60)
-    print("BharatGraph - PIB Scraper Test")
+    print("BharatGraph - PIB Scraper Test (HTML mode)")
     print("=" * 60)
 
     scraper = PIBScraper()
 
-    print("\n[1] Fetching all PIB feeds...")
+    print("\n[1] Fetching PIB press releases...")
     articles = scraper.fetch_all_feeds(save=True)
-    print(f"    ✅ Total articles: {len(articles)}")
+    print(f"    Total: {len(articles)}")
 
     if articles:
-        print(f"\n    Latest article: {articles[0]['title'][:70]}...")
-        print(f"    Published: {articles[0]['published']}")
-        print(f"    Alert keywords found: {articles[0]['alert_keywords']}")
+        print(f"\n    Example:")
+        print(f"    Title:    {articles[0]['title'][:70]}")
+        print(f"    Keywords: {articles[0]['alert_keywords']}")
 
-    print("\n[2] Finding high-alert articles (scheme/money/contract keywords)...")
-    high_alert = scraper.get_high_alert_articles(articles)
-    print(f"    ✅ High-alert articles: {len(high_alert)}")
-
-    if high_alert:
-        print(f"\n    Example high-alert: {high_alert[0]['title'][:70]}")
-        print(f"    Keywords: {high_alert[0]['alert_keywords']}")
-
-    print("\nDone! Check data/samples/ folder.")
+    print("\n[2] High-alert articles (2+ keywords)...")
+    high = scraper.get_high_alert_articles(articles)
+    print(f"    High-alert: {len(high)}")
+    print("\nDone!")

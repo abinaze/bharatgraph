@@ -37,3 +37,4 @@ neo4j/data/
 
 # Node
 node_modules/
+data/samples/*.json
