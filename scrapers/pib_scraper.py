@@ -3,8 +3,8 @@ BharatGraph - PIB (Press Information Bureau) Scraper
 Fetches official government press releases.
 Source: pib.gov.in
 
-NOTE: PIB RSS feeds return empty XML (server blocks feedparser).
-Fix: Scrape pib.gov.in/allRel.aspx HTML page directly.
+NOTE: PIB RSS feeds return empty XML - server blocks feedparser.
+Solution: Scrape pib.gov.in/allRel.aspx HTML directly instead.
 """
 
 import os
@@ -17,7 +17,7 @@ from loguru import logger
 class PIBScraper(BaseScraper):
     """
     Scrapes press releases from PIB using direct HTML scraping.
-    RSS mode was abandoned - PIB server blocks feedparser.
+    RSS/feedparser abandoned - PIB server returns empty XML.
     """
 
     PIB_RELEASES_URL = "https://pib.gov.in/allRel.aspx"
@@ -32,7 +32,6 @@ class PIBScraper(BaseScraper):
 
     def __init__(self):
         super().__init__(name="pib", delay=2.0)
-        # Browser User-Agent so PIB doesn't block the request
         self.session.headers.update({
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -103,7 +102,7 @@ class PIBScraper(BaseScraper):
         return [kw for kw in self.ALERT_KEYWORDS if kw in text.lower()]
 
     def fetch_all_feeds(self, save: bool = True) -> list:
-        """Main method used by pipeline — fetch all releases."""
+        """Main pipeline method — fetch all press releases."""
         articles = self.fetch_releases(limit=50)
 
         if save and articles:
@@ -123,10 +122,10 @@ class PIBScraper(BaseScraper):
         return high_alert
 
     def _get_sample_articles(self) -> list:
-        """Sample data used when site is unreachable."""
+        """Fallback sample data when site is unreachable."""
         return [
             {
-                "title":          "PM launches new rural infrastructure fund allocation scheme",
+                "title":          "PM launches rural infrastructure fund allocation scheme",
                 "link":           "https://pib.gov.in/PressReleasePage.aspx?PRID=1000001",
                 "published":      datetime.now().isoformat(),
                 "source":         "PIB (sample)",
@@ -136,7 +135,7 @@ class PIBScraper(BaseScraper):
                 "note":           "SAMPLE - real PIB fetch failed",
             },
             {
-                "title":          "Cabinet approves procurement of medical equipment worth 500 crore",
+                "title":          "Cabinet approves procurement worth 500 crore for medical equipment",
                 "link":           "https://pib.gov.in/PressReleasePage.aspx?PRID=1000002",
                 "published":      datetime.now().isoformat(),
                 "source":         "PIB (sample)",

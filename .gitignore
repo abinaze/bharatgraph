@@ -12,29 +12,23 @@ venv/
 env/
 .env
 .venv/
-
 # Secrets
 *.env
 config/secrets.py
 config/.env
-
 # Data files (large)
 data/raw/*.csv
 data/raw/*.json
 data/raw/*.pdf
 data/processed/*.csv
-
 # Logs
 logs/*.log
-
 # IDE
 .vscode/settings.json
 .idea/
 *.DS_Store
-
 # Neo4j
 neo4j/data/
-
 # Node
 node_modules/
 data/samples/*.json
