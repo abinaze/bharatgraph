@@ -1,6 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
 *.egg-info/
 dist/
 build/
@@ -10,19 +11,21 @@ build/
 # Virtual Environment
 venv/
 env/
-.env
 .venv/
 
-# Secrets
+# Secrets - NEVER commit these
+.env
 *.env
 config/secrets.py
 config/.env
 
-# Data files (large)
+# Data files - scraped output never committed
 data/raw/*.csv
 data/raw/*.json
 data/raw/*.pdf
+data/samples/*.json
 data/processed/*.csv
+data/processed/*.json
 
 # Logs
 logs/*.log
@@ -37,5 +40,3 @@ neo4j/data/
 
 # Node
 node_modules/
-*.pyc
-*.pyo
