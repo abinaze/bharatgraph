@@ -60,7 +60,7 @@ class GraphLoader:
             from dotenv import load_dotenv
             load_dotenv()
 
-            uri  = os.getenv("NEO4J_URI",      "bolt://localhost:7687")
+            uri  = os.getenv("NEO4J_URI", "")
             user = os.getenv("NEO4J_USER",     "neo4j")
             pwd  = os.getenv("NEO4J_PASSWORD", "")
 
