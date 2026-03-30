@@ -1,847 +1,488 @@
-# BharatGraph — Phase Roadmap
-# GitHub Issue and Pull Request Reference for All Phases
-#
-# For each phase:
-# 1. Create the GitHub issue using the ISSUE section
-# 2. Create the branch listed under BRANCH
-# 3. Build the files listed under FILES
-# 4. Open a pull request using the PR section
-# 5. Merge into main
-#
+# BharatGraph — Complete Phase Roadmap
+# GitHub Issue and Pull Request reference for phases 7 through 21
+# One issue per phase. One branch per phase. All merge directly into main.
 # Branch naming: feature/phase-N-name or fix/issue-N-name
-# No develop branch. All branches merge directly into main.
 
 
-# ============================================================
-# PHASE 4 — FastAPI Backend
-# ============================================================
+# ================================================================
+# PHASE 7 — NLP Document Intelligence
+# ================================================================
 
-ISSUE_TITLE:
-  "feat(api): FastAPI backend with entity search, dossier, and graph endpoints"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
+ISSUE_TITLE: "feat(ai): NLP pipeline — entity extraction, Benford analysis, Hindi NER"
+ISSUE_LABELS: ["enhancement"]
 ISSUE_DESCRIPTION: |
-  Build the REST API that exposes the graph database and risk engine to the
-  frontend and external tools.
+  Add NLP to extract structured intelligence from government documents.
+  All models are free and run locally — no paid APIs.
 
   Files to create:
-    api/main.py            FastAPI application, CORS, lifespan, router registration
-    api/models.py          Pydantic request and response models with source citations
-    api/dependencies.py    Shared Neo4j driver via dependency injection
-    api/routes/search.py   GET /search?q=name&type=politician|company|contract
-    api/routes/profile.py  GET /profile/{entity_id} — full dossier assembly
-    api/routes/risk.py     GET /risk/{entity_id} — risk score with factor breakdown
-    api/routes/graph.py    GET /graph/connections/{entity_id}?depth=2
-    api/routes/feed.py     WebSocket /ws/feed — live update stream
+    ai/nlp_extractor.py          spaCy English NER on CAG and PIB text
+    ai/benfords_analyzer.py      Statistical anomaly on declared asset figures
+    ai/multilingual_ner.py       Hindi NER via AI4Bharat IndicNER (HuggingFace)
+    ai/shadow_draft_detector.py  Semantic similarity: bill text vs corporate submissions
 
-  Additional endpoints:
-    GET /health
-    GET /stats
-    GET /graph/pattern/politician-contracts
+  benfords_analyzer.py: Chi-squared test on first-digit distribution of declared
+  assets in election affidavits. If figures cluster around thresholds such as
+  Rs 99 lakh rather than Rs 1 crore, it flags possible manipulation to stay
+  below disclosure triggers.
 
-  Response format for all endpoints must include:
-    data: the result payload
-    sources: list of source documents with url, date, institution
-    generated_at: ISO timestamp
+  shadow_draft_detector.py: sentence-transformers cosine similarity comparing
+  corporate lobby submissions against bill text. Score above 65 flagged as
+  high semantic alignment indicating potential policy capture.
 
-  Acceptance criteria:
-    uvicorn api.main:app starts without errors
-    GET /health returns 200 with Neo4j connection status
-    GET /search?q=sample returns structured results from Neo4j
-    All endpoints return typed JSON validated by Pydantic
-
-BRANCH: "feature/phase-4-api"
-
-PR_TITLE:
-  "feat(api): FastAPI backend with entity search, dossier, and graph endpoints"
-
-PR_DESCRIPTION: |
-  Adds the complete REST API layer.
-
-  api/main.py: FastAPI app with CORS middleware, lifespan context managing
-  Neo4j driver, and router registration for all route modules.
-
-  api/models.py: Typed Pydantic models for SearchResult, EntityProfile,
-  RiskScore, GraphNode, GraphEdge, and FeedItem. All response models include
-  a sources field.
-
-  api/dependencies.py: get_db() dependency returning a live Neo4j session.
-  Handles connection errors with a structured HTTP 503 response.
-
-  api/routes/: Four route modules covering search, profile, risk, and graph
-  traversal. Feed route uses WebSocket for live push.
-
-  Start the server:
-    uvicorn api.main:app --reload
-
-  Closes #ISSUE_NUMBER
-
-
-# ============================================================
-# PHASE 5 — Risk Scoring Engine
-# ============================================================
-
-ISSUE_TITLE:
-  "feat(ai): composite risk scoring engine with explainable factor breakdown"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
-ISSUE_DESCRIPTION: |
-  Build the risk scoring system that assigns a 0-100 structural risk indicator
-  to each entity based on graph pattern analysis. Every score must be fully
-  explainable with source citations per factor.
-
-  Files to create:
-    ai/risk_scorer.py    RiskScorer class assembling composite score from factors
-    ai/indicators.py     Five individual indicator functions with weights
-    ai/explainer.py      Converts factor scores to neutral analytical language
-
-  Risk factors and weights:
-    contract_concentration      0.25  Single company winning repeated contracts
-    politician_company_overlap  0.35  Politician is director of contract-winning firm
-    audit_mention_frequency     0.20  Entity mentioned in multiple CAG audit reports
-    asset_growth_anomaly        0.15  Declared assets grew more than 300 percent
-                                      between consecutive election affidavits
-    criminal_case_presence      0.05  Declared criminal cases in ECI affidavit
-
-  Output structure per entity:
-    entity_id
-    entity_name
-    risk_score         integer 0-100
-    risk_level         LOW, MODERATE, HIGH, or VERY_HIGH
-    factors            list of factor name, score, weight, evidence list
-    explanation        neutral analytical text generated by explainer.py
-    sources            all source documents referenced
-
-  Language rules enforced by explainer.py:
-    Use: structural indicator, governance anomaly, pattern, concentration
-    Never use: corrupt, suspect, criminal, fraud, guilty
-
-  Acceptance criteria:
-    python -m ai.risk_scorer runs on the sample graph data
-    Every factor in the output includes at least one source document reference
-    Risk level boundaries: 0-30 LOW, 31-60 MODERATE, 61-80 HIGH, 81-100 VERY_HIGH
-
-BRANCH: "feature/phase-5-risk-scoring"
-
-PR_TITLE:
-  "feat(ai): composite risk scoring engine with explainable factors"
-
-PR_DESCRIPTION: |
-  Adds the risk scoring layer.
-
-  ai/indicators.py: Five indicator functions each querying Neo4j for their
-  specific pattern. Returns a score between 0 and their maximum weight.
-
-  ai/risk_scorer.py: RiskScorer class calling all indicators, summing weighted
-  scores, and assembling the full output structure including evidence references.
-
-  ai/explainer.py: Converts the factor breakdown into neutral analytical prose.
-  Enforces legally safe language. Cites source documents inline.
-
-  Score interpretation:
-    0-30    Low structural indicators
-    31-60   Moderate structural indicators
-    61-80   High structural indicators
-    81-100  Very high structural indicators
-
-  Closes #ISSUE_NUMBER
-
-
-# ============================================================
-# PHASE 6 — Expanded Data Sources
-# ============================================================
-
-ISSUE_TITLE:
-  "feat(scrapers): Lok Sabha, SEBI, eCourts, OpenSanctions, ICIJ, Wikidata"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
-ISSUE_DESCRIPTION: |
-  Add new scrapers covering parliamentary data, financial regulation, court
-  records, and international investigative databases. All sources are free.
-
-  Files to create:
-    scrapers/loksabha_scraper.py        Parliamentary questions and answers
-    scrapers/prs_scraper.py             Bill text and legislative status
-    scrapers/sebi_scraper.py            Enforcement orders and insider trading
-    scrapers/ecourts_scraper.py         Judgment search results
-    scrapers/electoral_bond_scraper.py  Supreme Court disclosed bond data
-    scrapers/opensanctions_scraper.py   Global PEP and sanctions list (free API)
-    scrapers/icij_scraper.py            Offshore Leaks entity search (free API)
-    scrapers/wikidata_scraper.py        Entity enrichment via Wikidata SPARQL
-
-  New graph nodes enabled by this phase:
-    ParliamentaryQuestion   with ASKED_BY -> Politician and ABOUT -> Ministry
-    Bill                    with SPONSORED_BY -> Politician
-    SanctionedEntity        with IS_SANCTIONED
-    OffshoreEntity          with LINKED_TO -> Person or Company
-    CourtJudgment           with INVOLVES -> Person or Company
-
-  New data in .env.example:
-    OPENSANCTIONS_API_KEY   free at opensanctions.org
-    No key needed for ICIJ, Wikidata, Lok Sabha, or PRS
-
-  Acceptance criteria:
-    All 8 scrapers pass syntax check
-    loksabha_scraper fetches at least one question from public record
-    opensanctions_scraper returns results for a test entity name
-    icij_scraper queries Offshore Leaks API and returns structured results
-
-BRANCH: "feature/phase-6-data-sources"
-
-PR_TITLE:
-  "feat(scrapers): Lok Sabha, SEBI, eCourts, OpenSanctions, ICIJ, Wikidata sources"
-
-PR_DESCRIPTION: |
-  Adds 8 new scrapers covering parliamentary, financial, judicial, and
-  international data sources.
-
-  loksabha_scraper.py: Scrapes parliamentary question database from
-  loksabha.nic.in. Parses question number, date, subject, asking MP, and
-  ministry response.
-
-  prs_scraper.py: Fetches bill summaries and status from prsindia.org.
-
-  sebi_scraper.py: Scrapes enforcement action orders from sebi.gov.in.
-
-  ecourts_scraper.py: Queries judgment search API at judgments.ecourts.gov.in.
-
-  electoral_bond_scraper.py: Parses the Supreme Court ordered electoral bond
-  disclosure data from ECI portal.
-
-  opensanctions_scraper.py: Queries OpenSanctions free API for PEP and
-  sanctions screening of entities in the graph.
-
-  icij_scraper.py: Queries ICIJ Offshore Leaks API to find whether any graph
-  entities appear in Panama, Pandora, or Paradise Papers.
-
-  wikidata_scraper.py: SPARQL queries to Wikidata for education history,
-  career timeline, and nationality data for politicians in the graph.
-
-  Closes #ISSUE_NUMBER
-
-
-# ============================================================
-# PHASE 7 — NLP and Document Intelligence
-# ============================================================
-
-ISSUE_TITLE:
-  "feat(ai): NLP pipeline for entity extraction, shadow drafting, and Hindi NER"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
-ISSUE_DESCRIPTION: |
-  Add natural language processing capabilities using only free and open source
-  models. Extract structured entities from unstructured government documents.
-
-  Files to create:
-    ai/nlp_extractor.py          NER on CAG reports and PIB releases
-    ai/shadow_draft_detector.py  Semantic similarity between bills and lobby text
-    ai/benfords_analyzer.py      Statistical anomaly detection on asset figures
-    ai/multilingual_ner.py       Hindi NER using AI4Bharat IndicNER (HuggingFace)
-
-  Models used (all free):
-    spacy en_core_web_sm         English NER, runs locally
-    ai4bharat/IndicNER            Hindi NER, free HuggingFace inference
-    sentence-transformers          Semantic similarity, free local inference
-    No OpenAI or paid API calls
-
-  nlp_extractor.py behaviour:
-    Input: text from a CAG report or PIB press release
-    Output: list of extracted entities with type (PERSON, ORG, LOCATION, MONEY)
-    Each extracted entity resolved against existing graph nodes using
-    EntityResolver from processing/entity_resolver.py
-
-  shadow_draft_detector.py behaviour:
-    Input: bill text and a set of corporate consultation submissions
-    Output: alignment score 0-100 for each submission, with matched sentence pairs
-    Threshold 65 or above is flagged as high semantic alignment
-
-  benfords_analyzer.py behaviour:
-    Input: list of declared asset figures from election affidavits
-    Output: chi-squared test result and list of anomalous entries where first
-    digit distribution deviates significantly from Benford's Law expectation
-
-  Acceptance criteria:
-    nlp_extractor extracts at least 3 entities from a sample CAG report
-    shadow_draft_detector produces an alignment score for test inputs
-    benfords_analyzer produces a chi-squared result for a sample asset list
-    multilingual_ner extracts person names from a sample Hindi PIB headline
+  New requirements: spacy>=3.7.0, sentence-transformers>=2.6.0
 
 BRANCH: "feature/phase-7-nlp"
-
-PR_TITLE:
-  "feat(ai): NLP pipeline — entity extraction, shadow drafting, Benford analysis, Hindi NER"
-
+PR_TITLE: "feat(ai): NLP pipeline — entity extraction, Benford, Hindi NER, shadow drafting"
 PR_DESCRIPTION: |
-  Adds four NLP modules using only free and locally executable models.
-
-  ai/nlp_extractor.py: spaCy English NER pipeline extracting PERSON, ORG,
-  GPE, and MONEY entities from document text. Extracted entities passed to
-  EntityResolver for graph matching.
-
-  ai/shadow_draft_detector.py: sentence-transformers cosine similarity
-  comparing bill subsections against corporate consultation text. Returns
-  alignment score and matched sentence pairs above threshold.
-
-  ai/benfords_analyzer.py: Chi-squared test comparing first-digit distribution
-  of asset declaration figures against theoretical Benford distribution.
-  Flags entries with deviation above significance threshold.
-
-  ai/multilingual_ner.py: AI4Bharat IndicNER via Hugging Face inference API
-  for Hindi named entity extraction from PIB Hindi releases.
-
-  New requirements added:
-    spacy>=3.7.0
-    sentence-transformers>=2.6.0
-
+  Four NLP modules using only free locally-executable models.
+  Benford's Law catches manipulation of asset figures.
+  Hindi NER extends coverage to PIB Hindi releases.
   Closes #ISSUE_NUMBER
 
 
-# ============================================================
+# ================================================================
 # PHASE 8 — Advanced Graph Analytics
-# ============================================================
+# ================================================================
 
-ISSUE_TITLE:
-  "feat(ai): graph analytics — centrality, community detection, circular ownership, ghost companies"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
+ISSUE_TITLE: "feat(ai): graph analytics — centrality, community detection, circular ownership"
+ISSUE_LABELS: ["enhancement"]
 ISSUE_DESCRIPTION: |
-  Implement advanced graph machine learning and structural analysis using
-  NetworkX (free, open source). No paid dependencies.
+  Structural analysis of the knowledge graph using NetworkX (free).
 
   Files to create:
-    ai/graph_analytics.py       Centrality metrics and community detection
-    ai/circular_ownership.py    Detect circular shareholding structures
-    ai/shadow_director.py       Identify de facto controllers via filing patterns
-    ai/ghost_company.py         Detect shell companies activated for tenders
+    ai/graph_analytics.py      Betweenness centrality, PageRank, Louvain community detection
+    ai/circular_ownership.py   Cycle detection in shareholding graph
+    ai/shadow_director.py      De facto controllers not on formal board
+    ai/ghost_company.py        Shell companies activated before tenders
 
-  graph_analytics.py methods:
-    compute_betweenness_centrality(entity_id)
-      Identifies entities that serve as bridges between public and private sector.
-      High betweenness indicates an institutional gatekeeper.
-    compute_pagerank(graph_data)
-      Scores entities by the weight of entities that point to them via contracts.
-    detect_communities(graph_data)
-      Returns clusters of entities with dense internal connections.
-      Clusters of companies winning contracts from the same ministry flag
-      potential procurement cartels.
+  ghost_company.py flags: registered within 90 days before first contract,
+  no prior CAG or SEBI mentions, single director, contract value more than
+  10x paid-up capital. Results written back to Neo4j as node properties.
 
-  circular_ownership.py:
-    Detects cycles in company ownership graphs.
-    Pattern: Company A owns Company B owns Company C owns Company A.
-    Uses NetworkX cycle detection algorithm.
-    Each detected cycle is flagged as a circular ownership indicator.
-
-  shadow_director.py:
-    Identifies persons who appear in regulatory filings and address registrations
-    for companies but are not listed as formal directors.
-    Pattern: same address, same registered agent, same filing date across
-    multiple companies without formal board listing.
-
-  ghost_company.py:
-    Flags companies that meet three or more of:
-    - Registered within 90 days before winning their first contract
-    - No prior CAG or SEBI mentions
-    - No parliamentary question references
-    - Single director with no other directorships
-    - Contract value more than 10x the company's paid-up capital
-
-  New requirements:
-    networkx>=3.2.0
-
-  Acceptance criteria:
-    compute_betweenness_centrality returns a score for a test entity
-    detect_communities identifies at least one cluster in sample data
-    circular_ownership detects a known cycle in test graph data
-    ghost_company flags the sample contract winner created 30 days before award
+  New requirement: networkx>=3.2.0
 
 BRANCH: "feature/phase-8-graph-analytics"
-
-PR_TITLE:
-  "feat(ai): graph analytics — centrality, community detection, circular ownership, ghost companies"
-
+PR_TITLE: "feat(ai): centrality, community detection, circular ownership, ghost company detector"
 PR_DESCRIPTION: |
-  Adds advanced graph analytics using NetworkX.
-
-  ai/graph_analytics.py: Fetches subgraph from Neo4j, builds NetworkX graph,
-  computes betweenness centrality, PageRank, and community partitions using
-  the Louvain method. Results written back to Neo4j as node properties.
-
-  ai/circular_ownership.py: Extracts ownership edges from Neo4j, constructs
-  directed graph, uses simple_cycles() to detect circular structures. Each
-  cycle reported with all members and edge evidence.
-
-  ai/shadow_director.py: Cross-references MCA filing metadata against formal
-  director listings. Flags address reuse across multiple companies by the
-  same non-listed individual.
-
-  ai/ghost_company.py: Applies five-factor ghost company scoring using
-  registration date, prior public record mentions, director history, and
-  contract-to-capital ratio.
-
+  NetworkX-powered structural analysis. Results written to Neo4j.
+  Ghost company detector catches shell entities activated for specific tenders.
   Closes #ISSUE_NUMBER
 
 
-# ============================================================
-# PHASE 9 — React Frontend
-# ============================================================
+# ================================================================
+# PHASE 9 — Eight New Indian Data Sources
+# ================================================================
 
-ISSUE_TITLE:
-  "feat(frontend): Next.js dashboard with D3.js graph browser, dossier, and live feed"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
+ISSUE_TITLE: "feat(scrapers): NJDG, ED, CVC, NCRB, LGD, IBBI, NGO Darpan, CPPP"
+ISSUE_LABELS: ["enhancement"]
 ISSUE_DESCRIPTION: |
-  Build the complete frontend application. Deployed free on Vercel.
-  All components use only free open source libraries.
-
-  Technology:
-    Next.js 14
-    D3.js for force-directed knowledge graph
-    Tailwind CSS
-    Leaflet for geospatial view with OpenStreetMap tiles (free)
-    D3-sankey for money flow diagrams
-
-  Pages required:
-    /                   Search bar, live feed preview, platform statistics
-    /search             Results with type and risk level filters
-    /entity/[id]        Full dossier: overview, timeline, graph, evidence locker
-    /risk-dashboard     Entities ranked by structural risk indicator
-    /graph-explorer     Interactive multi-hop relationship browser
-    /live-feed          Real-time stream of new intelligence headlines
-    /watchlist          User-managed entity subscriptions with alert history
-
-  Graph visualisation requirements:
-    Nodes coloured by type: Politician, Company, Contract, AuditReport
-    Edge labels showing relationship type
-    Click node to navigate to dossier
-    Zoom, pan, and filter by relationship type
-    Export subgraph as PNG or JSON
-    Depth selector: 1-hop, 2-hop, 3-hop from any entity
-
-  Evidence locker behaviour:
-    Each claim in the dossier shows a source chip
-    Clicking the chip opens the original source URL in a new tab
-    Sources display: institution name, document date, credibility level
-
-  Acceptance criteria:
-    npm run build completes without errors
-    /search returns and displays results from the API
-    Knowledge graph renders a two-hop subgraph with labelled edges
-    Live feed connects via WebSocket and displays real-time updates
-
-BRANCH: "feature/phase-9-frontend"
-
-PR_TITLE:
-  "feat(frontend): Next.js dashboard with D3.js graph browser, dossier, and live feed"
-
-PR_DESCRIPTION: |
-  Adds the complete frontend application in frontend/.
-
-  frontend/pages/: Next.js pages for all seven routes.
-  frontend/components/Graph.jsx: D3.js force-directed graph with colour coding,
-  depth selection, zoom, pan, and export.
-  frontend/components/Dossier.jsx: Entity profile with tabbed evidence locker
-  and source chip components.
-  frontend/components/RiskBadge.jsx: Colour-coded structural risk indicator.
-  frontend/components/LiveFeed.jsx: WebSocket consumer displaying real-time
-  intelligence headlines with click-to-expand mini reports.
-  frontend/components/SankeyChart.jsx: D3-sankey money flow diagram for
-  contract value flows between ministries and companies.
-  frontend/components/GeoMap.jsx: Leaflet map showing contract and company
-  locations plotted against constituency boundaries.
-
-  Environment variable: NEXT_PUBLIC_API_URL pointing to Render backend.
-  Deploy to Vercel by connecting the GitHub repository.
-
-  Closes #ISSUE_NUMBER
-
-
-# ============================================================
-# PHASE 10 — Live Monitoring and GitHub Actions
-# ============================================================
-
-ISSUE_TITLE:
-  "feat(pipeline): GitHub Actions automation, alert engine, and live feed generation"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
-ISSUE_DESCRIPTION: |
-  Automate data collection using GitHub Actions free tier and build the
-  alert engine that powers the live transparency feed.
+  Eight new Indian government sources. Total scrapers becomes 21.
 
   Files to create:
-    .github/workflows/daily_scrape.yml    Runs all scrapers at 02:00 IST daily
-    .github/workflows/weekly_load.yml     Loads new data into Neo4j weekly
-    .github/workflows/test.yml            Syntax and unit tests on every push and PR
-    ai/alert_engine.py                    Diff-based alert and headline generation
-    ai/headline_generator.py              Templated NLG for intelligence headlines
+    scrapers/njdg_scraper.py       National Judicial Data Grid — case pendency and history
+    scrapers/ed_scraper.py         Enforcement Directorate press releases and actions
+    scrapers/cvc_scraper.py        Central Vigilance Commission complaint statistics
+    scrapers/ncrb_scraper.py       NCRB Crime in India district-wise annual statistics
+    scrapers/lgd_scraper.py        Local Government Directory — 782 districts, 676,497 villages
+    scrapers/ibbi_scraper.py       Insolvency and Bankruptcy Board corporate filings
+    scrapers/ngo_darpan_scraper.py NGO Darpan registered NGO and CSR recipient list
+    scrapers/cppp_scraper.py       Central Public Procurement Portal tender awards
 
-  daily_scrape.yml behaviour:
-    Triggers: schedule cron 0 20 * * * (02:00 IST = 20:30 UTC)
-    Steps: checkout, setup Python, activate venv, install requirements,
-    run pipeline with all scrapers, commit new processed JSON to a
-    dedicated branch named data/pipeline-YYYYMMDD (not main)
+  New graph nodes:
+    CourtCase, EDAction, VigilanceCase, InsolventEntity, NGO, Tender
 
-  test.yml behaviour:
-    Triggers: push to any branch, pull_request targeting main
-    Steps: syntax check all Python files, run pytest tests/
-
-  alert_engine.py behaviour:
-    Loads previous pipeline output and compares against new output
-    Detects: new CAG report mentioning an entity already in graph,
-    new GeM contract won by a company linked to a politician,
-    new PIB release matching a watchlisted entity
-    Each detected event creates an alert record in Neo4j
-
-  headline_generator.py behaviour:
-    Converts alert records into neutral analytical headlines
-    Examples:
-      New audit report flags irregularities in a scheme linked to Ministry X
-      Procurement order awarded to company with directorship overlap
-    Each headline includes: text, entity links, source document, confidence level
-
-  GitHub Actions secrets required (set in repository Settings > Secrets):
-    NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, DATAGOV_API_KEY
-
-  Acceptance criteria:
-    test.yml passes on a test pull request
-    daily_scrape.yml runs successfully in GitHub Actions environment
-    alert_engine detects a new contract for a known entity in test data
-    headline_generator produces a grammatically correct neutral headline
-
-BRANCH: "feature/phase-10-monitoring"
-
-PR_TITLE:
-  "feat(pipeline): GitHub Actions automation, diff-based alerts, and headline generation"
-
+BRANCH: "feature/phase-9-eight-sources"
+PR_TITLE: "feat(scrapers): NJDG, ED, CVC, NCRB, LGD, IBBI, NGO Darpan, CPPP"
 PR_DESCRIPTION: |
-  Adds automated data collection and the live feed generation engine.
-
-  .github/workflows/daily_scrape.yml: Cron job at 02:00 IST running all
-  scrapers and committing output to a data branch.
-
-  .github/workflows/weekly_load.yml: Loads latest pipeline JSON into
-  Neo4j AuraDB production instance.
-
-  .github/workflows/test.yml: CI check running on every push and pull
-  request. Blocks merge if syntax check or tests fail.
-
-  ai/alert_engine.py: Loads previous and current pipeline output, computes
-  diff, creates Alert nodes in Neo4j for new relevant findings.
-
-  ai/headline_generator.py: Template-based natural language generation
-  converting Alert nodes into feed headlines. Enforces neutral language rules.
-
+  8 new scrapers: judiciary, enforcement, crime, administration,
+  insolvency, NGO, and procurement. Total: 21 scrapers.
   Closes #ISSUE_NUMBER
 
 
-# ============================================================
-# PHASE 11 — LLM Chatbot and Dossier Export
-# ============================================================
+# ================================================================
+# PHASE 10 — Multi-Investigator AI Engine
+# ================================================================
 
-ISSUE_TITLE:
-  "feat(ai): LLM chatbot interface, hypothesis testing, and PDF dossier export"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
+ISSUE_TITLE: "feat(ai): 12-investigator parallel analysis engine with synthesis and doubt section"
+ISSUE_LABELS: ["enhancement"]
 ISSUE_DESCRIPTION: |
-  Add a conversational query interface and dossier export. Uses only free
-  Hugging Face inference. No paid API calls.
+  The core differentiating capability. 12 specialist investigators run in
+  parallel, each analysing the entity from a different professional angle.
+  Findings are synthesised. Where 3+ investigators agree, confidence is HIGH.
 
   Files to create:
-    ai/chatbot.py          Conversational interface translating natural language
-                           queries into Neo4j Cypher and assembling responses
-    ai/hypothesis_tester.py Evaluates whether entity A connects to entity B
-                            within a specified number of hops
-    ai/dossier_exporter.py  Generates PDF dossiers using WeasyPrint (free)
+    ai/investigators/financial_investigator.py    Money flows, contract values, asset anomalies
+    ai/investigators/political_investigator.py    Party funding, voting records, affiliations
+    ai/investigators/corporate_investigator.py    Directorships, company health, compliance
+    ai/investigators/judicial_investigator.py     Court cases, convictions, pending litigation
+    ai/investigators/procurement_investigator.py  Contract patterns, bid behaviour
+    ai/investigators/network_investigator.py      Graph centrality, community membership
+    ai/investigators/asset_investigator.py        Declared vs probable assets, growth
+    ai/investigators/international_investigator.py Offshore entities, sanctions, ICIJ
+    ai/investigators/media_investigator.py         PIB mentions, press release patterns
+    ai/investigators/historical_investigator.py    Timeline reconstruction over time
+    ai/investigators/public_interest_investigator.py Scheme data, development indicators
+    ai/investigators/doubt_investigator.py         Unexplained anomalies, hypotheses
+    ai/multi_investigator.py                       Parallel runner and synthesis
 
-  chatbot.py behaviour:
-    Input: natural language question in English or Hindi
-    Process: intent classification, entity extraction, Cypher query generation,
-    Neo4j execution, result assembly with citations
-    Output: structured response with data, explanation, sources, confidence
-    Model: use Hugging Face free inference API for intent classification
-    Cypher generation: rule-based templates, no LLM for query construction
-    to avoid hallucinated queries
+  Output per report:
+    entity_biography: full public life timeline from all sources
+    agreed_findings: patterns confirmed by 3 or more investigators
+    individual_findings: all findings by source investigator
+    doubts: suspicious patterns that cannot be confirmed, stated as hypotheses
+    positive_contributions: good governance actions found (balanced view)
+    unique_report_hash: SHA-256 of entity_id + data snapshot timestamp
+    evidence_locker: all source documents across all findings
 
-  hypothesis_tester.py behaviour:
-    Input: two entity names or IDs and a maximum hop count
-    Process: breadth-first search in Neo4j up to specified depth
-    Output: shortest path found (or no connection), every edge with
-    its source document, relationship type, and confidence score
+  Language rules: structural indicator, governance anomaly, pattern.
+  Never: corrupt, guilty, criminal, fraud, suspect.
 
-  dossier_exporter.py behaviour:
-    Input: entity ID
-    Process: assemble full dossier from graph, render to HTML template,
-    convert to PDF using WeasyPrint
-    Output: PDF file with cover page, risk score, timeline, relationship
-    table, evidence locker, and source index
-
-  New requirements:
-    weasyprint>=60.0
-    jinja2>=3.1.0
-
-  Acceptance criteria:
-    chatbot.py answers "show contracts for company X" using sample data
-    hypothesis_tester finds a path between two connected test entities
-    dossier_exporter generates a valid PDF for a test entity
-
-BRANCH: "feature/phase-11-chatbot"
-
-PR_TITLE:
-  "feat(ai): LLM chatbot, hypothesis tester, and PDF dossier export"
-
+BRANCH: "feature/phase-10-multi-investigator"
+PR_TITLE: "feat(ai): 12-investigator parallel engine with synthesis, doubts, and unique hash"
 PR_DESCRIPTION: |
-  Adds the conversational interface and document export capability.
-
-  ai/chatbot.py: Intent classifier using Hugging Face zero-shot classification.
-  Entity extractor using spaCy. Cypher generator using rule-based templates
-  for 12 common query patterns. Response assembler citing all source documents.
-
-  ai/hypothesis_tester.py: Neo4j shortest path query with configurable hop
-  limit. Returns full path with every edge's provenance. Returns no_connection
-  result with explanation when path exceeds limit or does not exist.
-
-  ai/dossier_exporter.py: Jinja2 HTML template rendered to PDF via WeasyPrint.
-  Dossier sections: cover, identity, risk indicator, timeline, corporate
-  associations, contracts, audit mentions, evidence locker, source index.
-
+  The core intelligence layer. 12 specialised investigators run concurrently.
+  Synthesis identifies agreed patterns and raises confidence.
+  Doubt section surfaces unexplained anomalies as investigative hypotheses.
+  Every report has a unique SHA-256 hash for integrity verification.
   Closes #ISSUE_NUMBER
 
 
-# ============================================================
-# PHASE 12 — Geospatial Infrastructure Verification
-# ============================================================
+# ================================================================
+# PHASE 11 — Multilingual Platform (22 Indian Languages)
+# ================================================================
 
-ISSUE_TITLE:
-  "feat(ai): Sentinel-2 satellite verification of infrastructure project progress"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
+ISSUE_TITLE: "feat(ai): multilingual support for all 22 Indian scheduled languages"
+ISSUE_LABELS: ["enhancement"]
 ISSUE_DESCRIPTION: |
-  Use free Copernicus Sentinel-2 satellite imagery to verify whether
-  government-funded infrastructure projects show physical progress
-  matching their reported financial disbursement status.
+  Every citizen regardless of language can query and read reports.
 
   Files to create:
-    ai/geospatial_verifier.py   Sentinel-2 imagery retrieval and NDVI analysis
-    scrapers/project_locator.py Extracts GPS coordinates from GeM contract data
+    ai/translator.py             Language detection and translation via IndicTrans2
+    ai/transliteration.py        Roman to Devanagari, Tamil, Telugu scripts etc.
+    api/routes/multilingual.py   Language-aware endpoints with ?lang= parameter
+    config/languages.py          ISO codes for all 22 scheduled languages
 
-  Data source:
-    Copernicus Open Access Hub: scihub.copernicus.eu (free, registration required)
-    Provides Sentinel-2 multispectral imagery at 10m resolution
-    API access via sentinelsat Python library (free, open source)
+  Uses AI4Bharat IndicTrans2 (free HuggingFace model, runs locally).
+  Supports: hi, ta, te, kn, ml, mr, bn, gu, pa, or, as, ur, sd, kok,
+  mai, mni, sat, ks, ne, bho, doi, sa
 
-  geospatial_verifier.py behaviour:
-    Input: GPS coordinates and a project reference (contract ID)
-    Process: query Sentinel-2 for two images — one before contract start date,
-    one after final payment date
-    Compute NDVI change detection between the two images
-    For road projects: compute built-up area index change
-    Output: progress_score 0-100, visual_change_detected boolean,
-    image_urls, analysis_date, discrepancy_flag if payment complete
-    but visual change below 30 percent
+  Name transliteration ensures search works across scripts:
+  "Modi" = "मोदी" = "மோடி" = "మోదీ" all resolve to the same entity.
 
-  project_locator.py behaviour:
-    Input: GeM contract records
-    Process: extract location field, geocode using Nominatim (free OSM geocoder)
-    Output: enriched contract records with latitude, longitude fields
+  All 14 dossier sections translated. Risk explanations in native language.
 
-  New requirements:
-    sentinelsat>=1.3.0
-    rasterio>=1.3.0
-    numpy>=1.24.0
-
-  Acceptance criteria:
-    project_locator geocodes a test address to coordinates
-    geospatial_verifier queries Sentinel-2 API for a test location
-    NDVI change computed for two test images
-    discrepancy_flag triggered on test case with low visual change
-
-BRANCH: "feature/phase-12-geospatial"
-
-PR_TITLE:
-  "feat(ai): Sentinel-2 satellite verification of infrastructure progress"
-
+BRANCH: "feature/phase-11-multilingual"
+PR_TITLE: "feat(ai): multilingual support — 22 Indian languages via IndicTrans2"
 PR_DESCRIPTION: |
-  Adds geospatial verification using free Copernicus satellite data.
-
-  scrapers/project_locator.py: Geocodes GeM contract location fields using
-  the free OpenStreetMap Nominatim API. Adds lat/lon to contract nodes in
-  the graph.
-
-  ai/geospatial_verifier.py: Queries Copernicus Open Access Hub for Sentinel-2
-  imagery before and after the contract period. Computes NDVI difference to
-  detect vegetation and structural change. Flags discrepancy when payment is
-  disbursed but change detection score is below threshold.
-
-  New .env variable: COPERNICUS_USER and COPERNICUS_PASSWORD for the free
-  Copernicus registration.
-
+  Every citizen can now use the platform in their native language.
+  AI4Bharat IndicTrans2 runs locally at no cost.
+  Transliteration ensures consistent entity matching across scripts.
   Closes #ISSUE_NUMBER
 
 
-# ============================================================
-# PHASE 13 — Revolving Door and TBML Detection
-# ============================================================
+# ================================================================
+# PHASE 12 — PDF Dossier Generator
+# ================================================================
 
-ISSUE_TITLE:
-  "feat(ai): revolving door indicator, TBML red flags, and electoral cycle analysis"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
+ISSUE_TITLE: "feat(ai): PDF dossier generator with SHA-256 integrity hash per report"
+ISSUE_LABELS: ["enhancement"]
 ISSUE_DESCRIPTION: |
-  Implement the Revolving Door Indicator and FATF-aligned Trade-Based Money
-  Laundering detection using only data already in the graph.
+  Professional PDF investigation dossiers submittable to courts and journalists.
 
   Files to create:
-    ai/revolving_door.py        Career transition analysis
-    ai/tbml_detector.py         FATF red flag indicator set
-    ai/electoral_cycle_analyzer.py  Contract timing against election calendar
+    ai/dossier_generator.py    14-section PDF assembly
+    ai/report_hasher.py        SHA-256 hash per report
+    templates/dossier_en.html  English Jinja2 template
+    templates/dossier_hi.html  Hindi template
+    api/routes/export.py       GET /export/pdf/{entity_id}
 
-  revolving_door.py behaviour:
-    Detects: Person held a regulatory or ministerial role (from parliamentary
-    records or Wikidata career data) then became a director of a company that
-    held contracts with that same ministry during their tenure.
-    Output per detected transition: person, previous_role, ministry,
-    current_company, contracts_during_tenure, transition_date, indicator_score
+  14 sections: Cover, Identity, Career Timeline, Corporate Associations,
+  Government Contracts, Audit Mentions, Court Records, International
+  Connections, Asset Declarations, Risk Summary, Analytical Findings,
+  Doubts and Unexplained Patterns, Positive Contributions, Evidence Locker.
 
-  tbml_detector.py — five FATF-aligned flags:
-    commodity_mismatch
-      Company's registered business category does not match the contract category
-      Example: registered as IT services, contract for road construction
-    single_bid_contract
-      GeM contract with only one registered bid (no competition)
-    price_anomaly
-      Contract value exceeds median by more than two standard deviations
-      for the same product category and ministry
-    rapid_director_change
-      Company directors changed within 30 days before or after contract award
-    subcontracting_loop
-      Winning bidder has a known relationship with a losing bidder
-      who subsequently received sub-contract work
+  Hash printed on cover page. Stored in Neo4j for future verification.
+  GET /verify/{hash} confirms a report has not been tampered with.
 
-  electoral_cycle_analyzer.py behaviour:
-    Correlates contract award dates against Indian election calendar
-    Flags contracts awarded in the 90-day window before a general election
-    by a ministry whose head is a candidate in that election
+  New requirements: weasyprint>=60.0, jinja2>=3.1.0
 
-  Acceptance criteria:
-    revolving_door detects a transition in test data with full career timeline
-    tbml_detector flags at least two indicators in sample GeM data
-    electoral_cycle_analyzer flags pre-election contracts in sample data
-    All outputs use analytical indicator language without accusations
-
-BRANCH: "feature/phase-13-revolving-door-tbml"
-
-PR_TITLE:
-  "feat(ai): revolving door indicator, TBML detection, and electoral cycle analysis"
-
+BRANCH: "feature/phase-12-pdf-dossier"
+PR_TITLE: "feat(ai): PDF dossier generator — 14 sections, SHA-256 hash, multilingual templates"
 PR_DESCRIPTION: |
-  Adds three advanced analytical modules targeting the highest-value
-  institutional risk patterns.
-
-  ai/revolving_door.py: Queries career timeline data from Wikidata and
-  parliamentary records against MCA director appointment dates. Identifies
-  cases where the same person held regulatory authority over a ministry and
-  later joined a board of a company that benefited from that ministry.
-
-  ai/tbml_detector.py: Implements five FATF-aligned red flag checks using
-  GeM contract data and MCA company records already in the graph. Each flag
-  is scored independently and combined into a TBML risk indicator.
-
-  ai/electoral_cycle_analyzer.py: Loads Indian general and state election
-  calendar (maintained as a static JSON file updated each election cycle).
-  Cross-references contract award dates against the 90-day pre-election window.
-
+  Court-grade PDF dossiers with unique integrity hash.
+  14-section structure covering every analytical dimension.
+  Verify endpoint allows anyone to confirm report authenticity.
   Closes #ISSUE_NUMBER
 
 
-# ============================================================
-# PHASE 14 — Free Production Deployment
-# ============================================================
+# ================================================================
+# PHASE 13 — React Frontend with Patriotic Design
+# ================================================================
 
-ISSUE_TITLE:
-  "feat(deploy): production deployment on Render, Vercel, and Neo4j AuraDB"
-
-ISSUE_LABELS:
-  ["enhancement"]
-
+ISSUE_TITLE: "feat(frontend): patriotic React dashboard with dark/light theme and D3.js graph"
+ISSUE_LABELS: ["enhancement"]
 ISSUE_DESCRIPTION: |
-  Deploy the complete platform using only free-tier services with zero
-  monthly cost. Establish CI/CD so every pull request runs tests before
-  merge and every merge to main redeploys automatically.
+  Complete frontend. Patriotic Indian design. Dark and light themes.
+  Deployed free on Vercel.
+
+  Technology: Next.js 14, TypeScript, Tailwind CSS, D3.js, Leaflet, Recharts.
+
+  Design system:
+    Colour palette: saffron (#FF9933), white (#FFFFFF), India green (#138808),
+    Ashoka blue (#000080) as accent.
+    Dark theme: deep navy background (#0A0F2E), saffron and white typography.
+    Light theme: white background, deep green accents, saffron highlights.
+    No gradients, no decorative clutter, every element is functional.
+    WCAG AA contrast ratios throughout.
+
+  Pages: /, /search, /entity/[id], /risk-dashboard, /graph-explorer,
+  /live-feed, /watchlist, /report/[id], /about, /verify/[hash]
+
+  Graph nodes coloured by type:
+    Politician: saffron | Company: India green | Contract: Ashoka blue
+    AuditReport: red | Ministry: navy | PressRelease: grey
+
+BRANCH: "feature/phase-13-frontend"
+PR_TITLE: "feat(frontend): patriotic React dashboard — Indian tricolour design system"
+PR_DESCRIPTION: |
+  Professional patriotic design using Indian tricolour palette.
+  Dark navy and saffron dark mode. Clean white light mode.
+  D3.js graph, Leaflet map, Sankey diagrams, full PDF download.
+  Closes #ISSUE_NUMBER
+
+
+# ================================================================
+# PHASE 14 — Live Monitoring and GitHub Actions
+# ================================================================
+
+ISSUE_TITLE: "feat(pipeline): GitHub Actions automation, alert engine, live feed generation"
+ISSUE_LABELS: ["enhancement"]
+ISSUE_DESCRIPTION: |
+  Automate all data collection using GitHub Actions free 2,000 min/month.
 
   Files to create:
-    render.yaml          Render.com web service configuration
+    .github/workflows/daily_scrape.yml    02:00 IST daily
+    .github/workflows/weekly_load.yml     Neo4j refresh
+    .github/workflows/test.yml            CI on every push and PR
+    ai/alert_engine.py                    Diff-based alerts
+    ai/headline_generator.py              Neutral NLG for live feed
+
+  alert_engine.py detects: new CAG report mentioning known entity,
+  new contract for company linked to politician, new ED action,
+  new court filing. Each alert generates a live feed headline.
+
+BRANCH: "feature/phase-14-monitoring"
+PR_TITLE: "feat(pipeline): GitHub Actions automation, diff alerts, live feed headlines"
+PR_DESCRIPTION: |
+  Automated daily scraping, weekly Neo4j refresh, CI tests on every PR.
+  Alert engine generates neutral analytical headlines for the live feed.
+  Closes #ISSUE_NUMBER
+
+
+# ================================================================
+# PHASE 15 — LLM Chatbot and Hypothesis Testing
+# ================================================================
+
+ISSUE_TITLE: "feat(ai): multilingual chatbot with multi-hop hypothesis testing"
+ISSUE_LABELS: ["enhancement"]
+ISSUE_DESCRIPTION: |
+  Conversational interface to the knowledge graph. Free Hugging Face only.
+  Supports all 22 Indian languages via Phase 11 translator.
+
+  Files to create:
+    ai/chatbot.py            Intent classification and Cypher template generation
+    ai/hypothesis_tester.py  Multi-hop connection tester between two entities
+    api/routes/chat.py       POST /chat endpoint
+
+  hypothesis_tester.py: finds shortest path between any two entities in the
+  graph up to 5 hops. Returns full path with every edge's source document.
+  Useful for journalists testing specific investigative theories.
+
+BRANCH: "feature/phase-15-chatbot"
+PR_TITLE: "feat(ai): multilingual chatbot with Cypher generation and hypothesis testing"
+PR_DESCRIPTION: |
+  Conversational interface in all 22 Indian languages.
+  Rule-based Cypher generation prevents hallucinated graph queries.
+  Closes #ISSUE_NUMBER
+
+
+# ================================================================
+# PHASE 16 — Geospatial Infrastructure Verification
+# ================================================================
+
+ISSUE_TITLE: "feat(ai): Sentinel-2 satellite verification of infrastructure progress"
+ISSUE_LABELS: ["enhancement"]
+ISSUE_DESCRIPTION: |
+  Verify physical construction progress using free Copernicus satellite data.
+
+  Files to create:
+    ai/geospatial_verifier.py    NDVI change detection on Sentinel-2
+    scrapers/project_locator.py  GPS geocoding of GeM contract locations
+
+  Flags discrepancy when final payment is disbursed but satellite imagery
+  shows less than 30 percent visual change at the contract location.
+
+  New .env variables: COPERNICUS_USER, COPERNICUS_PASSWORD
+  New requirements: sentinelsat>=1.3.0, rasterio>=1.3.0, numpy>=1.24.0
+
+BRANCH: "feature/phase-16-geospatial"
+PR_TITLE: "feat(ai): Sentinel-2 satellite verification of infrastructure progress"
+PR_DESCRIPTION: |
+  Free Copernicus satellite data objectively verifies project progress.
+  Progress discrepancy flag triggers when payment is complete but
+  satellite evidence shows limited physical change.
+  Closes #ISSUE_NUMBER
+
+
+# ================================================================
+# PHASE 17 — Revolving Door and TBML Detection
+# ================================================================
+
+ISSUE_TITLE: "feat(ai): revolving door indicator, TBML red flags, electoral cycle analysis"
+ISSUE_LABELS: ["enhancement"]
+ISSUE_DESCRIPTION: |
+  Three advanced institutional risk pattern detectors using existing graph data.
+
+  Files to create:
+    ai/revolving_door.py            Career regulatory-to-private transition analysis
+    ai/tbml_detector.py             Five FATF Trade-Based Money Laundering flags
+    ai/electoral_cycle_analyzer.py  Contract timing vs election calendar
+
+  TBML flags: commodity_mismatch, single_bid_contract, price_anomaly,
+  rapid_director_change, subcontracting_loop.
+
+BRANCH: "feature/phase-17-revolving-door"
+PR_TITLE: "feat(ai): revolving door, TBML detection, electoral cycle analysis"
+PR_DESCRIPTION: |
+  Three advanced corruption pattern detectors using data already in graph.
+  FATF-aligned TBML flags cover five distinct laundering patterns.
+  Closes #ISSUE_NUMBER
+
+
+# ================================================================
+# PHASE 18 — Security Hardening
+# ================================================================
+
+ISSUE_TITLE: "feat(security): rate limiting, DDoS protection, input validation, audit chain"
+ISSUE_LABELS: ["enhancement", "security"]
+ISSUE_DESCRIPTION: |
+  Industry-grade security for a long-running public transparency platform.
+
+  Files to create:
+    api/middleware/rate_limiter.py      Sliding window per IP
+    api/middleware/input_validator.py   Strict sanitisation, no Cypher injection
+    api/middleware/security_headers.py  CSP, HSTS, X-Frame-Options
+    api/middleware/audit_logger.py      Immutable append-only request log
+    blockchain/audit_chain.py          SHA-256 hash chain on audit log
+    docs/security_architecture.md      Threat model and incident response
+
+  rate_limiter.py: 100 req/min for search, 10 req/min for PDF export.
+  audit_chain.py: each log entry includes hash of previous entry.
+  Daily root hash stored in Neo4j. Optional public anchor available.
+
+BRANCH: "feature/phase-18-security"
+PR_TITLE: "feat(security): rate limiting, input validation, security headers, tamper-evident audit log"
+PR_DESCRIPTION: |
+  Production-grade security hardening. Rate limiting prevents DDoS.
+  Parameterised queries prevent injection. Hash-chained audit log
+  provides tamper evidence for all platform activity.
+  Closes #ISSUE_NUMBER
+
+
+# ================================================================
+# PHASE 19 — Self-Learning System
+# ================================================================
+
+ISSUE_TITLE: "feat(ai): self-learning system — schema adaptation, pattern discovery, health monitoring"
+ISSUE_LABELS: ["enhancement"]
+ISSUE_DESCRIPTION: |
+  Platform improves itself as data grows and new fraud patterns emerge.
+  All automatic changes require human review before taking effect.
+
+  Files to create:
+    ai/schema_learner.py      Detects new entity types in incoming data
+    ai/pattern_learner.py     Identifies candidate structural patterns weekly
+    ai/source_discoverer.py   Monitors data.gov.in for new published datasets
+    ai/weight_optimizer.py    Adjusts indicator weights based on confirmed outcomes
+    ai/self_audit.py          Weekly health check of all 21 scrapers
+
+  source_discoverer.py checks weekly for new government datasets and
+  creates draft scraper templates for human review and approval.
+
+  weight_optimizer.py: when court conviction or ED chargesheet confirms
+  a pattern, back-traces which indicators predicted it and adjusts weights.
+
+BRANCH: "feature/phase-19-self-learning"
+PR_TITLE: "feat(ai): self-learning system — schema adaptation, pattern discovery, weight optimisation"
+PR_DESCRIPTION: |
+  Platform adapts to new data sources and confirmed outcomes.
+  All automatic changes gated by human review.
+  Weekly self-audit ensures all scrapers remain operational.
+  Closes #ISSUE_NUMBER
+
+
+# ================================================================
+# PHASE 20 — Free Production Deployment
+# ================================================================
+
+ISSUE_TITLE: "feat(deploy): zero-cost production deployment — Render, Vercel, Neo4j AuraDB"
+ISSUE_LABELS: ["enhancement"]
+ISSUE_DESCRIPTION: |
+  Full production deployment at zero monthly cost.
+
+  Files to create:
+    render.yaml          Render.com web service definition
     vercel.json          Vercel deployment configuration
-    Procfile             Process specification: web: uvicorn api.main:app
-    docs/deployment.md   Step-by-step deployment guide with environment
-                         variable setup for each platform
+    Procfile             uvicorn process definition
+    docs/deployment.md   Step-by-step deployment guide
 
-  render.yaml contents:
-    services:
-      - type: web
-        name: bharatgraph-api
-        env: python
-        buildCommand: pip install -r requirements.txt
-        startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
-        plan: free
-        envVars: NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, DATAGOV_API_KEY
+  UptimeRobot free tier monitors /health every 5 minutes and keeps
+  the Render free tier awake with periodic pings.
 
-  GitHub Actions secrets to configure in repository settings:
-    NEO4J_URI
-    NEO4J_USER
-    NEO4J_PASSWORD
-    DATAGOV_API_KEY
-    RENDER_DEPLOY_HOOK_URL
+  GitHub Actions deploy hook triggers Render redeploy on every
+  merge to main.
 
-  CI/CD pipeline:
-    Every push runs test.yml (syntax check and pytest)
-    Every merge to main triggers automatic Render redeploy via deploy hook
-    Every merge to main triggers automatic Vercel redeploy (automatic)
-
-  Acceptance criteria:
-    FastAPI backend accessible at Render URL with /health returning 200
-    React frontend accessible at Vercel URL
-    Neo4j AuraDB connected from production backend
-    /search endpoint returns real results on production URL
-
-BRANCH: "feature/phase-14-deployment"
-
-PR_TITLE:
-  "feat(deploy): Render backend, Vercel frontend, Neo4j AuraDB production"
-
+BRANCH: "feature/phase-20-deployment"
+PR_TITLE: "feat(deploy): Render backend, Vercel frontend, Neo4j AuraDB, UptimeRobot monitoring"
 PR_DESCRIPTION: |
-  Adds all deployment configuration for zero-cost production hosting.
+  Zero-cost production deployment. All environment variables in
+  Render and Vercel dashboards. UptimeRobot keeps free tier awake.
+  Closes #ISSUE_NUMBER
 
-  render.yaml: Web service definition with Python environment, build and
-  start commands, and free plan selection.
 
-  vercel.json: Next.js deployment with NEXT_PUBLIC_API_URL set to the
-  Render service URL and API proxy configuration.
+# ================================================================
+# PHASE 21 — Court and Law Enforcement Intelligence Pack
+# ================================================================
 
-  Procfile: Web process command for Render.
+ISSUE_TITLE: "feat(ai): court-grade intelligence pack for law enforcement and judicial use"
+ISSUE_LABELS: ["enhancement"]
+ISSUE_DESCRIPTION: |
+  Professional-grade investigation outputs suitable for courts, police,
+  CBI, ED, CVC, and parliamentary committees.
 
-  docs/deployment.md: Step-by-step guide covering Render account setup,
-  Vercel project creation, Neo4j AuraDB free instance creation, GitHub
-  Actions secrets configuration, and first deployment verification.
+  Files to create:
+    ai/case_builder.py             Structured case file assembly
+    ai/evidence_chain.py           Formal evidence chain with legal citations
+    ai/crime_classifier.py         Maps findings to IPC, PCA, PMLA sections
+    ai/timeline_reconstructor.py   Forensic chronological event mapping
+    api/routes/legal_export.py     GET /legal/case-file/{entity_id}
 
-  Production URLs to be added to README after deployment.
+  crime_classifier.py maps structural patterns to potentially relevant
+  legal sections using neutral language: "pattern may be relevant to
+  section X" — never asserts guilt. Sections: IPC 420/409, PCA 13,
+  PMLA 3/4, FEMA, Companies Act 2013.
 
+  timeline_reconstructor.py builds forensic timeline combining all
+  data sources: registrations, contracts, asset declarations, audit
+  filings, court cases, ED actions, electoral bonds.
+
+  legal_export.py produces: PDF case file + JSON + evidence index.
+  Unique case file hash. Methodology note for court admissibility.
+
+BRANCH: "feature/phase-21-court-intelligence"
+PR_TITLE: "feat(ai): court and law enforcement intelligence pack with formal evidence chain"
+PR_DESCRIPTION: |
+  Professional investigation outputs for courts, police, CBI, ED, CVC.
+  Formal evidence chain, crime section mapping, forensic timeline.
+  Never asserts guilt — provides structured analytical framework only.
   Closes #ISSUE_NUMBER
