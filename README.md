@@ -303,14 +303,9 @@ Pipeline       47 records processed and saved in 15 seconds
 
 ---
 
-## License
+## Reference Documents
 
-MIT. See `LICENSE`.
-
-## Contributing
-
-See `CONTRIBUTING.md`.
-
-## Security
-
-See `SECURITY.md`.
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [Security Policy](SECURITY.md)
+- [Phase Roadmap](PHASE_ROADMAP.md)
+- [MIT License](LICENSE)
