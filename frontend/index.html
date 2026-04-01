@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BharatGraph — AI-powered public transparency and institutional intelligence platform for India.">
+  <meta name="theme-color" content="#0A0F2E">
+  <title>BharatGraph — Public Transparency Intelligence</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+          integrity="sha512-vc58zeoRPCJhAkQJqFb0P2VkgSAp3XpAfNKrFd5rqIpY9i1r2FfBBq9vO2C0JimL7Wh8/Q3EJIHdM+bFa0cA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar__inner">
+        <a class="navbar__brand" href="#/" onclick="Router.navigate('/');return false;">
+          <div>
+            <div class="navbar__logo-text">BHARATGRAPH</div>
+            <div class="navbar__tagline">Public Transparency Intelligence</div>
+          </div>
+        </a>
+
+        <nav class="navbar__nav" aria-label="Main navigation">
+          <a class="navbar__nav-link" data-route="/"
+             href="#/" onclick="Router.navigate('/');return false;">Home</a>
+          <a class="navbar__nav-link" data-route="/search"
+             href="#/search" onclick="Router.navigate('/search');return false;">Search</a>
+          <a class="navbar__nav-link" data-route="/live-feed"
+             href="#/live-feed" onclick="Router.navigate('/live-feed');return false;">Live Feed</a>
+          <a class="navbar__nav-link" data-route="/about"
+             href="#/about" onclick="Router.navigate('/about');return false;">About</a>
+        </nav>
+
+        <div class="navbar__controls">
+          <select id="lang-select"
+                  style="background:var(--bg-tertiary);border:1px solid var(--border-color);
+                         border-radius:var(--radius-md);padding:var(--space-1) var(--space-2);
+                         color:var(--text-secondary);font-size:var(--font-size-xs);cursor:pointer"
+                  onchange="State.language=this.value">
+            <option value="en">EN</option>
+            <option value="hi">HI</option>
+            <option value="ta">TA</option>
+            <option value="te">TE</option>
+            <option value="kn">KN</option>
+            <option value="ml">ML</option>
+          </select>
+          <button class="btn btn--ghost btn--sm" id="theme-btn"
+                  onclick="toggleTheme()" aria-label="Toggle theme">
+            Light
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="app-main" role="main" aria-live="polite">
+    <div style="display:flex;align-items:center;justify-content:center;
+                min-height:60vh;flex-direction:column;gap:16px">
+      <div class="spinner" style="width:40px;height:40px"></div>
+      <p style="color:var(--text-muted);font-size:14px">Loading BharatGraph...</p>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--border-color);
+                 padding:var(--space-8) 0;margin-top:var(--space-16)">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+                  flex-wrap:wrap;gap:var(--space-4)">
+        <div>
+          <div style="font-weight:600;color:var(--accent-primary);
+                      margin-bottom:var(--space-1)">BHARATGRAPH</div>
+          <div style="font-size:var(--font-size-xs);color:var(--text-muted)">
+            Public Transparency Intelligence Platform
+          </div>
+        </div>
+        <div style="font-size:var(--font-size-xs);color:var(--text-muted);
+                    text-align:right;line-height:var(--line-height-relaxed)">
+          All data from official government sources.<br>
+          Outputs are analytical indicators, not legal findings.<br>
+          MIT License — Open Source
+        </div>
+      </div>
+      <div style="margin-top:var(--space-4);padding-top:var(--space-4);
+                  border-top:1px solid var(--border-color);
+                  display:flex;align-items:center;justify-content:space-between;
+                  flex-wrap:wrap;gap:var(--space-3)">
+        <div style="font-size:var(--font-size-xs);color:var(--text-muted)">
+          <span id="api-status-dot" style="display:inline-block;width:8px;height:8px;
+                border-radius:50%;background:var(--color-risk-moderate);
+                margin-right:6px"></span>
+          API: <span id="api-status-text">checking...</span>
+        </div>
+        <div style="display:flex;gap:var(--space-4)">
+          <a href="https://github.com/abinaze/bharatgraph" target="_blank"
+             style="font-size:var(--font-size-xs);color:var(--text-muted)">GitHub</a>
+          <a href="#/about" onclick="Router.navigate('/about');return false;"
+             style="font-size:var(--font-size-xs);color:var(--text-muted)">Legal</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script>window.BHARATGRAPH_API_URL = "http://localhost:8000";</script>
+  <script src="js/router.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    Api.health().then(() => {
+      document.getElementById("api-status-dot").style.background = "var(--color-risk-low)";
+      document.getElementById("api-status-text").textContent = "Connected";
+    }).catch(() => {
+      document.getElementById("api-status-dot").style.background = "var(--color-risk-very-high)";
+      document.getElementById("api-status-text").textContent = "Offline";
+    });
+  </script>
+</body>
+</html>
