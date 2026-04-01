@@ -11,6 +11,8 @@ from api.dependencies import get_driver, close_driver
 from api.routes import search, profile, graph, risk
 from api.models import HealthResponse, StatsResponse
 
+from api.routes import multilingual
+app.include_router(multilingual.router, tags=["Multilingual"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
