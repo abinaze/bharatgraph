@@ -1,0 +1,24 @@
+name: daily-scrape
+on:
+  schedule:
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: run pipeline
+        env:
+          DATAGOV_API_KEY:       ${{ secrets.DATAGOV_API_KEY }}
+          NEO4J_URI:             ${{ secrets.NEO4J_URI }}
+          NEO4J_USER:            ${{ secrets.NEO4J_USER }}
+          NEO4J_PASSWORD:        ${{ secrets.NEO4J_PASSWORD }}
+          OPENSANCTIONS_API_KEY: ${{ secrets.OPENSANCTIONS_API_KEY }}
+        run: python -m processing.pipeline --scrapers cag,gem,pib,myneta,mca,loksabha,ed,wikidata
