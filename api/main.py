@@ -39,6 +39,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.middleware.gzip import GZipMiddleware
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 app.include_router(search.router,      tags=["Search"])
 app.include_router(profile.router,     tags=["Profile"])
 app.include_router(graph.router,       tags=["Graph"])
