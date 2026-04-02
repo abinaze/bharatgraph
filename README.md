@@ -1,10 +1,10 @@
 # BharatGraph
 
-An AI-powered public transparency and institutional intelligence platform for India.
+**AI-powered public transparency and institutional intelligence platform for India.**
 
 BharatGraph aggregates official government records, corporate filings, audit reports,
-parliamentary data, court judgments, and international investigative datasets into
-a unified knowledge graph. It applies entity resolution, graph analytics, and machine
+parliamentary data, court judgments, and international investigative datasets into a
+unified knowledge graph. It applies entity resolution, graph analytics, and machine
 learning to surface structural relationships between politicians, companies, contracts,
 ministries, and public schemes. Every output is traceable to a primary source document.
 
@@ -16,25 +16,18 @@ All language is analytically neutral and legally defensible.
 
 ## What It Builds
 
-Two public-facing interfaces backed by one analytical engine.
-
 **Investigation Intelligence (Tab 1)**
 
-A user enters any entity — politician, minister, civil servant, company, NGO,
-investor — and receives a structured dossier: identity verification, corporate
-directorships, government contracts, audit mentions, parliamentary activity,
-international connections, asset declarations across election cycles, and a
-composite structural risk indicator. Every claim links to its source document
-with a date and credibility rating. The graph browser allows multi-hop exploration:
-find how entity A connects to entity B through any chain of verified relationships.
+Enter any entity — politician, minister, company, NGO — and receive a structured dossier:
+identity verification, corporate directorships, government contracts, audit mentions,
+parliamentary activity, international connections, asset declarations across election
+cycles, and a composite structural risk indicator. Every claim links to its source
+document. The graph browser allows multi-hop exploration of verified relationships.
 
 **Live Transparency Feed (Tab 2)**
 
-A continuously updated stream of AI-generated intelligence derived from new CAG
-reports, GeM contracts, court filings, PIB releases, SEBI orders, and verified
-news. Each headline opens a mini investigation report with a timeline, evidence
-chain, and relationship graph. Users subscribe to watchlists for named entities
-and receive email alerts when new data links to them.
+A continuously updated stream of AI-generated intelligence derived from new CAG reports,
+GeM contracts, court filings, PIB releases, SEBI orders, and verified news.
 
 ---
 
@@ -42,16 +35,11 @@ and receive email alerts when new data links to them.
 
 ```
 (Politician)-[:DIRECTOR_OF]->(Company)-[:WON_CONTRACT]->(Contract)
-                                    |
-                            (AuditReport)-[:FLAGS]->(Scheme)
-                                    |
-                         (Ministry)-[:AWARDED_BY]->(Contract)
+                                            |
+                              (AuditReport)-[:FLAGS]->(Scheme)
+                                            |
+                              (Ministry)-[:AWARDED_BY]->(Contract)
 ```
-
-When these patterns converge — a company whose director holds public office
-wins repeated contracts from a ministry that official oversees, and audit reports
-flag the same schemes — the platform surfaces a structural risk indicator with
-full evidence documentation.
 
 ---
 
@@ -59,179 +47,174 @@ full evidence documentation.
 
 ```
 bharatgraph/
-    scrapers/           Data collectors from official Indian and international sources
-    processing/         Name normalisation, entity resolution, pipeline orchestration
-    graph/              Neo4j schema, loader, and Cypher query library
-    ai/                 Risk scoring, NLP analysis, anomaly detection, chatbot
-    api/                FastAPI REST and WebSocket backend
-    frontend/           Next.js and D3.js interactive dashboard
-    blockchain/         Append-only audit log for data provenance
-    tests/              Unit and integration tests
-    config/             Environment configuration
-    docs/               Extended documentation
-    data/
-        raw/            Downloaded source files (git-ignored)
-        processed/      Pipeline output (git-ignored)
-        samples/        Small test fixtures (git-ignored)
+  scrapers/       21 data collectors (Indian govt + international)
+  processing/     Name normalisation, entity resolution, pipeline
+  graph/          Neo4j schema, loader, Cypher queries
+  ai/             Risk scoring, NLP, graph analytics, 12 investigators
+  config/         22 language configs, settings
+  api/            FastAPI REST + WebSocket (6 routes)
+  frontend/       HTML/CSS/JS dashboard, D3.js graph, dark/light theme
+  templates/      Jinja2 dossier template (PDF/HTML)
+  blockchain/     Audit log
+  tests/          Tests
 ```
 
 ---
 
-## Data Sources
+## Deployment Stack (Zero Cost)
 
-**Indian Government**
+| Component      | Service             | Free Allowance                     |
+|----------------|---------------------|------------------------------------|
+| Source code    | GitHub              | Unlimited public repos             |
+| Backend API    | Hugging Face Spaces | Docker SDK — no cold start         |
+| Frontend       | GitHub Pages        | Unlimited static hosting           |
+| Graph database | Neo4j AuraDB Free   | 50K nodes, 175K relationships      |
+| CDN + DDoS     | Cloudflare Free     | Unlimited caching + DDoS           |
+| CI/CD          | GitHub Actions      | 2,000 min/month                    |
+| Uptime monitor | UptimeRobot Free    | 50 monitors, 5-min intervals       |
 
-| Source | Institution | Intelligence Value |
-|---|---|---|
-| MyNeta / ECI | Election Commission of India | Assets, liabilities, criminal cases, education per candidate |
-| MCA21 | Ministry of Corporate Affairs | Company registration, directors, CIN, shareholding patterns |
-| data.gov.in | Open Government Data Platform | MGNREGA, PM-KISAN, sectoral beneficiary datasets |
-| GeM | Government e-Marketplace | Procurement contracts, values, buyer organisations |
-| PIB | Press Information Bureau | Cabinet decisions, scheme launches, official announcements |
-| CAG | Comptroller and Auditor General | Audit reports, irregularity amounts, flagged schemes |
-| e-Gazette | Ministry of Law and Justice | Statutory notifications, gazette orders |
-| Lok Sabha and Rajya Sabha | Parliament of India | Questions, debates, committee assignments |
-| PRS India | PRS Legislative Research | Bill text, amendment history, legislative status |
-| eCourts | Supreme Court e-Committee | Judgment search, case status |
-| SEBI | Securities and Exchange Board | Insider trading, enforcement orders, market misconduct |
-| Electoral Bonds | Supreme Court ordered disclosure | Donor-recipient bond transaction data |
+---
 
-**International Free Sources**
+## Data Sources (21 Scrapers)
+
+### Indian Government
+
+| Source | Institution | Intelligence |
+|--------|-------------|--------------|
+| MyNeta / ECI | Election Commission | Assets, criminal cases, affidavits |
+| MCA21 | Corporate Affairs | Directors, company registration |
+| data.gov.in | Open Data Platform | MGNREGA, PM-KISAN |
+| GeM | e-Marketplace | Procurement contracts |
+| PIB | Press Information Bureau | Cabinet decisions |
+| CAG | Comptroller & Auditor General | Audit irregularities |
+| Lok Sabha | Parliament | Questions, debates |
+| NJDG | eCourts | Case status |
+| ED | Enforcement Directorate | PMLA press releases |
+| SEBI | Securities Board | Enforcement orders |
+| Electoral Bonds | ECI / SC disclosure | Donor-party data |
+| CVC | Vigilance Commission | Vigilance advisories |
+| NCRB | Crime Records Bureau | Crime statistics |
+| LGD | Panchayati Raj | Local government |
+| IBBI | Insolvency Board | Corporate insolvency |
+| NGO Darpan | NITI Aayog | NGO funding |
+| CPPP | Procurement Portal | Procurement transparency |
+
+### International
 
 | Source | What It Provides |
-|---|---|
-| OpenSanctions | Global PEP and sanctions list, daily updates, free API |
-| ICIJ Offshore Leaks | Panama, Pandora, Paradise Papers entity search, free API |
-| OpenCorporates | 223 million companies across 140 jurisdictions, free tier |
-| Wikidata | Structured entity data: education, career timeline, nationality |
-| World Bank Open Data | Governance indicators, development scores |
+|--------|-----------------|
+| OpenSanctions | Global PEP and sanctions |
+| ICIJ Offshore Leaks | Panama, Pandora, Paradise Papers |
+| Wikidata | Entity enrichment, career data |
 
 ---
 
-## Free Infrastructure Stack
+## Completed Phases
 
-| Component | Service | Free Allowance |
-|---|---|---|
-| Source code and CI | GitHub and GitHub Actions | Unlimited public repos, 2,000 CI minutes/month |
-| Python backend | Render.com | 750 hours/month |
-| React frontend | Vercel | Unlimited static deployments |
-| Graph database | Neo4j AuraDB | 50,000 nodes, 175,000 relationships |
-| Vector search | Qdrant Cloud | 1 GB storage |
-| LLM inference | Hugging Face Inference API | Rate-limited free tier |
-| Multilingual NER | AI4Bharat IndicNER on Hugging Face | Free local inference |
-| Satellite imagery | Copernicus Open Access Hub | Free Sentinel-2 data |
-| Email alerts | Resend.com | 3,000 emails/month |
-| Relational backup | Supabase | 500 MB PostgreSQL |
-| Object storage | Cloudflare R2 | 10 GB, 1M requests |
+### Phase 1 — Data Collection
+7 scrapers. Confirmed live: 3,199 MGNREGA records, 30 CAG links, 27 PIB articles.
+`base_scraper.py`: `load_dotenv()`, rate limiting, JSON output.
+
+### Phase 2 — Data Processing
+Indian name normalisation (honorifics, company prefixes). Jaccard token similarity
+for cross-source entity resolution. Full pipeline orchestrator.
+
+### Phase 3 — Graph Database
+Neo4j schema: 7 node types, 6 relationship types, 10 constraint queries.
+`MERGE` with stable MD5 IDs. 8 pre-built Cypher queries.
+Connected to Neo4j AuraDB Free: `neo4j+s://1a34e3b8.databases.neo4j.io`
+
+### Phase 4 — FastAPI Backend
+FastAPI with lifespan, CORS, 6 route modules registered after `app = FastAPI()`,
+WebSocket feed, Pydantic models. Version 0.12.0.
+
+### Phase 5 — Risk Scoring Engine
+Composite 0–100 score. Weights: politician_company_overlap (0.35),
+contract_concentration (0.25), audit_frequency (0.20), asset_anomaly (0.15),
+criminal_case (0.05). `validate_language()` enforces neutral analytical output.
+
+### Phase 6 — Expanded Data Sources
+13 scrapers total. ICIJ HTML mode (BeautifulSoup). Wikidata SPARQL confirmed.
+All public HuggingFace models — no gating.
+
+### Phase 7 — NLP Document Intelligence
+spaCy `en_core_web_sm` NER. Benford's Law chi-squared test on affidavit assets.
+Multilingual NER: `Davlan/bert-base-multilingual-cased-ner-hrl`.
+Shadow draft detector: `all-MiniLM-L6-v2`, 93.35% alignment confirmed.
+
+### Phase 8 — Advanced Graph Analytics
+NetworkX: betweenness centrality, PageRank, Louvain community detection.
+Circular ownership `simple_cycles()` — 3-node cycle confirmed.
+Ghost company scorer: GHOST_THRESHOLD=60 — Quick Win Pvt Ltd: 100/100 confirmed.
+
+### Phase 9 — Eight New Indian Sources (21 Total)
+NJDG (39 live records confirmed), ED, CVC, NCRB, LGD, IBBI, NGO Darpan, CPPP.
+All have sample fallbacks when live source unavailable.
+
+### Phase 10 — Multi-Investigator AI Engine
+12 parallel investigators in `ThreadPoolExecutor`. SHA-256 report hash: stable,
+unique, 64 chars. Synthesis: 3+ investigators agreeing = HIGH confidence.
+`FakeSession` for offline testing. `validate_language()` on all output.
+
+### Phase 11 — Multilingual Platform (22 Languages)
+All 22 Indian scheduled languages. Unicode script detection confirmed
+(Devanagari→hi, Tamil→ta). Helsinki-NLP/opus-mt-en-hi (public, no gating).
+Modi→मोदी/மோடி/మోదీ/ಮೋದಿ/മോദി cross-script search confirmed.
+Risk levels pre-translated in 9 languages.
+
+### Phase 12 — PDF Dossier Generator
+SHA-256 integrity hash per report. Verified tamper detection working.
+Jinja2 + WeasyPrint (HTML fallback on Windows, full PDF on Linux).
+Template: Indian tricolour design, 8 sections. 10,829 chars rendered confirmed.
+`GET /export/pdf/{entity_id}` · `GET /verify/{hash}`
+
+### Phase 13 — Production Frontend
+HTML/CSS/JS — no React, no Node.js, no build step. Works from `file://`.
+
+- `design-system.css`: CSS custom properties token layer, dark + light themes
+- `components.css`: 25+ component classes
+- `router.js`: hash-based client-side routing with named params
+- `api.js`: typed API client for all FastAPI endpoints
+- `components.js`: HTMLElement factory functions (React-component pattern)
+- `graph.js`: D3.js force-directed knowledge graph
+- `app.js`: state management, 5 views (home/search/entity/feed/about)
+- `index.html`: semantic HTML5 shell
+
+Colours: Saffron #FF9933 · India Green #138808 · Ashoka Blue #000080 · Navy #0A0F2E.
+Dark/light theme toggle with localStorage persistence.
 
 ---
 
-## Development Phases
+## Upcoming Phases
 
-### Completed
+| Phase | Title | Key Capability |
+|-------|-------|----------------|
+| 14 | Zero Cold-Start Deployment | HF Spaces + Cloudflare + Service Worker |
+| 15 | Mathematical Intelligence | Path signatures, Fourier, persistent homology |
+| 16 | Evidence Connection Map | 6-layer deep investigation, clickable graph |
+| 17 | Security Hardening | Rate limiting, audit chain, CSP headers |
+| 18 | Self-Learning System | Schema adaptation, pattern discovery |
+| 19 | Affidavit Trajectory | Kalman filter unexplained wealth detection |
+| 20 | Biography Engine | Complete life timeline from all 28 sources |
+| 21+ | Advanced Forensics | Benami, Procurement DNA, Revolving Door |
 
-**Phase 1 — Data Collection**
+Full detail in [Phase Roadmap](PHASE_ROADMAP.md).
 
-Seven scrapers collecting from official government sources. Confirmed live:
-3,199 MGNREGA records from DataGov API, 30 CAG audit report links from
-cag.gov.in, 27 PIB press releases from pib.gov.in HTML scraping. Base scraper
-with automatic `.env` loading, polite rate limiting, and JSON output.
+---
 
-**Phase 2 — Data Processing**
+## Confirmed Live Results
 
-Indian name normalisation stripping honorifics (Shri, Smt, Dr, Hon). Company
-name standardisation for M/s prefixes and Ltd/Pvt Ltd/LLP suffixes. Jaccard
-token similarity for cross-source entity matching. Full pipeline orchestrating
-all scrapers and saving to `data/processed/`.
-
-**Phase 3 — Graph Database**
-
-Neo4j schema with 7 node types, 6 relationship types, and 10 constraint and
-index setup queries. Graph loader using MERGE with stable MD5 ID hashing.
-8 pre-built Cypher queries covering the core corruption detection patterns.
-
-### Planned
-
-**Phase 4 — FastAPI Backend**
-
-REST API: entity search, dossier assembly, risk profile, graph traversal.
-WebSocket for live feed broadcast. Pydantic models with typed source citations.
-Dependency injection for shared Neo4j driver.
-
-**Phase 5 — Risk Scoring Engine**
-
-Composite 0-100 risk score per entity. Factors with weights: contract
-concentration (0.25), politician-company director overlap (0.35), CAG audit
-mention frequency (0.20), asset growth anomaly across election cycles (0.15),
-criminal case presence (0.05). Every factor output cites its source document.
-Output language uses structural indicator, not accusation.
-
-**Phase 6 — Expanded Data Sources**
-
-New scrapers: Lok Sabha question database, PRS bill tracker, SEBI enforcement
-orders, eCourts judgment search, electoral bond transaction data. Integration
-of OpenSanctions free PEP and sanctions API, ICIJ Offshore Leaks free entity
-search API, and Wikidata for entity enrichment.
-
-**Phase 7 — NLP and Document Intelligence**
-
-Named entity recognition on CAG and PIB text using spaCy and Hugging Face free
-models. Shadow drafting detection comparing corporate consultation responses
-against bill text. Multilingual NER for Hindi using AI4Bharat IndicNER (free,
-runs locally). Benford's Law anomaly detection on declared asset figures in
-election affidavits to detect statistically improbable distributions.
-
-**Phase 8 — Advanced Graph Analytics**
-
-NetworkX graph algorithms: betweenness centrality to identify institutional
-gatekeepers, community detection to find procurement clusters and bidding rings,
-PageRank on reverse contract links to identify beneficiary networks. Circular
-ownership detector using graph cycle detection. Shadow director identification.
-Ghost company detector: companies registered within 90 days of winning a
-tender with no prior commercial activity.
-
-**Phase 9 — React Frontend and Graph Visualisation**
-
-Next.js 14 with D3.js force-directed knowledge graph browser. Entity dossier
-with tabbed evidence locker. Risk score dashboard with ranked entity list.
-Timeline reconstruction for relationship evolution. Sankey diagram for money
-flows. Geospatial view using Leaflet with free OpenStreetMap tiles. Watchlist
-with WebSocket alert subscriptions.
-
-**Phase 10 — Live Monitoring and GitHub Actions**
-
-GitHub Actions cron jobs refreshing all scrapers daily within the 2,000
-minute/month free allowance. Diff-based alert engine detecting new CAG mentions
-of known graph entities. Headline generation for the live feed. Email alerts
-via Resend.com free tier. Autonomous scan of new data for known risk patterns.
-
-**Phase 11 — LLM Chatbot and Dossier Export**
-
-Conversational interface using free Hugging Face inference. Natural language
-queries: "Show all contracts linked to companies where this minister is a
-director." Evidence assembled from Neo4j with citations. Hypothesis testing
-with full multi-hop path explanation. PDF dossier export for journalists using
-WeasyPrint (free, open source).
-
-**Phase 12 — Geospatial Infrastructure Verification**
-
-Sentinel-2 satellite imagery via free Copernicus API. Cross-reference GPS
-coordinates from GeM contract locations against NDVI change detection to
-verify road and building construction. Flag discrepancy when payment is
-disbursed but imagery shows less than 50 percent physical completion.
-
-**Phase 13 — Revolving Door and TBML Detection**
-
-Revolving Door Indicator: career transitions from regulatory roles to private
-boards of companies that held contracts during that tenure. FATF-aligned
-Trade-Based Money Laundering flags: commodity mismatch, single-bid contracts,
-price anomaly against category median, director change within 30 days of
-contract award, sub-contracting loop where winner re-awards to a losing bidder.
-
-**Phase 14 — Free Deployment**
-
-Render.com backend, Vercel frontend, Neo4j AuraDB production, GitHub Actions
-CI/CD with automated tests on every pull request. Zero monthly cost target.
+```
+DataGov API    3,199 real MGNREGA records
+CAG            30 audit report links from cag.gov.in
+PIB            27 press releases from pib.gov.in
+Wikidata       Modi (Q1058), Gandhi (Q10218) confirmed
+NJDG           39 court records confirmed live
+Pipeline       47 records processed in 15 seconds
+SHA-256        Stable, unique, 64 chars — confirmed
+Language det.  Devanagari→hi, Tamil→ta, Latin→en — confirmed
+Transliteration Modi→5 scripts — confirmed
+```
 
 ---
 
@@ -241,65 +224,41 @@ CI/CD with automated tests on every pull request. Zero monthly cost target.
 git clone https://github.com/abinaze/bharatgraph.git
 cd bharatgraph
 python -m venv venv
-source venv/Scripts/activate
+source venv/Scripts/activate   # Windows Git Bash
 pip install -r requirements.txt
 cp .env.example .env
 ```
 
 Edit `.env`:
-
 ```
 DATAGOV_API_KEY=register_free_at_data.gov.in_user_register
 NEO4J_URI=neo4j+s://your-instance.databases.neo4j.io
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=your_generated_password
+NEO4J_PASSWORD=your_password
 ```
 
-Run the full pipeline:
-
+Run:
 ```bash
 python -m processing.pipeline --scrapers cag,gem,pib,myneta,mca
 python -m graph.loader
-python -m graph.queries
+uvicorn api.main:app --reload
 ```
+
+Open `frontend/index.html` in your browser — no server needed.
 
 ---
 
 ## Git Workflow
 
 One long-lived branch: `main`. All branches merge directly into `main`.
-No develop branch.
 
 ```
 feature/phase-N-short-name    New phase development
-fix/issue-N-description        Bug fix referencing a GitHub issue number
+fix/issue-N-description        Bug fix
 docs/description               Documentation only
 ```
 
-```bash
-git checkout main
-git pull origin main
-git checkout -b feature/phase-4-api
-git commit -m "feat(api): description of what changed"
-git push origin feature/phase-4-api
-```
-
 Commit prefixes: `feat`, `fix`, `docs`, `test`, `chore`, `refactor`.
-
-Never resolve merge conflicts using the GitHub web editor. Resolve locally,
-then push.
-
----
-
-## Confirmed Live Results
-
-```
-DataGov API    3,199 real MGNREGA records
-CAG            30 real audit report links from cag.gov.in
-PIB            27 real press releases from pib.gov.in
-GeM            gem.gov.in statistics page connected
-Pipeline       47 records processed and saved in 15 seconds
-```
 
 ---
 
