@@ -114,3 +114,18 @@ def debug_env():
         "neo4j_password_set": bool(os.getenv("NEO4J_PASSWORD")),
         "neo4j_uri_prefix":   (os.getenv("NEO4J_URI","")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
     }
+
+@app.get("/debug/neo4j")
+def debug_neo4j():
+    import os
+    from neo4j import GraphDatabase
+    uri      = os.getenv("NEO4J_URI", "")
+    user     = os.getenv("NEO4J_USER", "neo4j")
+    password = os.getenv("NEO4J_PASSWORD", "")
+    try:
+        driver = GraphDatabase.driver(uri, auth=(user, password))
+        driver.verify_connectivity()
+        driver.close()
+        return {"status": "connected", "uri_prefix": uri[:20]}
+    except Exception as e:
+        return {"status": "failed", "error": str(e), "uri_prefix": uri[:20]}
