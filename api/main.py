@@ -104,3 +104,13 @@ async def websocket_feed(websocket: WebSocket):
             })
     except WebSocketDisconnect:
         logger.info("[WS] Feed client disconnected")
+
+@app.get("/debug/env")
+def debug_env():
+    import os
+    return {
+        "neo4j_uri_set":      bool(os.getenv("NEO4J_URI")),
+        "neo4j_user_set":     bool(os.getenv("NEO4J_USER")),
+        "neo4j_password_set": bool(os.getenv("NEO4J_PASSWORD")),
+        "neo4j_uri_prefix":   (os.getenv("NEO4J_URI","")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
+    }
