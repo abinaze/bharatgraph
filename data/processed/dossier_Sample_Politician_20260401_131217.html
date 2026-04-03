@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BharatGraph Investigation Dossier</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 11px; color: #1a1a2e; background: white; }
+  .cover { page-break-after: always; min-height: 297mm; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40mm 30mm; border-bottom: 6px solid #FF9933; }
+  .cover-logo { font-size: 28px; font-weight: bold; color: #138808; letter-spacing: 3px; margin-bottom: 8px; }
+  .cover-tagline { font-size: 11px; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px; }
+  .cover-title { font-size: 22px; font-weight: bold; color: #0A0F2E; text-align: center; margin-bottom: 8px; }
+  .cover-entity { font-size: 16px; color: #FF9933; text-align: center; margin-bottom: 40px; }
+  .cover-meta { font-size: 9px; color: #888; text-align: center; line-height: 1.8; margin-bottom: 30px; }
+  .cover-hash { font-family: "Courier New", monospace; font-size: 9px; background: #f5f5f5; padding: 8px 16px; border: 1px solid #ddd; border-radius: 3px; word-break: break-all; text-align: center; max-width: 400px; }
+  .cover-hash-label { font-size: 8px; color: #999; text-align: center; margin-top: 4px; }
+  .disclaimer-box { margin-top: 40px; padding: 12px 20px; border: 1px solid #FF9933; border-radius: 3px; font-size: 9px; color: #666; text-align: center; max-width: 450px; }
+  .section { page-break-inside: avoid; padding: 16px 24px; margin-bottom: 16px; }
+  .section-header { font-size: 13px; font-weight: bold; color: white; background: #0A0F2E; padding: 8px 16px; margin-bottom: 12px; border-left: 4px solid #FF9933; }
+  .section-content { line-height: 1.7; }
+  .subsection-title { font-size: 10px; font-weight: bold; color: #138808; margin: 10px 0 4px 0; text-transform: uppercase; letter-spacing: 1px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9px; }
+  th { background: #0A0F2E; color: white; padding: 6px 8px; text-align: left; font-weight: normal; }
+  td { padding: 5px 8px; border-bottom: 1px solid #eee; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  .risk-badge { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+  .risk-LOW { background: #d4edda; color: #155724; }
+  .risk-MODERATE { background: #fff3cd; color: #856404; }
+  .risk-HIGH { background: #f8d7da; color: #721c24; }
+  .risk-VERY_HIGH { background: #f5c6cb; color: #491217; }
+  .finding-item { padding: 8px 12px; margin: 6px 0; border-left: 3px solid #FF9933; background: #fffaf5; }
+  .finding-HIGH { border-left-color: #dc3545; background: #fff5f5; }
+  .finding-MODERATE { border-left-color: #ffc107; background: #fffdf5; }
+  .finding-LOW { border-left-color: #28a745; background: #f5fff8; }
+  .evidence-item { padding: 6px 10px; margin: 4px 0; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 2px; font-size: 9px; }
+  .doubt-item { padding: 8px 12px; margin: 6px 0; border-left: 3px solid #6c757d; background: #f8f9fa; font-style: italic; }
+  .positive-item { padding: 6px 10px; margin: 4px 0; border-left: 3px solid #28a745; background: #f5fff8; }
+  .timeline-item { display: flex; padding: 6px 0; border-bottom: 1px solid #eee; }
+  .timeline-date { width: 100px; font-size: 9px; color: #666; flex-shrink: 0; }
+  .timeline-event { font-size: 10px; }
+  .page-footer { position: fixed; bottom: 0; left: 0; right: 0; font-size: 8px; color: #aaa; text-align: center; padding: 4px; border-top: 1px solid #eee; }
+  .score-bar-container { margin: 8px 0; }
+  .score-bar { height: 12px; background: #eee; border-radius: 6px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 6px; }
+  .score-fill-LOW { background: #28a745; }
+  .score-fill-MODERATE { background: #ffc107; }
+  .score-fill-HIGH { background: #fd7e14; }
+  .score-fill-VERY_HIGH { background: #dc3545; }
+  .metadata-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+  .metadata-item { padding: 6px 10px; background: #f8f9fa; border-radius: 2px; }
+  .metadata-label { font-size: 8px; color: #666; text-transform: uppercase; }
+  .metadata-value { font-size: 10px; font-weight: bold; color: #1a1a2e; }
+  h1 { font-size: 16px; margin-bottom: 12px; color: #0A0F2E; }
+  h2 { font-size: 12px; margin: 10px 0 6px 0; color: #138808; }
+  p { margin-bottom: 6px; }
+  .source-chip { display: inline-block; padding: 2px 6px; background: #e9ecef; border-radius: 2px; font-size: 8px; color: #495057; margin: 2px; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-logo">BHARATGRAPH</div>
+  <div class="cover-tagline">Public Transparency Intelligence Platform</div>
+  <div class="cover-title">Investigation Dossier</div>
+  <div class="cover-entity">Sample Politician</div>
+  <div class="cover-meta">
+    Entity Type: Unknown<br>
+    Entity ID: sample_entity_001<br>
+    Generated: 2026-04-01 13:12:17<br>
+    Investigators: 12<br>
+    Evidence Items: 2
+  </div>
+  <div class="cover-hash">2ecfac724433f5908387a69687cae54dc63294f14271abf287f21680d217d22a</div>
+  <div class="cover-hash-label">SHA-256 Report Integrity Hash — verify at bharatgraph.in/verify/2ecfac724433f590</div>
+  <div class="disclaimer-box">
+    This dossier is generated from official public records only. Every claim is linked to a primary source document.
+    This is an analytical report. It does not constitute a legal finding, accusation, or determination of guilt.
+    The subject of this report has the right to submit corrections through the BharatGraph platform.
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 1 — Identity and Overview</div>
+  <div class="section-content">
+    <div class="metadata-grid">
+      <div class="metadata-item">
+        <div class="metadata-label">Full Name</div>
+        <div class="metadata-value">Sample Politician</div>
+      </div>
+      <div class="metadata-item">
+        <div class="metadata-label">Entity Type</div>
+        <div class="metadata-value">Unknown</div>
+      </div>
+      
+      
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 2 — Structural Risk Indicator</div>
+  <div class="section-content">
+    <div class="metadata-grid">
+      <div class="metadata-item">
+        <div class="metadata-label">Risk Score</div>
+        <div class="metadata-value">0 / 100</div>
+      </div>
+      <div class="metadata-item">
+        <div class="metadata-label">Risk Level</div>
+        <div class="metadata-value">
+          <span class="risk-badge risk-UNKNOWN">UNKNOWN</span>
+        </div>
+      </div>
+    </div>
+    <div class="score-bar-container">
+      <div class="score-bar">
+        <div class="score-fill score-fill-UNKNOWN" style="width: 0%"></div>
+      </div>
+    </div>
+    <p style="margin-top:8px; font-size:10px; color:#666;">
+      This score is derived from structural patterns in official data.
+      It is an analytical indicator, not a legal determination.
+    </p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 3 — Analytical Findings</div>
+  <div class="section-content">
+    
+    <div class="subsection-title">Agreed Findings (confirmed by multiple investigators)</div>
+    
+    <div class="finding-item finding-HIGH">
+      <strong>[HIGH]</strong> Entity linked to 3 contracts totalling Rs 150 Cr.
+      
+      <div style="margin-top:4px;">
+        
+        <span class="source-chip">Contract order from GeM</span>
+        
+      </div>
+      
+    </div>
+    
+    
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 4 — Doubts and Unexplained Patterns</div>
+  <div class="section-content">
+    
+    
+    <div class="doubt-item">
+      <strong>Hypothesis:</strong> Company directorships exist but no matching contracts found.<br>
+      <strong>Data Gap:</strong> Possible CPPP data coverage gap<br>
+      <strong>Recommended Action:</strong> Cross-reference with CPPP tender awards
+    </div>
+    
+    
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 5 — Positive Contributions</div>
+  <div class="section-content">
+    
+    
+    <div class="positive-item">Party affiliation recorded providing public accountability.</div>
+    
+    <div class="positive-item">No matches found in ICIJ Offshore Leaks database.</div>
+    
+    
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 6 — Timeline of Events</div>
+  <div class="section-content">
+    
+    
+    <div class="timeline-item">
+      <div class="timeline-date">2022-04-15</div>
+      <div class="timeline-event">
+        <strong>Contract Awarded</strong> — Rs 50 Cr from Ministry of Rural Development
+        <span class="source-chip">GeM</span>
+      </div>
+    </div>
+    
+    
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 7 — Evidence Locker</div>
+  <div class="section-content">
+    <p style="margin-bottom:8px; font-size:9px; color:#666;">
+      All 2 primary source documents referenced in this report.
+    </p>
+    
+    <div class="evidence-item">
+      <strong>Government e-Marketplace</strong> — Contract Order Records
+      | <a href="https://gem.gov.in">https://gem.gov.in</a>
+      | Date: 2022-04-15
+    </div>
+    
+    <div class="evidence-item">
+      <strong>Election Commission of India</strong> — Candidate Affidavit
+      | <a href="https://myneta.info">https://myneta.info</a>
+      | Date: 2024-04-01
+    </div>
+    
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">Section 8 — Methodology and Data Sources</div>
+  <div class="section-content">
+    <p>This dossier was generated by the BharatGraph Multi-Investigator AI Engine.
+    12 specialist investigators analysed this entity in parallel,
+    each from an independent analytical angle. Every finding is backed by a primary
+    source document. No claims are made without evidence.</p>
+    <p style="margin-top:8px;">Data sources used in this analysis include official Indian government
+    records (ECI affidavits, MCA filings, GeM contracts, CAG audit reports, PIB press
+    releases, parliamentary records) and international datasets (OpenSanctions,
+    ICIJ Offshore Leaks, Wikidata).</p>
+    <p style="margin-top:8px; font-weight:bold; color:#dc3545;">
+    LEGAL DISCLAIMER: This report is generated from publicly available official records.
+    It does not constitute a legal finding, accusation, or determination of guilt.
+    The subject of this report has the right to submit corrections at bharatgraph.in.
+    </p>
+  </div>
+</div>
+
+<div class="page-footer">
+  BharatGraph Public Transparency Platform | Report Hash: 2ecfac724433f5908387a69687cae54d... | Generated: 2026-04-01 13:12:17
+</div>
+
+</body>
+</html>
