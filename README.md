@@ -1,7 +1,7 @@
 ---
 title: BharatGraph
 emoji: 🔍
-colorFrom: orange
+colorFrom: red
 colorTo: green
 sdk: docker
 app_file: app.py
