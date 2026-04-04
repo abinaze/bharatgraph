@@ -8,211 +8,338 @@ Branch naming: `feature/phase-N-name` or `fix/issue-N-name`.
 ## COMPLETED
 
 ### Phase 1 — Data Collection
-Branch: `feature/phase-1-scrapers`
-Files: `scrapers/base_scraper.py`, `scrapers/datagov_scraper.py`, `scrapers/pib_scraper.py`,
-`scrapers/myneta_scraper.py`, `scrapers/mca_scraper.py`, `scrapers/cag_scraper.py`,
-`scrapers/gem_scraper.py`
-Status: MERGED — 3,199 live records confirmed
+Branch: `feature/phase-1-scrapers` | Status: MERGED
+Files: `scrapers/base_scraper.py` + 6 scrapers
+Result: 3,199 live records confirmed
 
 ### Phase 2 — Data Processing
-Branch: `feature/phase-2-processing`
+Branch: `feature/phase-2-processing` | Status: MERGED
 Files: `processing/cleaner.py`, `processing/entity_resolver.py`, `processing/pipeline.py`
-Status: MERGED — 47 records in 15 seconds confirmed
+Result: 47 records in 15 seconds confirmed
 
 ### Phase 3 — Graph Database
-Branch: `feature/phase-3-graph`
+Branch: `feature/phase-3-graph` | Status: MERGED
 Files: `graph/schema.py`, `graph/loader.py`, `graph/queries.py`
-Status: MERGED — Neo4j AuraDB connected
+Result: Neo4j AuraDB connected
 
 ### Phase 4 — FastAPI Backend
-Branch: `feature/phase-4-api`
-Files: `api/main.py`, `api/models.py`, `api/dependencies.py`,
-`api/routes/search.py`, `api/routes/profile.py`, `api/routes/graph.py`,
-`api/routes/risk.py`
-Status: MERGED — v0.12.0
+Branch: `feature/phase-4-api` | Status: MERGED
+Files: `api/main.py`, `api/models.py`, `api/dependencies.py`, `api/routes/` (4 files)
+Result: v0.12.0
 
 ### Phase 5 — Risk Scoring Engine
-Branch: `feature/phase-5-risk`
+Branch: `feature/phase-5-risk` | Status: MERGED
 Files: `ai/indicators.py`, `ai/explainer.py`, `ai/risk_scorer.py`
-Status: MERGED — validate_language() enforced
+Result: validate_language() enforced
 
 ### Phase 6 — Expanded Data Sources (13 scrapers)
-Branch: `feature/phase-6-scrapers`
-Files: `scrapers/icij_scraper.py`, `scrapers/wikidata_scraper.py`,
-`scrapers/opensanctions_scraper.py`, `scrapers/loksabha_scraper.py`,
-`scrapers/sebi_scraper.py`, `scrapers/electoral_bond_scraper.py`
-Status: MERGED — Wikidata SPARQL confirmed live
+Branch: `feature/phase-6-scrapers` | Status: MERGED
+Files: 6 new scrapers (ICIJ, Wikidata, OpenSanctions, Lok Sabha, SEBI, Electoral Bonds)
+Result: Wikidata SPARQL confirmed live
 
 ### Phase 7 — NLP Document Intelligence
-Branch: `feature/phase-7-nlp`
-Files: `ai/nlp_extractor.py`, `ai/benfords_analyzer.py`,
-`ai/multilingual_ner.py`, `ai/shadow_draft_detector.py`
-Status: MERGED — 93.35% shadow draft alignment confirmed
+Branch: `feature/phase-7-nlp` | Status: MERGED
+Files: `ai/nlp_extractor.py`, `ai/benfords_analyzer.py`, `ai/multilingual_ner.py`, `ai/shadow_draft_detector.py`
+Result: 93.35% shadow draft alignment confirmed
 
 ### Phase 8 — Advanced Graph Analytics
-Branch: `feature/phase-8-graph-analytics`
-Files: `ai/graph_analytics.py`, `ai/circular_ownership.py`,
-`ai/shadow_director.py`, `ai/ghost_company.py`
-Status: MERGED — Ghost company 100/100 confirmed
+Branch: `feature/phase-8-graph-analytics` | Status: MERGED
+Files: `ai/graph_analytics.py`, `ai/circular_ownership.py`, `ai/shadow_director.py`, `ai/ghost_company.py`
+Result: Ghost company 100/100 confirmed
 
 ### Phase 9 — Eight New Indian Sources (21 total scrapers)
-Branch: `feature/phase-9-scrapers`
-Files: `scrapers/njdg_scraper.py`, `scrapers/ed_scraper.py`,
-`scrapers/cvc_scraper.py`, `scrapers/ncrb_scraper.py`, `scrapers/lgd_scraper.py`,
-`scrapers/ibbi_scraper.py`, `scrapers/ngo_darpan_scraper.py`, `scrapers/cppp_scraper.py`
-Status: MERGED — NJDG 39 live records confirmed
+Branch: `feature/phase-9-scrapers` | Status: MERGED
+Files: 8 new scrapers (NJDG, ED, CVC, NCRB, LGD, IBBI, NGO Darpan, CPPP)
+Result: NJDG 39 live records confirmed
 
 ### Phase 10 — Multi-Investigator AI Engine
-Branch: `feature/phase-10-multi-investigator`
-Files: `ai/multi_investigator.py`, `ai/investigators/__init__.py`,
-`ai/investigators/financial_investigator.py` (×12 total)
-Status: MERGED — SHA-256 hash confirmed, synthesis working
+Branch: `feature/phase-10-multi-investigator` | Status: MERGED
+Files: `ai/multi_investigator.py`, `ai/investigators/` (12 files)
+Result: SHA-256 hash confirmed, synthesis working
 
-### Phase 11 — Multilingual Platform
-Branch: `feature/phase-11-multilingual`
-Files: `config/languages.py`, `ai/translator.py`, `ai/transliteration.py`,
-`api/routes/multilingual.py`
-Status: MERGED — 22 languages, cross-script search confirmed
+### Phase 11 — Multilingual Platform (22 Languages)
+Branch: `feature/phase-11-multilingual` | Status: MERGED
+Files: `config/languages.py`, `ai/translator.py`, `ai/transliteration.py`, `api/routes/multilingual.py`
+Result: 22 languages, cross-script search confirmed
 
 ### Phase 12 — PDF Dossier Generator
-Branch: `feature/phase-12-pdf-dossier`
-Files: `ai/report_hasher.py`, `ai/dossier_generator.py`,
-`templates/dossier_en.html`, `api/routes/export.py`
-Status: MERGED — 10,829 char HTML confirmed, SHA-256 tamper detection working
+Branch: `feature/phase-12-pdf-dossier` | Status: MERGED
+Files: `ai/report_hasher.py`, `ai/dossier_generator.py`, `templates/dossier_en.html`, `api/routes/export.py`
+Result: 10,829 char HTML confirmed, SHA-256 tamper detection working
 
 ### Phase 13 — Production Frontend
-Branch: `feature/phase-13-frontend`
-Files: `frontend/index.html`, `frontend/css/design-system.css`,
-`frontend/css/components.css`, `frontend/js/router.js`,
-`frontend/js/api.js`, `frontend/js/components.js`,
-`frontend/js/graph.js`, `frontend/js/app.js`
-Status: MERGED — works from file:// protocol, D3.js graph confirmed
+Branch: `feature/phase-13-frontend` | Status: MERGED
+Files: `frontend/index.html`, `frontend/css/` (2), `frontend/js/` (5)
+Result: Works from file://, D3.js graph confirmed
+
+### Phase 14 — Zero Cold-Start Deployment ✓ LIVE
+Branch: `feature/phase-14-deployment` | Status: MERGED | Tag: v0.14.0
+Files: `app.py`, `Dockerfile`, `frontend/sw.js`, `.github/workflows/` (static.yml),
+       `graph/seed.py`, `api/routes/admin.py`
+Result: Live at abinazebinoy-bharatgraph.hf.space, Frontend at abinaze.github.io/bharatgraph
 
 ---
 
-## NEXT — Phase 14
-
-### Phase 14 — Zero Cold-Start Deployment
-Branch: `feature/phase-14-deployment`
-
-**Problem:** Render free tier sleeps after 15 minutes. Users get 30-60 second
-delays. Hugging Face Spaces with Docker SDK do not sleep on public spaces.
-
-**Files to create:**
-```
-app.py                              HF Space ASGI entry point
-Dockerfile                          Docker SDK config (port 7860)
-frontend/sw.js                      Service worker (offline-first)
-.github/workflows/deploy_hf.yml     Auto-deploy to HF on main push
-.github/workflows/daily_scrape.yml  Cron 02:00 IST daily scrape
-.github/workflows/test.yml          CI on every push/PR
-```
-
-**Changes to existing files:**
-```
-api/main.py        Add GZipMiddleware + Cache-Control headers
-frontend/index.html  Register service worker, add preconnect hints
-```
-
-See step-by-step instructions below.
-
----
-
-## PLANNED
+## NEXT — Phase 15
 
 ### Phase 15 — Mathematical Intelligence Engine
-6 analytical frameworks: Spectral graph (Fiedler value), Fourier timeline,
-Path signatures (rough path theory), Persistent homology (topological),
-Expanded Benford (Nigrini sub-tests), Mutual information (causal ranking).
-Files: `ai/math/` (6 modules), `ai/investigators/math_investigator.py`
 
-### Phase 16 — Evidence Connection Map + Deep Investigation
-6-layer recursive investigation engine. Clickable graph nodes open evidence
-detail panel showing WHY connected, source, confidence, timeline, next leads.
-Files: `ai/deep_investigator.py`, `ai/connection_mapper.py`,
-`api/routes/investigation.py`, `frontend/js/evidence_panel.js`
+**GitHub Issue:**
+```
+Title: feat(ai/math): mathematical intelligence engine — 6 analytical frameworks
+Labels: feature, enhancement
 
-### Phase 17 — Security Hardening
-Sliding window rate limiter (100/min search, 10/min export).
-Input validation, HTTP security headers (CSP, HSTS, X-Frame-Options).
-SHA-256 hash-chained audit log. Cloudflare free DDoS.
-Files: `api/middleware/rate_limiter.py`, `api/middleware/security_headers.py`,
-`api/middleware/input_validator.py`, `api/middleware/audit_logger.py`,
-`blockchain/audit_chain.py`
+Problem:
+  Current risk scoring uses simple weighted sums. Advanced mathematical methods
+  from computational topology, rough path theory, spectral graph theory, and
+  information geometry surface patterns invisible to linear weights.
 
-### Phase 18 — Self-Learning System
-Schema learner (new field detection with human review gate).
-Weekly pattern candidate discovery via subgraph mining.
-data.gov.in catalog monitoring for new datasets.
-Evidence-based weight optimiser (3 confirmed outcomes minimum).
-Weekly self-audit of all 21 scrapers with GitHub alerts.
-Files: `ai/self_learning/` (5 modules),
-`.github/workflows/weekly_learn.yml`
+Scope:
+  ai/math/__init__.py
+  ai/math/spectral_analyzer.py       Graph Laplacian Fiedler value (bridge detection)
+  ai/math/fourier_timeline.py        FFT on contract/audit date sequences
+  ai/math/path_signature.py          Rough path signatures on financial sequences
+  ai/math/topology_analyzer.py       Persistent homology on entity clusters
+  ai/math/anomaly_scorer.py          Ensemble combining all 6 methods
+  ai/math/information_gain.py        Mutual information + causal feature ranking
+  ai/investigators/math_investigator.py  New 13th investigator
+
+Frameworks:
+  1. Spectral: L = D-A, Fiedler value λ₁ = algebraic connectivity
+  2. Fourier: FFT on contract amount time series, detect periodic patterns
+  3. Path Signature: iisignature.sig(X, level=3) on (date, amount) paths
+  4. Topology: Vietoris-Rips filtration, persistent homology, loop detection
+  5. Benford++: Nigrini sub-tests + Fisher combination T = -2*sum(ln(p_i))
+  6. Causal: mutual_info_classif + PC algorithm Markov blanket
+
+Acceptance Criteria:
+  * spectral_analyzer returns Fiedler value for sample graph
+  * fourier_timeline detects synthetic periodic pattern
+  * path_signature produces consistent feature vector
+  * topology_analyzer returns persistence diagram for sample cluster
+  * anomaly_scorer produces ensemble score 0-100
+  * math_investigator integrates with multi-investigator engine
+```
+
+Branch: `feature/phase-15-math-intelligence`
+
+See step-by-step instructions in PHASE 15 section below.
+
+---
+
+## PLANNED PHASES
+
+### Phase 16 — Evidence Connection Map + Deep Investigation Engine
+Features from research: A, B, C, J, L, N
+
+Scope:
+- `ai/deep_investigator.py`: 6-layer recursive analysis engine
+- `ai/connection_mapper.py`: evidence path finder between any two entities
+- `api/routes/investigation.py`: GET /investigate/{id}, GET /connection-map
+- `frontend/js/evidence_panel.js`: clickable side panel with WHY/HOW/SOURCE
+- `frontend/js/graph.js` update: click triggers evidence panel
+
+Graph features:
+- Relationship labels: director, contract, ministry, audit, party, scheme, owner
+- Source document on every edge
+- Timeline order on every connection
+- Hop count / connection distance
+- Connection strength: strong / weak / uncertain
+- Bridge entity markers
+- Conflicting-source markers
+- Repeated-entity detection across contexts
+- "Investigate Further" button in panel
+- Hidden-link suggestions (next likely entity)
+- Recursive one-hop → two-hop → archive → contradiction passes
+
+### Phase 17 — Security Hardening + Provenance Layer
+Features from research: G
+
+Scope:
+- `api/middleware/rate_limiter.py`: sliding window (100/min search, 10/min export)
+- `api/middleware/security_headers.py`: CSP, HSTS, X-Frame-Options
+- `api/middleware/input_validator.py`: 200 char limit, parameterised queries only
+- `api/middleware/audit_logger.py`: append-only SHA-256 hash chain
+- `blockchain/audit_chain.py`: daily root hash in Neo4j
+- Provenance fields on every node/edge: origin_url, fetch_date, parser_version,
+  extraction_method, confidence_source, lineage_chain, last_validated
+
+### Phase 18 — Self-Learning + Case Memory
+Features from research: P, Q
+
+Scope:
+- `ai/self_learning/schema_learner.py`: new field detection → human review gate
+- `ai/self_learning/pattern_learner.py`: weekly subgraph mining
+- `ai/self_learning/source_discoverer.py`: data.gov.in catalog monitoring
+- `ai/self_learning/weight_optimizer.py`: 3 confirmations minimum before update
+- `ai/self_learning/self_audit.py`: weekly scraper health check + GitHub alerts
+- `ai/case_memory/`: solved-case library, reusable reasoning patterns, false-positive signatures
+- Human-in-the-loop: "review this merge" queue, "review this link" queue
+- `.github/workflows/weekly_learn.yml`
 
 ### Phase 19 — Affidavit Wealth Trajectory Engine
-Kalman filter on affidavit time series across 5 election cycles.
-Unexplained wealth residual scoring. Asset disappearance detection.
-Pre-election movable asset surge detector.
-File: `ai/forensics/affidavit_analyzer.py`
+Scope:
+- `ai/forensics/affidavit_analyzer.py`: Kalman filter on 5 election cycles
+- Expected income model vs actual growth: salary + FD returns
+- Asset disappearance detection across years
+- Pre-election movable asset surge detector
+- `ai/investigators/affidavit_investigator.py`
 
 ### Phase 20 — Biography Engine
-Complete chronological life timeline from all 28 sources.
-Temporal convergence detection (election + contract within 90 days).
-Neutral narrative generation with full source citations.
-Files: `ai/biography/timeline_builder.py`, `api/routes/biography.py`,
-`frontend/js/timeline.js`
+Scope:
+- `ai/biography/timeline_builder.py`: multi-source timeline from all 28 sources
+- `ai/biography/convergence_detector.py`: temporal event alignment
+- `ai/biography/biography_generator.py`: neutral narrative generation
+- `api/routes/biography.py`: GET /biography/{entity_id}
+- `frontend/js/timeline.js`: vertical scrollable timeline component
 
 ### Phase 21 — Benami Entity Detection
-Node2Vec graph embeddings + surname/age/address similarity.
-Family network construction. Director proxy scoring.
-File: `ai/forensics/benami_detector.py`
+Features from research: H
+
+Scope:
+- `ai/forensics/benami_detector.py`: 5-factor proxy scoring
+- Node2Vec graph embeddings for similarity
+- Family surname network construction
+- Director age anomaly (< 22 = proxy flag)
+- Address proximity clustering
+- `ai/investigators/benami_investigator.py`
 
 ### Phase 22 — Procurement DNA + Cartel Detection
-Bid document fingerprinting (TF-IDF + cosine similarity).
-Price ratio analysis (Hotelling T-squared). Cover bid detection.
-Vendor co-bidding network with community detection.
-Files: `ai/forensics/bid_dna.py`, `ai/forensics/cartel_detector.py`
+Scope:
+- `ai/forensics/bid_dna.py`: TF-IDF structural fingerprinting
+- `ai/forensics/cartel_detector.py`: price ratio, rotation, cover bid
+- Bid cosine similarity between supposedly competing vendors
+- Vendor co-bidding network with Louvain community detection
+- Hotelling T-squared test on price ratios
 
-### Phase 23 — Revolving Door Tracker
-Career graph: regulator → private sector transitions.
-Cooling-off period violation detection. Pre-employment benefit scoring.
-File: `ai/forensics/revolving_door.py`
+### Phase 23 — Revolving Door + TBML Detection
+Features from research: V
+
+Scope:
+- `ai/forensics/revolving_door.py`: career graph, cooling-off violations
+- `ai/forensics/tbml_detector.py`: commodity mismatch, price anomaly vs median
+- Pre-employment benefit scoring
+- Post-retirement board appointment gap analysis
+- `ai/investigators/conflict_investigator.py`
 
 ### Phase 24 — Linguistic Fingerprinting
-Burrows' Delta authorship attribution on government documents.
-Template reuse via Rabin fingerprint. Shadow drafting detection.
-File: `ai/forensics/linguistic_fingerprint.py`
+Scope:
+- `ai/forensics/linguistic_fingerprint.py`: Burrows' Delta authorship attribution
+- Template reuse via Rabin rolling hash fingerprint
+- Shadow drafting: corporate consultation vs final bill text
+- Cross-document authorship clustering
+- `ai/investigators/linguistic_investigator.py`
 
 ### Phase 25 — Policy-Benefit Causal Analysis
-Granger causality test (policy → entity benefit).
-Transfer entropy for causal direction. Event study: Cumulative Abnormal
-Contract Award scoring.
-File: `ai/forensics/policy_benefit_analyzer.py`
+Scope:
+- `ai/forensics/policy_benefit_analyzer.py`: Granger causality + transfer entropy
+- Cumulative Abnormal Contract Award (CACA) event study
+- Policy benefit vector: contract surge ratio around announcements
+- `ai/investigators/policy_investigator.py`
 
-### Phase 26 — Adversarial Counterevidence Engine
-For every HIGH finding: auto-generate contra-hypothesis and search for
-disproving evidence. Confidence adjustment based on counterevidence strength.
-File: `ai/adversarial_engine.py`
+### Phase 26 — Adversarial Counterevidence + Competing Hypotheses
+Features from research: S
+
+Scope:
+- `ai/adversarial_engine.py`: forced disproof search for every HIGH finding
+- Contra-hypothesis generation with alternative explanation library
+- Hypothesis A/B/C mode with evidence scorecard
+- Confidence adjustment: verified findings marked, disputed findings flagged
+- `ai/investigators/adversarial_investigator.py`
 
 ### Phase 27 — Multi-Agent Debate Engine
-iMAD architecture: linguistic hesitation detection (41 features) triggers
-structured 3-round debate. Anti-drift via semantic similarity check.
-Dual-agent: filter agent + reasoning agent.
-File: `ai/debate_engine.py`
+Features from research: D, E, R
+
+Scope:
+- `ai/debate_engine.py`: iMAD-style 3-round structured debate
+- Linguistic hesitation detection (41 features) → selective debate trigger
+- Anti-drift via semantic similarity check (DRIFTJudge adapted)
+- Dual-agent: filter agent + reasoning agent pipeline
+- Consensus + dissent tracking: findings with "18 agree, 3 reject"
+- Adaptive routing: simple → small panel, complex → full debate
+- Personality parameters per investigator: skepticism, curiosity, strictness
+- Agent profiles as JSON configs
 
 ### Phase 28 — Dark Pattern Detection
-PrefixSpan sequential pattern mining on administrative event histories.
-6 pre-defined high-risk patterns. Timing window significance test.
-File: `ai/forensics/dark_pattern_detector.py`
+Scope:
+- `ai/forensics/dark_pattern_detector.py`: PrefixSpan sequential mining
+- 6 pre-defined high-risk administrative sequences
+- Timing window significance test (z-score vs null distribution)
+- Dark pattern score 0-100 integrated with risk engine
+- `ai/investigators/dark_pattern_investigator.py`
 
-### Phase 29 — Source-Drift Triangulation
-Wayback Machine CDX API for historical source comparison.
-Credibility score: age + consistency + multi-source.
-Retroactive editing detection.
-File: `ai/source_credibility.py`
+### Phase 29 — Source-Drift + Historical Analysis
+Features from research: F
 
-### Phase 30 — Predictive Risk Engine
-3-model ensemble: linear trajectory, Random Forest, ARIMA.
-6-month risk forecast for all tracked entities.
-Early Warning System with live feed alerts.
-File: `ai/predictive_risk.py`
+Scope:
+- `ai/source_credibility.py`: Wayback Machine CDX API integration
+- Temporal diff: live page vs 2-year-old archive vs 4-year-old archive
+- Retroactive editing detection
+- Claim survival scoring: facts surviving across all time periods
+- Evidence Status: Active / Modified / Removed / Archived
+- First-appearance timeline per claim
+- Archive-gap recovery for deleted pages
+- Before/after diff view in UI
+
+### Phase 30 — Predictive Risk + Auto-Prioritisation
+Features from research: O
+
+Scope:
+- `ai/predictive_risk.py`: 3-model ensemble (linear, Random Forest, ARIMA)
+- 6-month risk trajectory forecast for all tracked entities
+- Lead priority score combining centrality + anomaly + recency + novelty
+- Early Warning System: live feed alerts for accelerating risk
+- Outcome feedback loop: model weight update on confirmed ED/CBI cases
+
+### Phase 31 — Geospatial Verification
+Features from research: U
+
+Scope:
+- `scrapers/sentinel_scraper.py`: Copernicus Open Access Hub (free Sentinel-2)
+- `ai/geospatial/ndvi_analyzer.py`: NDVI change detection
+- `ai/geospatial/build_verifier.py`: payment disbursed vs construction visible
+- Contract location map in frontend
+- Before/after satellite image comparison
+- Build-completion mismatch flag
+
+### Phase 32 — Identity Fusion + Multimedia OSINT
+Features from research: W, X
+
+Scope:
+- `ai/identity/alias_resolver.py`: alias-to-email linking, credential reuse
+- `ai/identity/persona_cluster.py`: cross-platform identity fusion
+- `ai/osint/background_analyzer.py`: background-object extraction from images
+- `ai/osint/reverse_image.py`: pattern-of-life from public image metadata
+- `ai/osint/username_tracker.py`: cross-platform reuse detection
+- Bridge identifier detection in identity graph
+
+---
+
+## Feature Index (from Research Document)
+
+| Feature | Description | Phase |
+|---------|-------------|-------|
+| A | Investigation connector map | 16 |
+| B | Recursive 6-layer investigation engine | 16 |
+| C | Clickable evidence detail panel | 16 |
+| D | Multi-agent reasoning swarm | 27 |
+| E | Consensus/contradiction/uncertainty layers | 27 |
+| F | Historical investigation + archive recovery | 29 |
+| G | Provenance and auditability | 17 |
+| H | Entity resolution and alias merging | 21 |
+| I | Graph analytics features | 15 |
+| J | Hidden-link suggestion engine | 16 |
+| K | Evidence clustering and bridge detection | 15 |
+| L | Recursive find-more mode | 16 |
+| M | Report generation with evidence ranking | 12+ |
+| N | Practical UI layers for analysts | 16 |
+| O | Auto-prioritisation of leads | 30 |
+| P | Case memory + investigation history | 18 |
+| Q | Human-in-the-loop active learning | 18 |
+| R | Adaptive debate routing | 27 |
+| S | Competing hypotheses mode | 26 |
+| T | Anomaly and suspicion modules | 15 |
+| U | Geospatial verification | 31 |
+| V | Revolving door + TBML detection | 23 |
+| W | Multimedia investigation techniques | 32 |
+| X | Identity fusion from breach data | 32 |
