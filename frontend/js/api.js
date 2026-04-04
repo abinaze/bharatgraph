@@ -53,6 +53,8 @@ const Api = {
 
   verifyHash: (hash) => Api._request(`/verify/${hash}`),
 
+  nodeEvidence: (entityId) => Api._request(`/node-evidence/${entityId}`),
+
   createFeedSocket: () => {
     const wsUrl = API_BASE.replace(/^http/, "ws") + "/ws/feed";
     return new WebSocket(wsUrl);

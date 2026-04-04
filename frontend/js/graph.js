@@ -108,9 +108,13 @@ const GraphRenderer = {
         })
       )
       .on("click", (event, d) => {
-        event.stopPropagation();
-        if (window.Router) Router.navigate(`/entity/${d.id}`);
-      });
+          event.stopPropagation();
+          if (window.EvidencePanel) {
+            EvidencePanel.open(d.id, d.name || d.id);
+          } else if (window.Router) {
+            Router.navigate(`/entity/${d.id}`);
+          }
+        })
 
     node.append("circle")
       .attr("r", 22)
