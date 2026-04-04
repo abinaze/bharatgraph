@@ -23,6 +23,17 @@ All language is analytically neutral and legally defensible.
 
 ---
 
+## Live Deployment
+
+| Layer | URL |
+|-------|-----|
+| Frontend | https://abinaze.github.io/bharatgraph |
+| API | https://abinazebinoy-bharatgraph.hf.space |
+| Health | https://abinazebinoy-bharatgraph.hf.space/health |
+| API Docs | https://abinazebinoy-bharatgraph.hf.space/docs |
+
+---
+
 ## What It Builds
 
 **Investigation Intelligence (Tab 1)**
@@ -58,14 +69,14 @@ GeM contracts, court filings, PIB releases, SEBI orders, and verified news.
 bharatgraph/
   scrapers/       21 data collectors (Indian govt + international)
   processing/     Name normalisation, entity resolution, pipeline
-  graph/          Neo4j schema, loader, Cypher queries
+  graph/          Neo4j schema, loader, Cypher queries, seed data
   ai/             Risk scoring, NLP, graph analytics, 12 investigators
   config/         22 language configs, settings
-  api/            FastAPI REST + WebSocket (6 routes)
+  api/            FastAPI REST + WebSocket (6 routes + admin)
   frontend/       HTML/CSS/JS dashboard, D3.js graph, dark/light theme
   templates/      Jinja2 dossier template (PDF/HTML)
   blockchain/     Audit log
-  tests/          Tests
+  .github/        CI/CD workflows (test, deploy, daily scrape)
 ```
 
 ---
@@ -76,11 +87,11 @@ bharatgraph/
 |----------------|---------------------|------------------------------------|
 | Source code    | GitHub              | Unlimited public repos             |
 | Backend API    | Hugging Face Spaces | Docker SDK — no cold start         |
-| Frontend       | GitHub Pages        | Unlimited static hosting           |
+| Frontend       | GitHub Pages        | Static HTML Actions workflow       |
 | Graph database | Neo4j AuraDB Free   | 50K nodes, 175K relationships      |
 | CDN + DDoS     | Cloudflare Free     | Unlimited caching + DDoS           |
 | CI/CD          | GitHub Actions      | 2,000 min/month                    |
-| Uptime monitor | UptimeRobot Free    | 50 monitors, 5-min intervals       |
+| Uptime monitor | UptimeRobot Free    | 5-min interval health checks       |
 
 ---
 
@@ -131,66 +142,51 @@ for cross-source entity resolution. Full pipeline orchestrator.
 ### Phase 3 — Graph Database
 Neo4j schema: 7 node types, 6 relationship types, 10 constraint queries.
 `MERGE` with stable MD5 IDs. 8 pre-built Cypher queries.
-Connected to Neo4j AuraDB Free: `neo4j+s://1a34e3b8.databases.neo4j.io`
 
 ### Phase 4 — FastAPI Backend
 FastAPI with lifespan, CORS, 6 route modules registered after `app = FastAPI()`,
-WebSocket feed, Pydantic models. Version 0.12.0.
+WebSocket feed. Version 0.12.0.
 
 ### Phase 5 — Risk Scoring Engine
 Composite 0–100 score. Weights: politician_company_overlap (0.35),
 contract_concentration (0.25), audit_frequency (0.20), asset_anomaly (0.15),
-criminal_case (0.05). `validate_language()` enforces neutral analytical output.
+criminal_case (0.05). `validate_language()` enforces neutral output.
 
-### Phase 6 — Expanded Data Sources
-13 scrapers total. ICIJ HTML mode (BeautifulSoup). Wikidata SPARQL confirmed.
-All public HuggingFace models — no gating.
+### Phase 6 — Expanded Data Sources (13 scrapers)
+ICIJ HTML mode (BeautifulSoup). Wikidata SPARQL confirmed. Public HF models only.
 
 ### Phase 7 — NLP Document Intelligence
 spaCy `en_core_web_sm` NER. Benford's Law chi-squared test on affidavit assets.
-Multilingual NER: `Davlan/bert-base-multilingual-cased-ner-hrl`.
 Shadow draft detector: `all-MiniLM-L6-v2`, 93.35% alignment confirmed.
 
 ### Phase 8 — Advanced Graph Analytics
 NetworkX: betweenness centrality, PageRank, Louvain community detection.
-Circular ownership `simple_cycles()` — 3-node cycle confirmed.
-Ghost company scorer: GHOST_THRESHOLD=60 — Quick Win Pvt Ltd: 100/100 confirmed.
+Circular ownership `simple_cycles()`. Ghost company scorer: 100/100 confirmed.
 
-### Phase 9 — Eight New Indian Sources (21 Total)
+### Phase 9 — Eight New Indian Sources (21 Total Scrapers)
 NJDG (39 live records confirmed), ED, CVC, NCRB, LGD, IBBI, NGO Darpan, CPPP.
-All have sample fallbacks when live source unavailable.
 
 ### Phase 10 — Multi-Investigator AI Engine
-12 parallel investigators in `ThreadPoolExecutor`. SHA-256 report hash: stable,
-unique, 64 chars. Synthesis: 3+ investigators agreeing = HIGH confidence.
-`FakeSession` for offline testing. `validate_language()` on all output.
+12 parallel investigators. SHA-256 report hash: stable, unique, 64 chars.
+Synthesis: 3+ investigators agreeing = HIGH confidence. `FakeSession` for offline testing.
 
 ### Phase 11 — Multilingual Platform (22 Languages)
-All 22 Indian scheduled languages. Unicode script detection confirmed
-(Devanagari→hi, Tamil→ta). Helsinki-NLP/opus-mt-en-hi (public, no gating).
-Modi→मोदी/மோடி/మోదీ/ಮೋದಿ/മോദി cross-script search confirmed.
-Risk levels pre-translated in 9 languages.
+All 22 Indian scheduled languages. Unicode detection confirmed.
+Helsinki-NLP public model. Modi→मोदी/தமிழ்/తెలుగు/ಕನ್ನಡ/മലയാളം confirmed.
 
 ### Phase 12 — PDF Dossier Generator
-SHA-256 integrity hash per report. Verified tamper detection working.
-Jinja2 + WeasyPrint (HTML fallback on Windows, full PDF on Linux).
-Template: Indian tricolour design, 8 sections. 10,829 chars rendered confirmed.
-`GET /export/pdf/{entity_id}` · `GET /verify/{hash}`
+SHA-256 integrity hash. Jinja2 + WeasyPrint (HTML fallback on Windows).
+Indian tricolour design, 8 sections. 10,829 chars rendered confirmed.
 
 ### Phase 13 — Production Frontend
 HTML/CSS/JS — no React, no Node.js, no build step. Works from `file://`.
+D3.js force-directed graph. Dark/light theme. 5 views: home/search/entity/feed/about.
 
-- `design-system.css`: CSS custom properties token layer, dark + light themes
-- `components.css`: 25+ component classes
-- `router.js`: hash-based client-side routing with named params
-- `api.js`: typed API client for all FastAPI endpoints
-- `components.js`: HTMLElement factory functions (React-component pattern)
-- `graph.js`: D3.js force-directed knowledge graph
-- `app.js`: state management, 5 views (home/search/entity/feed/about)
-- `index.html`: semantic HTML5 shell
-
-Colours: Saffron #FF9933 · India Green #138808 · Ashoka Blue #000080 · Navy #0A0F2E.
-Dark/light theme toggle with localStorage persistence.
+### Phase 14 — Zero Cold-Start Deployment ✓ LIVE
+Hugging Face Spaces Docker SDK. No cold start on public spaces.
+Service worker cache-first for static assets. GZipMiddleware (60-80% compression).
+`POST /admin/seed` endpoint loads 10 politicians, 5 companies, 3 contracts.
+Frontend on GitHub Pages via GitHub Actions static workflow.
 
 ---
 
@@ -198,14 +194,24 @@ Dark/light theme toggle with localStorage persistence.
 
 | Phase | Title | Key Capability |
 |-------|-------|----------------|
-| 14 | Zero Cold-Start Deployment | HF Spaces + Cloudflare + Service Worker |
-| 15 | Mathematical Intelligence | Path signatures, Fourier, persistent homology |
-| 16 | Evidence Connection Map | 6-layer deep investigation, clickable graph |
-| 17 | Security Hardening | Rate limiting, audit chain, CSP headers |
-| 18 | Self-Learning System | Schema adaptation, pattern discovery |
-| 19 | Affidavit Trajectory | Kalman filter unexplained wealth detection |
-| 20 | Biography Engine | Complete life timeline from all 28 sources |
-| 21+ | Advanced Forensics | Benami, Procurement DNA, Revolving Door |
+| **15** | **Mathematical Intelligence Engine** | Spectral graph analysis, Fourier timeline, path signatures, persistent homology, expanded Benford, mutual information + causal ranking |
+| **16** | **Evidence Connection Map + Deep Investigation** | Investigation connector map with relationship labels/strength/source, 6-layer recursive engine, clickable evidence panel, hidden-link suggestions, recursive find-more button |
+| **17** | **Security Hardening + Provenance** | Rate limiting, CSP/HSTS headers, SHA-256 audit chain, full provenance layer on every node/edge, deterministic artifact IDs |
+| **18** | **Self-Learning + Case Memory** | Schema adaptation, pattern candidate discovery, case memory library, human-in-the-loop merge queue, investigation replay |
+| **19** | **Affidavit Wealth Trajectory** | Kalman filter across 5 election cycles, unexplained wealth residual scoring, asset disappearance detection |
+| **20** | **Biography Engine** | Complete chronological life timeline from all 28 sources, temporal convergence detection, narrative generation |
+| **21** | **Benami Detection** | Graph embeddings, proxy network analysis, family name matching, director age anomaly |
+| **22** | **Procurement DNA + Cartel Detection** | Bid document fingerprinting, price ratio analysis, cover bid detection, vendor co-bidding network |
+| **23** | **Revolving Door + TBML Detection** | Career graph, cooling-off violations, trade-based money laundering flags |
+| **24** | **Linguistic Fingerprinting** | Burrows' Delta authorship attribution across govt documents, template reuse detection |
+| **25** | **Policy-Benefit Causal Analysis** | Granger causality, transfer entropy, Cumulative Abnormal Contract Award |
+| **26** | **Adversarial Counterevidence + Competing Hypotheses** | Forced disproof search, hypothesis A/B/C mode, evidence scorecard |
+| **27** | **Multi-Agent Debate Engine** | iMAD hesitation detection, 3-round structured debate, anti-drift, adaptive routing, consensus + dissent tracking |
+| **28** | **Dark Pattern Detection** | PrefixSpan sequential pattern mining, 6 pre-defined high-risk patterns |
+| **29** | **Source-Drift + Historical Analysis** | Wayback Machine credibility, archive-gap recovery, temporal slice viewer, claim survival scoring |
+| **30** | **Predictive Risk + Auto-Prioritisation** | ARIMA + Random Forest trajectory, 6-month forecast, lead priority scores |
+| **31** | **Geospatial Verification** | Sentinel-2 satellite imagery, NDVI change detection, build-completion mismatch |
+| **32** | **Identity Fusion + Multimedia OSINT** | Alias-to-email linking, credential reuse detection, persona clustering, background-object analysis |
 
 Full detail in [Phase Roadmap](PHASE_ROADMAP.md).
 
@@ -217,12 +223,14 @@ Full detail in [Phase Roadmap](PHASE_ROADMAP.md).
 DataGov API    3,199 real MGNREGA records
 CAG            30 audit report links from cag.gov.in
 PIB            27 press releases from pib.gov.in
-Wikidata       Modi (Q1058), Gandhi (Q10218) confirmed
+Wikidata       Modi (Q1058), Gandhi (Q10218) confirmed live
 NJDG           39 court records confirmed live
-Pipeline       47 records processed in 15 seconds
+Pipeline       28 nodes loaded — 2 politicians, 2 companies, 20 audits, 4 press
 SHA-256        Stable, unique, 64 chars — confirmed
 Language det.  Devanagari→hi, Tamil→ta, Latin→en — confirmed
-Transliteration Modi→5 scripts — confirmed
+Search         Working on production HF Space
+Frontend       Live at abinaze.github.io/bharatgraph
+API            Live at abinazebinoy-bharatgraph.hf.space
 ```
 
 ---
@@ -233,33 +241,20 @@ Transliteration Modi→5 scripts — confirmed
 git clone https://github.com/abinaze/bharatgraph.git
 cd bharatgraph
 python -m venv venv
-source venv/Scripts/activate   # Windows Git Bash
+source venv/Scripts/activate
 pip install -r requirements.txt
 cp .env.example .env
-```
-
-Edit `.env`:
-```
-DATAGOV_API_KEY=register_free_at_data.gov.in_user_register
-NEO4J_URI=neo4j+s://your-instance.databases.neo4j.io
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=your_password
-```
-
-Run:
-```bash
+# Edit .env with your Neo4j URI, user, password and DATAGOV_API_KEY
 python -m processing.pipeline --scrapers cag,gem,pib,myneta,mca
 python -m graph.loader
 uvicorn api.main:app --reload
 ```
 
-Open `frontend/index.html` in your browser — no server needed.
+Open `frontend/index.html` — no server needed.
 
 ---
 
 ## Git Workflow
-
-One long-lived branch: `main`. All branches merge directly into `main`.
 
 ```
 feature/phase-N-short-name    New phase development
@@ -269,11 +264,15 @@ docs/description               Documentation only
 
 Commit prefixes: `feat`, `fix`, `docs`, `test`, `chore`, `refactor`.
 
+Never resolve merge conflicts in the GitHub web editor. Resolve locally then push.
+
 ---
 
 ## Reference Documents
 
 - [Contributing Guidelines](CONTRIBUTING.md)
 - [Security Policy](SECURITY.md)
+- [Phase Roadmap](PHASE_ROADMAP.md)
+- [MIT License](LICENSE)
 - [Phase Roadmap](PHASE_ROADMAP.md)
 - [MIT License](LICENSE)
