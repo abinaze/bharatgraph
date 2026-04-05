@@ -1,0 +1,63 @@
+name: weekly-self-learning
+
+on:
+  schedule:
+    - cron: "0 18 * * 0"
+  workflow_dispatch:
+
+jobs:
+  learn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: install dependencies
+        run: pip install loguru python-dotenv requests networkx
+
+      - name: run self audit
+        run: python -c "
+from ai.self_learning.self_audit import SelfAudit
+r = SelfAudit().run(timeout_secs=15)
+print(f'Audit: {r[\"passed\"]}/{r[\"total\"]} passed')
+if r['failed'] > 0:
+    print('::warning::' + str(r['failed']) + ' scrapers failed audit')
+"
+
+      - name: run schema learner
+        run: python -c "
+from ai.self_learning.schema_learner import SchemaLearner
+s = SchemaLearner()
+pending = s.get_pending()
+print(f'Pending schema additions: {len(pending)}')
+"
+
+      - name: run weight optimizer
+        env:
+          NEO4J_URI:      ${{ secrets.NEO4J_URI }}
+          NEO4J_USER:     ${{ secrets.NEO4J_USER }}
+          NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+        run: python -c "
+from ai.self_learning.weight_optimizer import WeightOptimizer
+opt = WeightOptimizer()
+result = opt.optimize()
+print(f'Weight adjustment: {result[\"adjusted\"]}')
+if result.get('changes'):
+    for k,v in result['changes'].items():
+        print(f'  {k}: {v[\"old\"]} -> {v[\"new\"]}')
+"
+
+      - name: commit learning artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/processed/ || true
+          git diff --staged --quiet || \
+            git commit -m "chore(learn): weekly self-learning run $(date -u +%Y-%m-%d)"
+          git push origin main || true
