@@ -40,7 +40,15 @@ app.add_middleware(
 )
 
 from fastapi.middleware.gzip import GZipMiddleware
+from api.middleware.rate_limiter import SlidingWindowRateLimiter
+from api.middleware.security_headers import SecurityHeadersMiddleware
+from api.middleware.input_validator import InputValidatorMiddleware
+from api.middleware.audit_logger import AuditLoggerMiddleware
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+app.add_middleware(SlidingWindowRateLimiter)
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(InputValidatorMiddleware)
+app.add_middleware(AuditLoggerMiddleware)
 
 app.include_router(search.router,      tags=["Search"])
 app.include_router(profile.router,     tags=["Profile"])
