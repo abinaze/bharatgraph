@@ -207,7 +207,7 @@ const Views = {
             <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Filter:</span>
             ${["All","politician","company","audit"].map(t => `
               <button class="btn btn--sm ${type === t || (!type && t==="All") ? "btn--primary" : "btn--secondary"}"
-                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!=="All"?"&type="+t:""}')">
+                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!=="All"?"&type="+t.toLowerCase():""}')">
                 ${t.charAt(0).toUpperCase()+t.slice(1)}
               </button>
             `).join("")}
@@ -245,7 +245,11 @@ const Views = {
     document.getElementById("search-results").innerHTML = "";
     document.getElementById("search-results").appendChild(skeletons);
 
-    Api.search(query, type || null).then(data => {
+    const lang = (typeof State !== 'undefined' && State.language) ? State.language : 'en';
+    const searchPromise = (lang && lang !== 'en')
+      ? Api.multilingualSearch(query, lang)
+      : Api.search(query, type ? type.toLowerCase() : null, 20, lang);
+    searchPromise.then(data => {
       const container = document.getElementById("search-results");
       if (!container) return;
       container.innerHTML = "";

@@ -114,7 +114,17 @@
 
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
-  <script>window.BHARATGRAPH_API_URL = "https://abinazebinoy-bharatgraph.hf.space";</script>
+  <script>
+    // Auto-detect API URL: use local when developing, production when deployed
+    (function() {
+      var h = window.location.hostname;
+      if (h === "localhost" || h === "127.0.0.1" || h === "") {
+        window.BHARATGRAPH_API_URL = "http://localhost:8000";
+      } else {
+        window.BHARATGRAPH_API_URL = "https://abinazebinoy-bharatgraph.hf.space";
+      }
+    })();
+  </script>
   <script src="js/router.js"></script>
   <script src="js/api.js"></script>
   <script src="js/components.js"></script>

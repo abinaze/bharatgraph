@@ -23,9 +23,10 @@ const Api = {
 
   stats: () => Api._request("/stats"),
 
-  search: (query, type = null, limit = 20) => {
+  search: (query, type = null, limit = 20, lang = "en") => {
     const params = new URLSearchParams({ q: query, limit });
-    if (type) params.append("type", type);
+    if (type)  params.append("type", type);
+    if (lang && lang !== "en") params.append("lang", lang);
     return Api._request(`/search?${params}`);
   },
 
