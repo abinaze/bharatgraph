@@ -77,16 +77,26 @@ def multilingual_search(
             rows = session.run(
                 """
                 MATCH (n)
-                WHERE (n:Politician OR n:Company OR n:AuditReport)
-                  AND toLower(n.name) CONTAINS toLower($q)
+                WHERE (n:Politician OR n:Company OR n:AuditReport OR
+                       n:Contract OR n:Ministry OR n:Party OR
+                       n:Scheme OR n:PressRelease)
+                  AND (
+                    toLower(coalesce(n.name,''))        CONTAINS toLower($q) OR
+                    toLower(coalesce(n.title,''))       CONTAINS toLower($q) OR
+                    toLower(coalesce(n.item_desc,''))   CONTAINS toLower($q) OR
+                    toLower(coalesce(n.buyer_org,''))   CONTAINS toLower($q) OR
+                    any(a IN coalesce(n.aliases,[])
+                        WHERE toLower(a) CONTAINS toLower($q))
+                  )
                 RETURN n.id AS id, labels(n)[0] AS type,
-                       n.name AS name, n.state AS state
-                LIMIT 10
+                       coalesce(n.name, n.title) AS name,
+                       n.state AS state, n.source AS source
+                LIMIT 15
                 """,
                 q=variant
             ).data()
             for r in rows:
-                if not any(x["id"] == r["id"] for x in results):
+                if r.get("id") and not any(x.get("id") == r["id"] for x in results):
                     results.append(r)
 
     disclaimer = get_ui_label("legal_disclaimer", lang)

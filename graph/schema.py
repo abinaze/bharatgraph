@@ -200,6 +200,17 @@ RELATIONSHIP_SCHEMAS = {
 # ── Cypher constraint + index statements ─────────────────
 # Run these once when setting up a new Neo4j database.
 
+# ── Full-text index (run once) ───────────────────────────────────────────────
+# This powers instant search across all labels and fields simultaneously.
+FULLTEXT_INDEX_QUERY = """
+CALL db.index.fulltext.createNodeIndex(
+  'globalSearch',
+  ['Politician','Company','Contract','AuditReport','Scheme','Ministry','Party','PressRelease'],
+  ['name','title','aliases','description','item_desc','buyer_org',
+   'cin','ministry','summary','seller_name','order_id']
+)
+"""
+
 SETUP_QUERIES = [
     # Uniqueness constraints (also create indexes automatically)
     "CREATE CONSTRAINT politician_id IF NOT EXISTS FOR (n:Politician) REQUIRE n.id IS UNIQUE",
@@ -213,6 +224,11 @@ SETUP_QUERIES = [
     "CREATE INDEX politician_name IF NOT EXISTS FOR (n:Politician) ON (n.name)",
     "CREATE INDEX company_name    IF NOT EXISTS FOR (n:Company)    ON (n.name)",
     "CREATE INDEX contract_date   IF NOT EXISTS FOR (n:Contract)   ON (n.order_date)",
+    # Full-text index across all searchable labels and fields
+    "CALL db.index.fulltext.createNodeIndex('globalSearch', "
+    "['Politician','Company','Contract','AuditReport','Scheme','Ministry','Party','PressRelease'], "
+    "['name','title','aliases','description','item_desc','buyer_org','cin','ministry','summary'])"
+    " IF NOT EXISTS",
 ]
 
 

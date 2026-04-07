@@ -77,6 +77,50 @@ def search_entities(
 
     results = []
 
+    # Fast-path: try fulltext index first (available after first pipeline run)
+    if filter_type in ("all", ""):
+        try:
+            with driver.session() as session:
+                ft_rows = session.run(
+                    """
+                    CALL db.index.fulltext.queryNodes('globalSearch', $q)
+                    YIELD node, score
+                    RETURN node.id AS id,
+                           labels(node)[0] AS label,
+                           coalesce(node.name, node.title) AS name,
+                           node.state AS state,
+                           node.party AS party,
+                           node.source AS source,
+                           score
+                    ORDER BY score DESC LIMIT $limit
+                    """,
+                    q=q, limit=limit
+                ).data()
+
+            if ft_rows:
+                for r in ft_rows:
+                    label = r.get("label", "Unknown")
+                    src = SOURCE_MAP.get(label, ("BharatGraph","Knowledge Graph","#"))
+                    results.append(SearchResult(
+                        entity_id=r["id"] or "",
+                        entity_type=label,
+                        name=r["name"] or "",
+                        state=r.get("state"),
+                        party=r.get("party"),
+                        sources=[SourceDocument(
+                            institution=src[0],
+                            document_title=src[1],
+                            url=src[2],
+                        )],
+                    ))
+                return SearchResponse(
+                    query=q, total=len(results),
+                    results=results[:limit],
+                    generated_at=datetime.now().isoformat(),
+                )
+        except Exception:
+            pass  # Fulltext index not ready — fall through to label-by-label
+
     with driver.session() as session:
         if filter_type in ("all", ""):
             targets = list(LABEL_QUERIES.keys())

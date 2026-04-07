@@ -85,7 +85,21 @@ class GraphLoader:
             logger.info(f"[Loader] DRY RUN: would run {len(SETUP_QUERIES)} setup queries")
             return
         with self.driver.session() as session:
-            for query in SETUP_QUERIES:
+            # Try fulltext index (silent fail if already exists or unsupported)
+            try:
+                session.run(
+                    "CALL db.index.fulltext.createNodeIndex("
+                    "'globalSearch',"
+                    "['Politician','Company','Contract','AuditReport',"
+                    " 'Scheme','Ministry','Party','PressRelease'],"
+                    "['name','title','aliases','item_desc','buyer_org',"
+                    " 'cin','ministry','summary','seller_name']"
+                    ")"
+                )
+            except Exception:
+                pass
+
+        for query in SETUP_QUERIES:
                 try:
                     session.run(query)
                 except Exception as e:

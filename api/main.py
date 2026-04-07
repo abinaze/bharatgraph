@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from api.dependencies import get_driver, close_driver
-from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami
+from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources
 from api.models import HealthResponse, StatsResponse
 
 
@@ -61,6 +61,7 @@ app.include_router(investigation.router, tags=["Investigation"])
 app.include_router(affidavit.router,     tags=["Affidavit"])
 app.include_router(biography.router,     tags=["Biography"])
 app.include_router(benami.router,       tags=["Benami"])
+app.include_router(sources.router,      tags=["Sources"])
 
 
 @app.get("/health", response_model=HealthResponse)
