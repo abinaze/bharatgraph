@@ -249,7 +249,23 @@ const Views = {
     const searchPromise = (lang && lang !== 'en')
       ? Api.multilingualSearch(query, lang)
       : Api.search(query, type ? type.toLowerCase() : null, 20, lang);
-    searchPromise.then(data => {
+    searchPromise.then(rawData => {
+      // Normalise shape: multilingual returns {id, type} while main search
+      // returns {entity_id, entity_type}. Unify before rendering.
+      const data = {
+        ...rawData,
+        total: rawData.total || (rawData.results || []).length,
+        query: rawData.query || query,
+        results: (rawData.results || []).map(r => ({
+          entity_id:   r.entity_id   || r.id   || "",
+          entity_type: r.entity_type || r.type  || "Unknown",
+          name:        r.name        || r.title || r.entity_id || r.id || "",
+          state:       r.state       || null,
+          party:       r.party       || null,
+          source:      r.source      || r.dataset || null,
+          sources:     r.sources     || [],
+        })),
+      };
       const container = document.getElementById("search-results");
       if (!container) return;
       container.innerHTML = "";
