@@ -4,8 +4,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from datetime import datetime
 from loguru import logger
 
-# Benami = property held by one person on behalf of another.
-# We score 5 independent factors. Each contributes to 0-100 proxy score.
 
 FACTOR_WEIGHTS = {
     "director_age_anomaly":   0.25,
