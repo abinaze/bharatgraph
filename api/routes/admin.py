@@ -25,7 +25,7 @@ def seed_database(driver=Depends(get_db)):
 
     loader = GraphLoader()
     p = loader.load_politicians(SAMPLE_POLITICIANS)
-    c = loader.load_companies(SAMPLE_CONTRACTS)
+    c = loader.load_companies(SAMPLE_COMPANIES)
     k = loader.load_contracts(SAMPLE_CONTRACTS)
     a = loader.load_audit_reports(SAMPLE_AUDIT_REPORTS)
 
