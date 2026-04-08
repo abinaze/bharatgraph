@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from datetime import datetime
 from loguru import logger
 
-SIMILARITY_THRESHOLD = 0.72   # TF-IDF cosine above this = suspicious
+SIMILARITY_THRESHOLD = 0.72
 MIN_BIDS_FOR_ANALYSIS = 3
 
 
@@ -119,7 +119,7 @@ class BidDNA:
                 bid_a, vec_a = vectors[i]
                 bid_b, vec_b = vectors[j]
                 sim = self._cosine(vec_a, vec_b)
-                if sim > 0.3:   # only track non-trivially similar
+                if sim > 0.3:
                     pairs.append({
                         "a":          bid_a.get("vendor","?"),
                         "b":          bid_b.get("vendor","?"),
@@ -137,7 +137,7 @@ class BidDNA:
         std  = math.sqrt(variance)
         if std == 0:
             return None
-        # Cover-bid detection: one bid just above winner
+
         sorted_amounts = sorted(amounts)
         gaps = [sorted_amounts[i+1] - sorted_amounts[i]
                 for i in range(len(sorted_amounts)-1)]
