@@ -14,8 +14,8 @@ FACTOR_WEIGHTS = {
 }
 
 YOUNG_DIRECTOR_AGE  = 25
-COMPANY_AGE_DAYS    = 180   # registered < 180 days before first contract
-SAME_ADDRESS_LIMIT  = 3     # 3+ companies at same address = flag
+COMPANY_AGE_DAYS    = 180
+SAME_ADDRESS_LIMIT  = 3
 
 
 class BenamiDetector:
@@ -80,7 +80,6 @@ class BenamiDetector:
             "analyzed_at":     datetime.now().isoformat(),
         }
 
-    # ── Factor 1: Young / anomalous directors ───────────────────────────────
     def _score_director_age(self, entity_id: str, driver) -> tuple:
         if not driver:
             return 0.3, {"young_directors": 1, "note": "sample data"}
@@ -108,7 +107,7 @@ class BenamiDetector:
             logger.warning(f"[Benami] director_age failed: {e}")
             return 0.0, {"error": str(e)[:60]}
 
-    # ── Factor 2: Surname network ────────────────────────────────────────────
+ 
     def _score_surname_network(self, entity_id: str,
                                 entity_name: str, driver) -> tuple:
         surname = entity_name.strip().split()[-1].lower()
@@ -142,7 +141,7 @@ class BenamiDetector:
             logger.warning(f"[Benami] surname_network failed: {e}")
             return 0.0, {"error": str(e)[:60]}
 
-    # ── Factor 3: Address clustering ─────────────────────────────────────────
+    
     def _score_address_cluster(self, entity_id: str,
                                 driver) -> tuple:
         if not driver:
@@ -176,7 +175,7 @@ class BenamiDetector:
             logger.warning(f"[Benami] address_cluster failed: {e}")
             return 0.0, {"error": str(e)[:60]}
 
-    # ── Factor 4: Company registered shortly before first contract ───────────
+
     def _score_company_age(self, entity_id: str, driver) -> tuple:
         if not driver:
             return 0.4, {"flagged_companies": 1, "note": "sample"}
@@ -214,7 +213,6 @@ class BenamiDetector:
             logger.warning(f"[Benami] company_age failed: {e}")
             return 0.0, {"error": str(e)[:60]}
 
-    # ── Factor 5: Single-director companies ──────────────────────────────────
     def _score_single_director(self, entity_id: str,
                                 driver) -> tuple:
         if not driver:
@@ -244,7 +242,7 @@ class BenamiDetector:
             logger.warning(f"[Benami] single_director failed: {e}")
             return 0.0, {"error": str(e)[:60]}
 
-    # ── Build findings from factor scores ────────────────────────────────────
+
     def _build_findings(self, scores: dict, details: dict,
                          composite: float, level: str) -> list:
         findings = []
