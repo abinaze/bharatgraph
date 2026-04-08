@@ -4,9 +4,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from datetime import datetime
 from loguru import logger
 
-ROTATION_WINDOW_DAYS  = 730   # 2 years
+ROTATION_WINDOW_DAYS  = 730
 MIN_VENDORS_FOR_CARTEL = 3
-ROTATION_THRESHOLD    = 0.6   # 60% contracts show rotation pattern
+ROTATION_THRESHOLD    = 0.6
 
 
 class CartelDetector:
@@ -97,13 +97,12 @@ class CartelDetector:
         if not vendors or len(vendors) < 2:
             return {"score": 0.0, "evidence": []}
 
-        # Check if contract indices follow a round-robin pattern
+
         contract_lists = [v.get("contracts", v.get("dates", [])) for v in vendors]
         total = sum(len(c) for c in contract_lists)
         if total == 0:
             return {"score": 0.0, "evidence": []}
 
-        # Simple heuristic: if each vendor has roughly equal share → rotation
         expected_share = 1.0 / len(vendors)
         shares = [len(c) / total for c in contract_lists]
         variance = sum((s - expected_share)**2 for s in shares) / len(shares)
@@ -120,7 +119,6 @@ class CartelDetector:
         if len(vendors) < 2:
             return {"repeat_pairs": 0, "examples": []}
 
-        # Count overlapping tender appearances
         from itertools import combinations
         pairs     = {}
         examples  = []
