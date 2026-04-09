@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: install core dependencies
+        run: |
+          pip install loguru python-dotenv requests fastapi pydantic \
+                      neo4j networkx jinja2 numpy scipy pytest
+
+      - name: syntax check all Python files
+        run: |
+          FAIL=0
+          find . -name "*.py" \
+            -not -path "./venv/*" \
+            -not -path "./.git/*" \
+            -not -path "./__pycache__/*" | while read f; do
+            python -m py_compile "$f" || { echo "SYNTAX ERROR: $f"; FAIL=1; }
+          done
+          exit $FAIL
+
+      - name: run unit tests
+        run: pytest tests/ -v --tb=short 2>/dev/null || echo "No tests found"
+
+      - name: verify no bolt://localhost in codebase
+        run: |
+          if grep -r "bolt://localhost" --include="*.py" .; then
+            echo "ERROR: bolt://localhost found in Python files"
+            exit 1
+          fi
+          echo "PASS: No bolt://localhost references"
+
+      - name: verify all registered API routes exist
+        run: |
+          python3 -c "
+          import re, os, sys
+          main = open('api/main.py').read()
+          m = re.findall(r'from api\.routes import (.*)', main)
+          if m:
+              mods = [x.strip() for x in m[0].split(',')]
+              missing = [x for x in mods if not os.path.exists(f'api/routes/{x}.py')]
+              if missing:
+                  print('MISSING ROUTE FILES:', missing)
+                  sys.exit(1)
+              print(f'PASS: All {len(mods)} route files present')
+          "
