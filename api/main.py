@@ -16,10 +16,14 @@ from api.models import HealthResponse, StatsResponse
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("[API] Starting up — initialising Neo4j driver")
-    get_driver()
+    logger.info("[API] Starting up — attempting Neo4j connection")
+    driver = get_driver()
+    if driver:
+        logger.success("[API] Neo4j ready")
+    else:
+        logger.warning("[API] Starting without Neo4j — set secrets to enable")
     yield
-    logger.info("[API] Shutting down — closing Neo4j driver")
+    logger.info("[API] Shutting down")
     close_driver()
 
 
@@ -70,7 +74,7 @@ app.include_router(linguistic.router,     tags=["Linguistic"])
 app.include_router(policy.router,         tags=["Policy"])
 
 
-@app.get("/health", response_model=HealthResponse)
+@app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse)
 def health_check():
     driver    = get_driver()
     connected = driver is not None
