@@ -1,3 +1,12 @@
+---
+title: BharatGraph
+emoji: 🔍
+colorFrom: red
+colorTo: green
+sdk: docker
+app_file: app.py
+pinned: false
+---
 # BharatGraph
 
 AI-powered public transparency and institutional intelligence platform for India.
