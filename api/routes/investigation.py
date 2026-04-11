@@ -40,5 +40,14 @@ def connection_map(
 @router.get("/node-evidence/{entity_id}")
 def node_evidence(entity_id: str, driver=Depends(get_db)):
     logger.info(f"[Investigation] Node evidence: {entity_id}")
+    from fastapi import HTTPException
+    with driver.session() as s:
+        row = s.run(
+            "MATCH (n {id:$id}) RETURN n.id AS id", id=entity_id
+        ).single()
+    if not row:
+        raise HTTPException(
+            status_code=404, detail=f"Entity {entity_id} not found"
+        )
     mapper = ConnectionMapper(driver=driver)
     return mapper.get_node_evidence(entity_id)
