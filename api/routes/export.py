@@ -60,6 +60,9 @@ def export_pdf(entity_id: str, driver=Depends(get_db)):
     if not output_path or not os.path.exists(output_path):
         raise HTTPException(status_code=500,
                             detail="Dossier generation failed")
+    allowed_dir = os.path.realpath("data/processed")
+    if not os.path.realpath(output_path).startswith(allowed_dir):
+        raise HTTPException(status_code=400, detail="Invalid output path")
 
     media_type = (
         "application/pdf"

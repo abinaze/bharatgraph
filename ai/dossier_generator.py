@@ -166,6 +166,10 @@ class DossierGenerator:
 
     def generate(self, entity_id: str, multi_report: dict = None,
                   output_dir: str = "data/processed") -> dict:
+        allowed_base = os.path.realpath("data")
+        real_out_dir = os.path.realpath(output_dir)
+        if not real_out_dir.startswith(allowed_base):
+            raise ValueError(f"Output directory outside allowed path: {output_dir}")
         os.makedirs(output_dir, exist_ok=True)
         dossier_data = self.assemble_dossier_data(entity_id, multi_report)
         html         = self.render_html(dossier_data)
