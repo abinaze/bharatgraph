@@ -92,18 +92,17 @@ class GraphLoader:
                     "'globalSearch',"
                     "['Politician','Company','Contract','AuditReport',"
                     " 'Scheme','Ministry','Party','PressRelease'],"
-                    "['name','title','aliases','item_desc','buyer_org',"
+                    "['name','title','aliases','item_desc','product','buyer_org',"
                     " 'cin','ministry','summary','seller_name']"
                     ")"
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"[Loader] Full-text index note: {e}")
 
-        for query in SETUP_QUERIES:
+            for query in SETUP_QUERIES:
                 try:
                     session.run(query)
                 except Exception as e:
-                    # Constraints may already exist - that is fine
                     logger.debug(f"[Loader] Schema query skipped (may exist): {e}")
         logger.success("[Loader] Schema constraints and indexes ready")
 
