@@ -236,9 +236,6 @@ if __name__ == "__main__":
     ]
     r = a.analyze("pol_test", sample, "MP")
     print(f"\n  Years:         {r['years_covered']}")
-    print(f"  Asset series:  {r['asset_series']}")
-    print(f"  Expected:      Rs {r['expected_crore']} Cr")
-    print(f"  Residual:      Rs {r['residual_crore']} Cr ({r['residual_ratio']}x)")
     print(f"  Level:         {r['unexplained_level']}")
     print(f"  Kalman anomaly:{len(r['kalman_result']['anomaly_years'])}")
     print(f"  Findings:      {len(r['findings'])}")

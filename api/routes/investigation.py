@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.get("/investigate/{entity_id}")
 def deep_investigate(entity_id: str, driver=Depends(get_db)):
-    logger.info(f"[Investigation] Deep investigate: {entity_id}")
+    logger.debug("[Investigation] Deep investigate request received")
     investigator = DeepInvestigator(driver=driver)
     with driver.session() as session:
         row = session.run(
@@ -32,14 +32,14 @@ def connection_map(
     b: str = Query(..., description="Entity B ID"),
     driver=Depends(get_db),
 ):
-    logger.info(f"[Investigation] Connection map: {a} → {b}")
+    logger.debug("[Investigation] Connection map request received")
     mapper = ConnectionMapper(driver=driver)
     return mapper.find_paths(a, b)
 
 
 @router.get("/node-evidence/{entity_id}")
 def node_evidence(entity_id: str, driver=Depends(get_db)):
-    logger.info(f"[Investigation] Node evidence: {entity_id}")
+    logger.debug("[Investigation] Node evidence request received")
     from fastapi import HTTPException
     with driver.session() as s:
         row = s.run(

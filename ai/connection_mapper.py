@@ -32,7 +32,7 @@ class ConnectionMapper:
             rows = session.run(
                 """
                 MATCH path = shortestPath(
-                  (a {id:$a})-[*1..5]-(b {id:$b})
+                  (a {id:$a})-[*1..$hops]-(b {id:$b})
                 )
                 RETURN [n IN nodes(path) | {id:n.id, name:n.name,
                         label:labels(n)[0]}] AS nodes,
@@ -40,7 +40,7 @@ class ConnectionMapper:
                        length(path) AS hops
                 LIMIT 10
                 """,
-                a=entity_a, b=entity_b
+                a=entity_a, b=entity_b, hops=max_hops
             ).data()
 
         paths = []
@@ -102,7 +102,7 @@ class ConnectionMapper:
                 """
                 MATCH (n {id:$id})-[r]-(m)
                 RETURN type(r) AS rel, labels(m)[0] AS node_type,
-                       m.name AS name, m.id AS mid,
+                       coalesce(m.name, m.title, m.product, m.item_desc, m.id) AS name, m.id AS mid,
                        m.state AS state
                 LIMIT 30
                 """,
