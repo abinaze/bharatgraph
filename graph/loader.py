@@ -85,26 +85,28 @@ class GraphLoader:
             logger.info(f"[Loader] DRY RUN: would run {len(SETUP_QUERIES)} setup queries")
             return
         with self.driver.session() as session:
-            # Try fulltext index (silent fail if already exists or unsupported)
+            # Try fulltext index — silent fail if already exists
             try:
                 session.run(
                     "CALL db.index.fulltext.createNodeIndex("
                     "'globalSearch',"
                     "['Politician','Company','Contract','AuditReport',"
                     " 'Scheme','Ministry','Party','PressRelease'],"
-                    "['name','title','aliases','item_desc','buyer_org',"
+                    "['name','title','aliases','item_desc','product','buyer_org',"
                     " 'cin','ministry','summary','seller_name']"
                     ")"
                 )
-            except Exception:
-                pass
+                logger.info("[Loader] Full-text index created or verified")
+            except Exception as e:
+                logger.debug(f"[Loader] Full-text index note: {e}")
 
-        for query in SETUP_QUERIES:
+            # Run all constraint/index setup queries inside the same session
+            for query in SETUP_QUERIES:
                 try:
                     session.run(query)
                 except Exception as e:
-                    # Constraints may already exist - that is fine
                     logger.debug(f"[Loader] Schema query skipped (may exist): {e}")
+
         logger.success("[Loader] Schema constraints and indexes ready")
 
     def _run(self, query: str, params: dict = None):
