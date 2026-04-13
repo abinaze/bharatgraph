@@ -107,10 +107,23 @@ def get_stats():
                 "MATCH ()-[r]->() RETURN type(r) AS t, count(r) AS c"
             ).data()
             rel_counts = {r["t"]: r["c"] for r in rows if r["t"]}
+    # Read last pipeline timestamp from Neo4j if stored
+    last_run = None
+    try:
+        if driver:
+            with driver.session() as session:
+                row = session.run(
+                    "MATCH (m:PipelineMeta) "
+                    "RETURN m.last_run AS ts ORDER BY m.last_run DESC LIMIT 1"
+                ).single()
+                last_run = row["ts"] if row else None
+    except Exception:
+        pass
+
     return StatsResponse(
         nodes=node_counts,
         relationships=rel_counts,
-        last_pipeline_run=None,
+        last_pipeline_run=last_run,
         generated_at=datetime.now().isoformat(),
     )
 
@@ -153,4 +166,7 @@ def debug_neo4j():
         driver.close()
         return {"status": "connected", "uri_prefix": uri[:20]}
     except Exception as e:
-        return {"status": "failed", "error": str(e), "uri_prefix": uri[:20]}
+        logger.warning(f"[Debug] Neo4j connection test failed: {type(e).__name__}")
+        return {"status": "failed",
+                "error": "Connection failed — check environment secrets",
+                "uri_prefix": uri[:20] if uri else "NOT SET"}
