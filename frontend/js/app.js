@@ -1,3 +1,9 @@
+function sanitize(str) {
+  const d = document.createElement("div");
+  d.textContent = String(str || "");
+  return d.innerHTML;
+}
+
 const State = {
   theme: localStorage.getItem("bg-theme") || "dark",
   language: "en",
