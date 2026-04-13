@@ -1,4 +1,10 @@
 const State = {
+// Sanitize untrusted strings before inserting into innerHTML
+function sanitize(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
   theme: localStorage.getItem("bg-theme") || "dark",
   language: "en",
   searchResults: [],
@@ -197,7 +203,7 @@ const Views = {
         <div class="container">
           <div class="search-bar" style="max-width:700px;margin-bottom:var(--space-6)">
             <input class="search-bar__input" id="search-input"
-                   value="${query}" placeholder="Search entities..."
+                   placeholder="Search entities..." id="search-input-field"
                    autocomplete="off">
             <button class="search-bar__btn" id="search-btn">Search</button>
           </div>
