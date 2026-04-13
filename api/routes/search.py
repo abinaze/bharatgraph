@@ -41,9 +41,11 @@ LABEL_QUERIES = {
     "contract": ("Contract",
         "MATCH (n:Contract) "
         "WHERE toLower(coalesce(n.item_desc,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.product,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.buyer_org,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.order_id,'')) CONTAINS toLower($q) "
-        "RETURN n.id AS id, coalesce(n.item_desc, n.order_id) AS name, "
+        "RETURN n.id AS id, "
+        "       coalesce(n.item_desc, n.product, n.order_id) AS name, "
         "       null AS state, null AS party LIMIT $limit"),
     "ministry": ("Ministry",
         "MATCH (n:Ministry) WHERE toLower(n.name) CONTAINS toLower($q) "
@@ -118,8 +120,11 @@ def search_entities(
                     results=results[:limit],
                     generated_at=datetime.now().isoformat(),
                 )
-        except Exception:
-            pass  # Fulltext index not ready — fall through to label-by-label
+        except Exception as ft_err:
+            logger.debug(
+                f"[Search] Full-text index unavailable, using label scan: "
+                f"{type(ft_err).__name__}"
+            )
 
     with driver.session() as session:
         if filter_type in ("all", ""):
