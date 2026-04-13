@@ -72,7 +72,7 @@ const Components = {
         <span style="font-weight:bold;font-size:16px;color:var(--accent-primary)">${icon}</span>
       </div>
       <div class="result-card__content">
-        <div class="result-card__name">${entity.name || entity.entity_id}</div>
+        <div class="result-card__name">${sanitize(entity.name || entity.entity_id || "")}</div>
         <div class="result-card__meta">
           <span class="badge badge--${type}">${entity.entity_type || ""}</span>
           ${entity.state ? `<span>${entity.state}</span>` : ""}
