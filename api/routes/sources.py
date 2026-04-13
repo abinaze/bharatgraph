@@ -44,8 +44,8 @@ def sources_summary(driver=Depends(get_db)):
             rows = s.run(
                 """
                 MATCH (n)
-                WHERE n.source IS NOT NULL
-                RETURN n.source AS source, count(*) AS total
+                WHERE n.source IS NOT NULL OR n.dataset IS NOT NULL
+                RETURN coalesce(n.dataset, n.source) AS source, count(*) AS total
                 ORDER BY total DESC
                 """
             ).data()

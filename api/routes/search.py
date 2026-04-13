@@ -43,6 +43,7 @@ LABEL_QUERIES = {
         "WHERE toLower(coalesce(n.item_desc,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.buyer_org,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.order_id,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.product,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, coalesce(n.item_desc, n.order_id) AS name, "
         "       null AS state, null AS party LIMIT $limit"),
     "ministry": ("Ministry",
@@ -118,8 +119,8 @@ def search_entities(
                     results=results[:limit],
                     generated_at=datetime.now().isoformat(),
                 )
-        except Exception:
-            pass  # Fulltext index not ready — fall through to label-by-label
+        except Exception as ft_err:
+            logger.debug(f"[Search] Full-text index unavailable: {type(ft_err).__name__}")
 
     with driver.session() as session:
         if filter_type in ("all", ""):
