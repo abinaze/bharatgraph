@@ -1,3 +1,9 @@
+function sanitize(str) {
+  const d = document.createElement("div");
+  d.textContent = String(str || "");
+  return d.innerHTML;
+}
+
 const Components = {
   Spinner: (size = "sm") => {
     const el = document.createElement("div");
@@ -66,7 +72,7 @@ const Components = {
         <span style="font-weight:bold;font-size:16px;color:var(--accent-primary)">${icon}</span>
       </div>
       <div class="result-card__content">
-        <div class="result-card__name">${entity.name || entity.entity_id}</div>
+        <div class="result-card__name">${sanitize(entity.name || entity.entity_id || "")}</div>
         <div class="result-card__meta">
           <span class="badge badge--${type}">${entity.entity_type || ""}</span>
           ${entity.state ? `<span>${entity.state}</span>` : ""}
@@ -113,9 +119,9 @@ const Components = {
     el.innerHTML = `
       <div class="feed-item__indicator feed-item__indicator--${level}"></div>
       <div style="flex:1">
-        <div class="feed-item__headline">${item.headline || item.message || ""}</div>
+        <div class="feed-item__headline">${sanitize(item.headline || item.message || "")}</div>
         <div class="feed-item__meta">
-          ${item.source ? `<span>${item.source}</span>` : ""}
+          ${item.source ? `<span>${sanitize(item.source)}</span>` : ""}
           ${item.detected_at
             ? `<span>${new Date(item.detected_at).toLocaleString("en-IN")}</span>`
             : ""}
