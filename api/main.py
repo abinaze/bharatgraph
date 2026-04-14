@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from api.dependencies import get_driver, close_driver
-from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial
+from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate
 from api.models import HealthResponse, StatsResponse
 
 
@@ -34,7 +34,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.26.0",
+    version="0.27.0",
     lifespan=lifespan,
 )
 
@@ -73,6 +73,7 @@ app.include_router(conflict.router,       tags=["Conflict"])
 app.include_router(linguistic.router,     tags=["Linguistic"])
 app.include_router(policy.router,         tags=["Policy"])
 app.include_router(adversarial.router,     tags=["Adversarial"])
+app.include_router(debate.router,          tags=["Debate"])
 
 
 @app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse)
@@ -87,7 +88,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.26.0",
+        version="0.27.0",
         generated_at=datetime.now().isoformat(),
     )
 
