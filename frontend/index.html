@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/components.css">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+    onerror="window._d3Failed=true;console.warn('D3 CDN failed')"
           integrity="sha512-vc58zeoRPCJhAkQJqFb0P2VkgSAp3XpAfNKrFd5rqIpY9i1r2FfBBq9vO2C0JimL7Wh8/Q3EJIHdM+bFa0cA=="
           crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
@@ -150,7 +151,7 @@
     // Ensure initial route is handled after all scripts load
     document.addEventListener('DOMContentLoaded', function() {
       if (window.Router) {
-        Router.handle();
+        Router.init();
       }
     });
   </script>
