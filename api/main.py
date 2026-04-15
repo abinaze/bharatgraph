@@ -34,7 +34,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.27.0",
+    version="0.28.0",
     lifespan=lifespan,
 )
 
@@ -88,7 +88,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.27.0",
+        version="0.28.0",
         generated_at=datetime.now().isoformat(),
     )
 
