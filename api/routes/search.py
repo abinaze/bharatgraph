@@ -58,6 +58,35 @@ LABEL_QUERIES = {
     "scheme": ("Scheme",
         "MATCH (n:Scheme) WHERE toLower(n.name) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.name AS name, null AS state, null AS party LIMIT $limit"),
+    "regulatory":    ("RegulatoryOrder",
+        "MATCH (n:RegulatoryOrder) "
+        "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.entity_name,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.title AS name, null AS state, null AS party LIMIT $limit"),
+    "enforcement":   ("EnforcementAction",
+        "MATCH (n:EnforcementAction) "
+        "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.accused,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.title AS name, null AS state, null AS party LIMIT $limit"),
+    "tender":        ("Tender",
+        "MATCH (n:Tender) "
+        "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.ministry,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.title AS name, null AS state, null AS party LIMIT $limit"),
+    "electoralbond": ("ElectoralBond",
+        "MATCH (n:ElectoralBond) "
+        "WHERE toLower(coalesce(n.purchaser_name,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.redeemed_by,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, coalesce(n.purchaser_name,n.redeemed_by) AS name, "
+        "null AS state, null AS party LIMIT $limit"),
+    "insolvency":    ("InsolvencyOrder",
+        "MATCH (n:InsolvencyOrder) "
+        "WHERE toLower(coalesce(n.company_name,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.company_name AS name, null AS state, null AS party LIMIT $limit"),
+    "ngo":           ("NGO",
+        "MATCH (n:NGO) "
+        "WHERE toLower(coalesce(n.ngo_name,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.ngo_name AS name, n.state AS state, null AS party LIMIT $limit"),
     "pressrelease": ("PressRelease",
         "MATCH (n:PressRelease) "
         "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
