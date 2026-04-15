@@ -65,6 +65,9 @@ const Components = {
     el.setAttribute("tabindex", "0");
     const type = (entity.entity_type || "").toLowerCase();
     const icons = { politician: "P", company: "C", contract: "K",
+                  tender: "T", regulatory: "R", enforcement: "E",
+                  electoralbond: "B", insolvency: "I", ngo: "N",
+                  ministry: "M", party: "W", scheme: "S",
                     auditreport: "A", ministry: "M" };
     const icon = icons[type] || "?";
     el.innerHTML = `

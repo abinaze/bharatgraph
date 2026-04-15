@@ -217,7 +217,7 @@ const Views = {
           <div style="display:flex;align-items:center;gap:var(--space-2);
                       margin-bottom:var(--space-6);flex-wrap:wrap">
             <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Filter:</span>
-            ${["All","politician","company","audit"].map(t => `
+            ${["All","politician","company","audit","contract","ministry","tender","electoralbond","regulatory","enforcement","insolvency","ngo"].map(t => `
               <button class="btn btn--sm ${type === t || (!type && t==="All") ? "btn--primary" : "btn--secondary"}"
                       onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!=="All"?"&type="+t.toLowerCase():""}')">
                 ${t.charAt(0).toUpperCase()+t.slice(1)}
