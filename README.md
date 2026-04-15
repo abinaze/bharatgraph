@@ -34,11 +34,39 @@ All language is analytically neutral and legally defensible.
 
 ---
 
+## API Endpoints (v0.28.0)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /search | Full-text search across all 16 node types |
+| GET | /profile/{id} | Entity profile with risk score |
+| GET | /graph/{id} | D3-compatible graph neighbourhood |
+| GET | /risk/{id} | Structural risk indicators |
+| GET | /investigate/{id} | 6-layer deep investigation |
+| GET | /biography/{id} | AI-generated biographical timeline |
+| GET | /adversarial/{id} | Competing hypotheses analysis |
+| GET | /debate/{id} | 7-agent structured debate |
+| GET | /policy/causal/{id} | Granger causality + CACA scoring |
+| GET | /benami/{id} | Proxy ownership detection |
+| GET | /procurement/bid-dna/{id} | Bid document fingerprinting |
+| GET | /procurement/cartel | Cartel pattern detection |
+| GET | /conflict/revolving-door/{id} | Cooling-off period violations |
+| GET | /conflict/tbml/{id} | Trade-based ML indicators |
+| GET | /linguistic/fingerprint/{id} | Authorship analysis |
+| GET | /sources | All 21 data sources with record counts |
+| GET | /export/{id} | PDF/HTML dossier generation |
+| GET | /admin/seed | Seed sample data |
+| POST | /admin/pipeline | Trigger full scrape pipeline |
+| GET | /stats | Node/relationship counts |
+| GET | /health | API health check (GET + HEAD) |
+
+
 ## Architecture
 
 ```
 bharatgraph/
   scrapers/          21 data collectors (17 Indian + 4 international)
+  graph/             Schema, loader (13 node types), seed, queries
   processing/        Name normalisation, entity resolution, parallel pipeline
   graph/             Neo4j schema, loader, Cypher queries, seed data
   ai/
@@ -50,7 +78,7 @@ bharatgraph/
     case_memory/     Solved case library, false positive tracking
   config/            22 language configurations
   api/
-    routes/          14 API route modules
+    routes/          19 API route modules
     middleware/       Rate limiter, security headers, input validator, audit logger
     models.py         Pydantic request/response models
   blockchain/        SHA-256 hash-chained audit log
@@ -75,7 +103,40 @@ bharatgraph/
 
 ---
 
+
 ## Data Sources
+
+### Indian Government (17 scrapers)
+
+| # | Source | Records Loaded As | Route |
+|---|--------|-------------------|-------|
+| 1 | MyNeta / ECI | `Politician` | /search, /profile |
+| 2 | MCA21 | `Company` | /search, /profile |
+| 3 | GeM | `Contract` | /search, /procurement |
+| 4 | CAG | `AuditReport` | /search, /profile |
+| 5 | PIB | `PressRelease` | /search |
+| 6 | Lok Sabha | `ParliamentQuestion` | /search |
+| 7 | SEBI | `RegulatoryOrder` | /search |
+| 8 | ED | `EnforcementAction` | /search |
+| 9 | CVC | `VigilanceCircular` | /search |
+| 10 | Electoral Bonds (ECI) | `ElectoralBond` | /search |
+| 11 | IBBI | `InsolvencyOrder` | /search |
+| 12 | NGO Darpan | `NGO` | /search |
+| 13 | CPPP | `Tender` | /search |
+| 14 | NCRB | `CrimeReport` | pipeline |
+| 15 | LGD | `LocalBody` | pipeline |
+| 16 | DataGov | `Document` (multi-schema) | pipeline |
+| 17 | NJDG | `CourtCase` | pipeline |
+
+### International (4 scrapers)
+
+| # | Source | Records Loaded As |
+|---|--------|-------------------|
+| 18 | ICIJ Offshore Leaks | `ICIJEntity` |
+| 19 | OpenSanctions | `SanctionedEntity` |
+| 20 | Wikidata | Enriches `Politician` |
+| 21 | UN SDG Data | `Document` |
+
 
 ### Indian Government (17 scrapers)
 

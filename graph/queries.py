@@ -57,7 +57,7 @@ QUERIES = {
     "ministry_audit_flags": {
         "description": "Ministries most flagged by CAG audit reports",
         "cypher": """
-        MATCH (a:AuditReport)-[:AUDITS]->(m:Ministry)
+        MATCH (a:AuditReport)-[:FLAGS]->(m:Ministry)
         WITH m, count(a) AS audit_count, sum(a.amount_crore) AS total_flagged
         RETURN m.name       AS ministry,
                audit_count,
