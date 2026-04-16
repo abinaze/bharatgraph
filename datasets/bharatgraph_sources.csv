@@ -1,0 +1,576 @@
+category,organization,source_name,source_url,source_type,coverage,notes
+core,OGD India,data.gov.in,https://data.gov.in,data portal,"Main open data hub, 7 lakh+ datasets","Main open data hub, 7 lakh+ datasets"
+core,OGD India,data.gov.in APIs,https://www.data.gov.in/apis,data portal,Machine-readable data APIs,Machine-readable data APIs
+core,OGD India,data.gov.in Sector Index,https://www.data.gov.in/sector,data portal,Sectoral dataset index,Sectoral dataset index
+core,OGD India,data.gov.in Metrics,https://www.data.gov.in/metrics,data portal,Publisher activity dashboard,Publisher activity dashboard
+core,OGD India,India.gov.in,https://www.india.gov.in,data portal,National citizen portal,National citizen portal
+core,OGD India,iGOD Organizations,https://igod.gov.in,data portal,Central govt directory,Central govt directory
+core,OGD India,iGOD Full Org List,https://igod.gov.in/ug/E002/organizations,data portal,Full organization directory,Full organization directory
+core,OGD India,MyGov,https://mygov.in,data portal,Citizen engagement platform,Citizen engagement platform
+legislation,Parliament/Legislation,India Code,https://www.indiacode.nic.in,legal,"All central acts, constitution, rules","All central acts, constitution, rules"
+legislation,Parliament/Legislation,Legislative Dept,https://legislative.gov.in,legal,"Acts, constitution, rules","Acts, constitution, rules"
+legislation,Parliament/Legislation,eGazette of India,https://egazette.nic.in,legal,"Ordinances, notifications, acts","Ordinances, notifications, acts"
+legislation,Parliament/Legislation,Lok Sabha Portal,https://loksabha.nic.in,legal,"Debates, questions, bills, members","Debates, questions, bills, members"
+legislation,Parliament/Legislation,Rajya Sabha Portal,https://rajyasabha.nic.in,legal,"Debates, questions, bills","Debates, questions, bills"
+legislation,Parliament/Legislation,Lok Sabha Questions Archive,https://loksabhadocs.nic.in,legal,Starred/unstarred questions,Starred/unstarred questions
+legislation,Parliament/Legislation,MPA Bills List,https://mpa.gov.in/bills-list,legal,Government bills introduced,Government bills introduced
+legislation,Parliament/Legislation,MPA Portal,https://mpa.gov.in,legal,Ministry of Parliamentary Affairs,Ministry of Parliamentary Affairs
+legislation,Parliament/Legislation,PRS India Bill Tracker,https://prsindia.org/legislation,legal,"Bill status, summaries","Bill status, summaries"
+legal_text,India Code,IPC 1860 Full Text,https://www.indiacode.nic.in/bitstream/123456789/2263/1/A1860-45.pdf,legislation,Indian Penal Code — all 511 sections,Indian Penal Code — all 511 sections
+legal_text,India Code,Constitution of India,https://www.indiacode.nic.in/handle/123456789/15240,legislation,"All articles, schedules, amendments","All articles, schedules, amendments"
+legal_text,India Code,CrPC Criminal Procedure Code,https://www.indiacode.nic.in/bitstream/123456789/1362/1/a1974-02.pdf,legislation,Code of Criminal Procedure,Code of Criminal Procedure
+legal_text,India Code,PMLA 2002,https://www.indiacode.nic.in/handle/123456789/2036,legislation,Prevention of Money Laundering Act,Prevention of Money Laundering Act
+legal_text,India Code,Prevention of Corruption Act,https://www.indiacode.nic.in/handle/123456789/2037,legislation,PCA 1988 with 2018 amendments,PCA 1988 with 2018 amendments
+legal_text,India Code,RTI Act 2005,https://www.indiacode.nic.in/handle/123456789/1872,legislation,Right to Information Act full text,Right to Information Act full text
+legal_text,India Code,Companies Act 2013,https://www.indiacode.nic.in/handle/123456789/2479,legislation,Corporate law provisions,Corporate law provisions
+legal_text,India Code,Forest Conservation Act 1980,https://www.indiacode.nic.in/handle/123456789/13482,legislation,"Forest diversion rules, FCA 1980","Forest diversion rules, FCA 1980"
+legal_text,India Code,Environment Protection Act 1986,https://www.indiacode.nic.in/handle/123456789/7654,legislation,EPA 1986 provisions,EPA 1986 provisions
+legal_text,India Code,FEMA 1999,https://www.indiacode.nic.in/handle/123456789/4679,legislation,Foreign exchange violations,Foreign exchange violations
+legal_text,India Code,Insolvency Bankruptcy Code IBC,https://ibbi.gov.in,legislation,IBC 2016 full text,IBC 2016 full text
+legal_text,India Code,SEBI Act 1992,https://www.sebi.gov.in/legal/acts/jun-1992/the-securities-and-exchange-board-of-india-act-1992_1.html,legislation,Securities regulation,Securities regulation
+legal_text,India Code,POCSO Act,https://www.indiacode.nic.in/handle/123456789/2132,legislation,Child protection act,Child protection act
+legal_text,India Code,Competition Act 2002,https://www.cci.gov.in/sites/default/files/the_competition_act.pdf,legislation,Antitrust and monopoly law,Antitrust and monopoly law
+legal_text,India Code,UAPA 1967,https://www.indiacode.nic.in/handle/123456789/2044,legislation,Unlawful activities prevention,Unlawful activities prevention
+legal_text,India Code,Wildlife Protection Act,https://www.indiacode.nic.in/handle/123456789/1753,legislation,"Wildlife crime, species protection","Wildlife crime, species protection"
+legal_text,India Code,DPDP Act 2023,https://www.meity.gov.in/writereaddata/files/Digital%20Personal%20Data%20Protection%20Act%202023.pdf,legislation,Digital personal data protection,Digital personal data protection
+legal_text,India Code,Scheduled Castes Act 1989,https://www.indiacode.nic.in/handle/123456789/1252,legislation,SC/ST prevention of atrocities,SC/ST prevention of atrocities
+judiciary,Courts/Judiciary,eCourts National Portal,https://ecourts.gov.in,court/legal,"Case status, orders, cause lists","Case status, orders, cause lists"
+judiciary,Courts/Judiciary,NJDG National Judicial Data Grid,https://njdg.ecourts.gov.in,court/legal,"Pendency, institution, disposal","Pendency, institution, disposal"
+judiciary,Courts/Judiciary,NJDG High Court Data,https://njdg.ecourts.gov.in/hcnjdg/,court/legal,HC pendency by case type,HC pendency by case type
+judiciary,Courts/Judiciary,NJDG District Courts,https://njdg.ecourts.gov.in/njdg_public/,court/legal,District court pendency live,District court pendency live
+judiciary,Courts/Judiciary,Supreme Court Judgments,https://www.sci.gov.in/judgements-case-no/,court/legal,All SC judgments searchable,All SC judgments searchable
+judiciary,Courts/Judiciary,SCI Latest Orders,https://www.sci.gov.in/latest-orders/,court/legal,Daily orders,Daily orders
+judiciary,Courts/Judiciary,SCI Landmark Judgments,https://www.sci.gov.in/landmark-judgment-summaries/,court/legal,Landmark case summaries,Landmark case summaries
+judiciary,Courts/Judiciary,NGT Judgments,https://greentribunal.gov.in/judgementOrder/zonalbenchwise,court/legal,Environment court orders,Environment court orders
+judiciary,Courts/Judiciary,eCourts Case Status API,https://services.ecourts.gov.in,court/legal,REST API for case tracking,REST API for case tracking
+judiciary,Courts/Judiciary,NCLT Portal,https://nclt.gov.in,court/legal,"Company law, insolvency cases","Company law, insolvency cases"
+judiciary,Courts/Judiciary,DRT Debt Recovery Tribunals,https://drtindia.gov.in,court/legal,"Debt recovery, NPA cases","Debt recovery, NPA cases"
+judiciary,Courts/Judiciary,ITAT Income Tax Tribunal,https://itat.gov.in,court/legal,Income tax disputes,Income tax disputes
+judiciary,Courts/Judiciary,CESTAT Tribunal,https://cestat.gov.in,court/legal,Customs and excise disputes,Customs and excise disputes
+judiciary,Courts/Judiciary,TDSAT Telecom Tribunal,https://www.tdsat.gov.in,court/legal,Telecom disputes,Telecom disputes
+judiciary,Courts/Judiciary,OGD Court Pendency Dataset,https://www.data.gov.in/resource/court-wise-number-pending-cases-district-and-subordinate-courts-high-courts-and-supreme,court/legal,Pendency stats dataset,Pendency stats dataset
+judiciary,Courts/Judiciary,Allahabad HC,https://www.allahabadhighcourt.in,court/legal,UP High Court — largest in India,UP High Court — largest in India
+judiciary,Courts/Judiciary,Bombay HC,https://bombayhighcourt.nic.in,court/legal,"Maharashtra, Goa, Dadra","Maharashtra, Goa, Dadra"
+judiciary,Courts/Judiciary,Madras HC,https://www.hcmadras.tn.nic.in,court/legal,"Tamil Nadu, Puducherry","Tamil Nadu, Puducherry"
+judiciary,Courts/Judiciary,Delhi HC,https://delhihighcourt.nic.in,court/legal,National capital territory,National capital territory
+judiciary,Courts/Judiciary,Calcutta HC,https://calcuttahighcourt.gov.in,court/legal,"West Bengal, Andaman","West Bengal, Andaman"
+judiciary,Courts/Judiciary,Karnataka HC,https://karnatakajudiciary.kar.nic.in,court/legal,Karnataka,Karnataka
+judiciary,Courts/Judiciary,Telangana HC,https://hcts.gov.in,court/legal,Telangana,Telangana
+judiciary,Courts/Judiciary,Kerala HC,https://www.hckerala.gov.in,court/legal,"Kerala, Lakshadweep","Kerala, Lakshadweep"
+judiciary,Courts/Judiciary,Gujarat HC,https://gujarathighcourt.nic.in,court/legal,Gujarat,Gujarat
+judiciary,Courts/Judiciary,Rajasthan HC,https://hcraj.nic.in,court/legal,Rajasthan — Jodhpur and Jaipur,Rajasthan — Jodhpur and Jaipur
+judiciary,Courts/Judiciary,Punjab & Haryana HC,https://highcourtchd.gov.in,court/legal,"Punjab, Haryana, Chandigarh","Punjab, Haryana, Chandigarh"
+judiciary,Courts/Judiciary,MP HC,https://mphc.gov.in,court/legal,Madhya Pradesh,Madhya Pradesh
+judiciary,Courts/Judiciary,Gauhati HC,https://ghconline.gov.in,court/legal,Assam and all NE states,Assam and all NE states
+judiciary,Courts/Judiciary,AP HC,https://hcap.nic.in,court/legal,Andhra Pradesh,Andhra Pradesh
+judiciary,Courts/Judiciary,Chhattisgarh HC,https://highcourt.cg.gov.in,court/legal,Chhattisgarh,Chhattisgarh
+judiciary,Courts/Judiciary,Jharkhand HC,https://jharkhandhighcourt.nic.in,court/legal,Jharkhand,Jharkhand
+judiciary,Courts/Judiciary,Orissa HC,https://orissahighcourt.nic.in,court/legal,Odisha,Odisha
+judiciary,Courts/Judiciary,Tripura HC,https://triphighcourt.gov.in,court/legal,Tripura,Tripura
+judiciary,Courts/Judiciary,Uttarakhand HC,https://uttarakhandhighcourt.net.in,court/legal,Uttarakhand,Uttarakhand
+judiciary,Courts/Judiciary,Himachal Pradesh HC,https://hphighcourt.nic.in,court/legal,Himachal Pradesh,Himachal Pradesh
+judiciary,Courts/Judiciary,Sikkim HC,https://sikkim.gov.in/highcourt,court/legal,Sikkim,Sikkim
+judiciary,Courts/Judiciary,Manipur HC,https://mhc.nic.in,court/legal,Manipur,Manipur
+judiciary,Courts/Judiciary,Meghalaya HC,https://meghalayahighcourt.nic.in,court/legal,Meghalaya,Meghalaya
+judiciary,Courts/Judiciary,Nagaland HC,https://nalhc.nic.in,court/legal,Nagaland,Nagaland
+judiciary,Courts/Judiciary,Jammu & Kashmir HC,https://jkhighcourt.nic.in,court/legal,J&K and Ladakh,J&K and Ladakh
+finance,Finance/Banking/Regulators,RBI DBIE Data Warehouse,https://data.rbi.org.in/DBIE/,financial data,"Macro, monetary, banking statistics","Macro, monetary, banking statistics"
+finance,Finance/Banking/Regulators,RBI Statistics,https://www.rbi.org.in/Scripts/Statistics.aspx,financial data,RBI publications,RBI publications
+finance,Finance/Banking/Regulators,RBI Enforcement Orders,https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx,financial data,Bank penalties,Bank penalties
+finance,Finance/Banking/Regulators,SEBI Statistics,https://www.sebi.gov.in/statistics/statistics.html,financial data,"Market stats, FPI, MF","Market stats, FPI, MF"
+finance,Finance/Banking/Regulators,SEBI Enforcement Orders,https://www.sebi.gov.in/enforcement/orders/,financial data,"Penalties, bans by entity","Penalties, bans by entity"
+finance,Finance/Banking/Regulators,SEBI Insider Trading Orders,https://www.sebi.gov.in/enforcement/orders/insider-trading/,financial data,Insider trading adjudications,Insider trading adjudications
+finance,Finance/Banking/Regulators,MCA21 Portal,https://www.mca.gov.in,financial data,"Company master, filings, directors","Company master, filings, directors"
+finance,Finance/Banking/Regulators,MCA Master Data Download,https://www.mca.gov.in/content/mca/global/hi/mca/master-data/MDS.html,financial data,Bulk company master data,Bulk company master data
+finance,Finance/Banking/Regulators,MCA ROC e-Filings,https://efiling.mca.gov.in,financial data,"Balance sheets, P&L, directors","Balance sheets, P&L, directors"
+finance,Finance/Banking/Regulators,Income Tax e-Filing,https://www.incometax.gov.in,financial data,"ITR filings, refunds, e-PAN","ITR filings, refunds, e-PAN"
+finance,Finance/Banking/Regulators,CBIC Customs GST,https://www.cbic.gov.in,financial data,"GST, customs, excise","GST, customs, excise"
+finance,Finance/Banking/Regulators,GST Portal,https://www.gst.gov.in,financial data,"GSTIN search, filing status","GSTIN search, filing status"
+finance,Finance/Banking/Regulators,CGA Controller General,https://cga.nic.in,financial data,Government expenditure accounts,Government expenditure accounts
+finance,Finance/Banking/Regulators,CAG Audit Reports,https://cag.gov.in,financial data,All CAG central/state audit reports,All CAG central/state audit reports
+finance,Finance/Banking/Regulators,CAG Compliance Reports,https://cag.gov.in/cag_old/content/compliance-audit-reports,financial data,Scheme compliance audits,Scheme compliance audits
+finance,Finance/Banking/Regulators,DEA Dept Economic Affairs,https://dea.gov.in,financial data,"Economic policy, debt, markets","Economic policy, debt, markets"
+finance,Finance/Banking/Regulators,DOE Dept of Expenditure,https://doe.gov.in,financial data,"Budget, expenditure management","Budget, expenditure management"
+finance,Finance/Banking/Regulators,DFS Financial Services,https://financialservices.gov.in,financial data,"Banking, insurance, pensions","Banking, insurance, pensions"
+finance,Finance/Banking/Regulators,DIPAM Disinvestment,https://dipam.gov.in,financial data,"PSU disinvestment, shareholding","PSU disinvestment, shareholding"
+finance,Finance/Banking/Regulators,Dept of Revenue,https://dor.gov.in,financial data,"Tax policy, enforcement","Tax policy, enforcement"
+finance,Finance/Banking/Regulators,IRDAI Insurance Regulator,https://irdai.gov.in,financial data,Insurance sector regulation,Insurance sector regulation
+finance,Finance/Banking/Regulators,PFRDA Pension Regulator,https://www.pfrda.org.in,financial data,"Pension funds, NPS data","Pension funds, NPS data"
+finance,Finance/Banking/Regulators,Finance Commission,https://fincomindia.nic.in,financial data,"Federal transfers, state grants","Federal transfers, state grants"
+finance,Finance/Banking/Regulators,FIU India,https://fiuindia.gov.in,financial data,"STR, anti-money laundering data","STR, anti-money laundering data"
+finance,Finance/Banking/Regulators,Open Budgets India,https://openbudgetsindia.org,financial data,All state budget documents,All state budget documents
+finance,Finance/Banking/Regulators,OGD Budget Datasets,https://www.data.gov.in/keywords/Budget,financial data,Year-wise budget datasets,Year-wise budget datasets
+finance,Finance/Banking/Regulators,OGD NPA Data,https://www.data.gov.in/keywords/NPA,financial data,Bank bad loans by year,Bank bad loans by year
+finance,Finance/Banking/Regulators,Ministry of Finance Portal,https://finmin.nic.in,financial data,Finance ministry portal,Finance ministry portal
+environment,Environment/Forest/Climate,MoEFCC Portal,https://moef.gov.in,environment data,"Environment policy, notifications","Environment policy, notifications"
+environment,Environment/Forest/Climate,PARIVESH Clearances,https://parivesh.nic.in,environment data,"Forest, wildlife, EC, CRZ clearances","Forest, wildlife, EC, CRZ clearances"
+environment,Environment/Forest/Climate,PARIVESH Project Search,https://parivesh.nic.in/newupload/,environment data,Project-wise clearance status,Project-wise clearance status
+environment,Environment/Forest/Climate,FSI Forest Survey India,https://fsi.nic.in,environment data,"Forest cover, fires, ISFR reports","Forest cover, fires, ISFR reports"
+environment,Environment/Forest/Climate,FSI ISFR 2023 Report,https://fsi.nic.in/forest-report/india-state-of-forest-report-2023,environment data,Biennial forest cover assessment,Biennial forest cover assessment
+environment,Environment/Forest/Climate,FSI Forest Fire Alerts,https://fsi.nic.in/forest-fire,environment data,MODIS/VIIRS real-time fire alerts,MODIS/VIIRS real-time fire alerts
+environment,Environment/Forest/Climate,CPCB Central Pollution Board,https://cpcb.nic.in,environment data,"Pollution standards, compliance","Pollution standards, compliance"
+environment,Environment/Forest/Climate,CPCB Real-time AQI,https://app.cpcbccr.com/AQI_India/,environment data,"PM2.5, PM10 city-wise live data","PM2.5, PM10 city-wise live data"
+environment,Environment/Forest/Climate,CPCB Water Quality,https://cpcb.nic.in/water-quality-data/,environment data,River water quality parameters,River water quality parameters
+environment,Environment/Forest/Climate,CPCB Industry Compliance,https://cpcb.nic.in/noc-for-industries/,environment data,Green/orange/red factory compliance,Green/orange/red factory compliance
+environment,Environment/Forest/Climate,NGT Forest/Env Orders,https://greentribunal.gov.in,environment data,"Forest, mining, pollution orders","Forest, mining, pollution orders"
+environment,Environment/Forest/Climate,CRZ Notifications MoEFCC,https://moef.gov.in/moef/index3.php?linkid=343&lang=1,environment data,"CRZ, mangrove protection orders","CRZ, mangrove protection orders"
+environment,Environment/Forest/Climate,Maharashtra Mangrove Cell,https://www.mangroves.maharashtra.gov.in,environment data,"Mumbai mangroves, coastal ecology","Mumbai mangroves, coastal ecology"
+environment,Environment/Forest/Climate,Maharashtra Forest Dept,https://mahaforest.gov.in,environment data,Western Ghats forest data,Western Ghats forest data
+environment,Environment/Forest/Climate,WCCB Wildlife Crime,https://wccb.gov.in,environment data,"Trafficking, poaching statistics","Trafficking, poaching statistics"
+environment,Environment/Forest/Climate,NTCA Tiger Authority,https://ntca.gov.in,environment data,"Tiger census, project tiger","Tiger census, project tiger"
+environment,Environment/Forest/Climate,CWC Central Water Commission,https://cwc.gov.in,environment data,"Reservoir levels, flood data","Reservoir levels, flood data"
+environment,Environment/Forest/Climate,India WRIS GIS Portal,https://indiawris.gov.in,environment data,GIS-based water resources,GIS-based water resources
+environment,Environment/Forest/Climate,CAMPA Fund Data,https://www.data.gov.in/catalog/state-wise-campa-funds,environment data,Compensatory afforestation funds,Compensatory afforestation funds
+environment,Environment/Forest/Climate,Bhuvan ISRO Geospatial,https://bhuvan.nrsc.gov.in,environment data,"India GIS portal, forest cover maps","India GIS portal, forest cover maps"
+environment,Environment/Forest/Climate,NRSC Open Data Archive,https://www.nrsc.gov.in/NRSC_Open_Data_Archive,environment data,Satellite data download,Satellite data download
+environment,Environment/Forest/Climate,MOSDAC Weather ISRO,https://www.mosdac.gov.in,environment data,INSAT-based weather data,INSAT-based weather data
+environment,Environment/Forest/Climate,CGWB Groundwater Board,https://cgwb.gov.in,environment data,District-wise groundwater monitoring,District-wise groundwater monitoring
+environment,Environment/Forest/Climate,OGD Environment Sector,https://www.data.gov.in/sector/Environment%20and%20Forest,environment data,All environment datasets,All environment datasets
+environment,Environment/Forest/Climate,OGD MoEFCC Catalog,https://www.data.gov.in/catalogs?ministry=Ministry+of+Environment%2C+Forest+and+Climate+Change,environment data,MoEFCC datasets,MoEFCC datasets
+environment,Environment/Forest/Climate,OGD Green India Mission,https://www.data.gov.in/catalog/green-india-mission-gim-data,environment data,"Afforestation, carbon sinks dataset","Afforestation, carbon sinks dataset"
+pollution_board,Maharashtra PCB,Maharashtra Pollution Control Board,https://mpcb.gov.in,state regulator,"Pollution monitoring, industry compliance, mangrove violations","Industrial consent, enforcement orders"
+pollution_board,Karnataka PCB,Karnataka Pollution Control Board,https://kspcb.karnataka.gov.in,state regulator,"Pollution board orders, consent management","Industrial consent, enforcement orders"
+pollution_board,Tamil Nadu PCB,Tamil Nadu Pollution Control Board,https://tnpcb.gov.in,state regulator,"Air, water, noise compliance, SIPCOT zones","Industrial consent, enforcement orders"
+pollution_board,Kerala PCB,Kerala Pollution Control Board,https://www.kspcb.kerala.gov.in,state regulator,"Kerala pollution data, coastal alerts","Industrial consent, enforcement orders"
+pollution_board,Delhi PCB,Delhi Pollution Control Board,https://dpcc.delhigovt.nic.in,state regulator,"Delhi pollution control, odd-even data","Industrial consent, enforcement orders"
+pollution_board,Gujarat PCB,Gujarat Pollution Control Board,https://gpcb.gujarat.gov.in,state regulator,"Industrial pollution, GIDC compliance","Industrial consent, enforcement orders"
+pollution_board,Andhra Pradesh PCB,Andhra Pradesh Pollution Control Board,https://www.appcb.ap.gov.in,state regulator,AP pollution board orders,"Industrial consent, enforcement orders"
+pollution_board,Telangana PCB,Telangana Pollution Control Board,https://tspcb.cgg.gov.in,state regulator,"TS pollution board, industry consents","Industrial consent, enforcement orders"
+pollution_board,Rajasthan PCB,Rajasthan Pollution Control Board,https://www.rpcb.nic.in,state regulator,Rajasthan pollution compliance,"Industrial consent, enforcement orders"
+pollution_board,West Bengal PCB,West Bengal Pollution Control Board,https://www.wbpcb.gov.in,state regulator,"WB pollution, tanneries, factories, Ganga","Industrial consent, enforcement orders"
+pollution_board,Odisha PCB,Odisha Pollution Control Board,https://ospcb.gov.in,state regulator,"Odisha pollution board, mining areas","Industrial consent, enforcement orders"
+pollution_board,Uttar Pradesh PCB,Uttar Pradesh Pollution Control Board,https://uppcb.com,state regulator,"UP pollution board, industrial zones","Industrial consent, enforcement orders"
+pollution_board,Madhya Pradesh PCB,Madhya Pradesh Pollution Control Board,https://mppcb.mp.gov.in,state regulator,"MP pollution data, Bhopal legacy","Industrial consent, enforcement orders"
+pollution_board,Punjab PCB,Punjab Pollution Control Board,https://www.ppcb.gov.in,state regulator,"Punjab pollution, Sutlej river data","Industrial consent, enforcement orders"
+pollution_board,Haryana PCB,Haryana Pollution Control Board,https://hppcb.gov.in,state regulator,Haryana pollution compliance,"Industrial consent, enforcement orders"
+pollution_board,Bihar PCB,Bihar Pollution Control Board,https://bspcb.bih.nic.in,state regulator,Bihar pollution board,"Industrial consent, enforcement orders"
+pollution_board,Jharkhand PCB,Jharkhand Pollution Control Board,https://jpb.jharkhand.gov.in,state regulator,"Jharkhand pollution, mining zones","Industrial consent, enforcement orders"
+pollution_board,Assam PCB,Assam Pollution Control Board,https://apcb.gov.in,state regulator,Assam pollution board,"Industrial consent, enforcement orders"
+pollution_board,Chhattisgarh PCB,Chhattisgarh Pollution Control Board,https://cgpb.gov.in,state regulator,"CG pollution, coal and steel zones","Industrial consent, enforcement orders"
+pollution_board,Uttarakhand PCB,Uttarakhand Pollution Control Board,https://ubpcb.uk.gov.in,state regulator,Uttarakhand pollution board,"Industrial consent, enforcement orders"
+pollution_board,Goa PCB,Goa Pollution Control Board,https://gpcb.gov.in,state regulator,"Goa pollution, mining, coastal","Industrial consent, enforcement orders"
+pollution_board,Nagaland PCB,Nagaland Pollution Control Board,https://nagalandpcb.gov.in,state regulator,Nagaland PCB,"Industrial consent, enforcement orders"
+pollution_board,Manipur PCB,Manipur Pollution Control Board,https://manipurpcb.gov.in,state regulator,Manipur PCB,"Industrial consent, enforcement orders"
+pollution_board,Meghalaya PCB,Meghalaya Pollution Control Board,https://meghalayapcb.gov.in,state regulator,Meghalaya PCB,"Industrial consent, enforcement orders"
+pollution_board,Tripura PCB,Tripura Pollution Control Board,https://tripurapcb.gov.in,state regulator,Tripura PCB,"Industrial consent, enforcement orders"
+pollution_board,Mizoram PCB,Mizoram Pollution Control Board,https://mizorampcb.gov.in,state regulator,Mizoram PCB,"Industrial consent, enforcement orders"
+pollution_board,Sikkim PCB,Sikkim Pollution Control Board,https://sikkimpcb.gov.in,state regulator,Sikkim PCB,"Industrial consent, enforcement orders"
+pollution_board,Arunachal Pradesh PCB,Arunachal Pradesh Pollution Control Board,https://arunachalpradeshpcb.gov.in,state regulator,Arunachal Pradesh PCB,"Industrial consent, enforcement orders"
+state_forest,Karnataka Forest Dept,Karnataka Forest Department,https://aranya.gov.in,forest dept,"Forest management, permits, wildlife","Forest diversion, tree felling, wildlife data"
+state_forest,Kerala Forest Dept,Kerala Forest Department,https://forest.kerala.gov.in,forest dept,"Western Ghats, eco-sensitive zones","Forest diversion, tree felling, wildlife data"
+state_forest,Tamil Nadu Forest Dept,Tamil Nadu Forest Department,https://www.forests.tn.gov.in,forest dept,"TN forests, biosphere reserves","Forest diversion, tree felling, wildlife data"
+state_forest,Andhra Pradesh Forest Dept,Andhra Pradesh Forest Department,https://forests.ap.gov.in,forest dept,AP forest management,"Forest diversion, tree felling, wildlife data"
+state_forest,Telangana Forest Dept,Telangana Forest Department,https://forests.telangana.gov.in,forest dept,Telangana forest data,"Forest diversion, tree felling, wildlife data"
+state_forest,Gujarat Forest Dept,Gujarat Forest Department,https://forests.gujarat.gov.in,forest dept,Gujarat forest dept,"Forest diversion, tree felling, wildlife data"
+state_forest,Rajasthan Forest Dept,Rajasthan Forest Department,https://forest.rajasthan.gov.in,forest dept,"Rajasthan forests, desert ecology","Forest diversion, tree felling, wildlife data"
+state_forest,Madhya Pradesh Forest Dept,Madhya Pradesh Forest Department,https://forest.mp.gov.in,forest dept,"MP forests, tiger reserves","Forest diversion, tree felling, wildlife data"
+state_forest,Uttar Pradesh Forest Dept,Uttar Pradesh Forest Department,https://forest.up.gov.in,forest dept,"UP forest, Terai zone","Forest diversion, tree felling, wildlife data"
+state_forest,Uttarakhand Forest Dept,Uttarakhand Forest Department,https://forests.uk.gov.in,forest dept,"Uttarakhand forests, Himalaya","Forest diversion, tree felling, wildlife data"
+state_forest,Himachal Pradesh Forest Dept,Himachal Pradesh Forest Department,https://hpforest.nic.in,forest dept,"HP forests, apple belt","Forest diversion, tree felling, wildlife data"
+state_forest,Odisha Forest Dept,Odisha Forest Department,https://forests.odisha.gov.in,forest dept,"Odisha forests, tribal forest rights","Forest diversion, tree felling, wildlife data"
+state_forest,Bihar Forest Dept,Bihar Forest Department,https://forest.bih.nic.in,forest dept,Bihar forest dept,"Forest diversion, tree felling, wildlife data"
+state_forest,West Bengal Forest Dept,West Bengal Forest Department,https://westbengalforest.gov.in,forest dept,"WB forests, Sundarbans","Forest diversion, tree felling, wildlife data"
+state_forest,Assam Forest Dept,Assam Forest Department,https://assamforest.in,forest dept,"Assam forests, Kaziranga adjacent","Forest diversion, tree felling, wildlife data"
+state_forest,Jharkhand Forest Dept,Jharkhand Forest Department,https://www.jharkhandforest.org,forest dept,"Jharkhand forest, mineral belt","Forest diversion, tree felling, wildlife data"
+state_forest,Goa Forest Dept,Goa Forest Department,https://goaforest.com,forest dept,"Goa forests, Western Ghats, mining","Forest diversion, tree felling, wildlife data"
+state_forest,Punjab Forest Dept,Punjab Forest Department,https://forests.punjab.gov.in,forest dept,Punjab forest dept,"Forest diversion, tree felling, wildlife data"
+state_forest,Delhi Forest Dept,Delhi Forest Department,https://forest.delhi.gov.in,forest dept,"Delhi forest dept, ridges","Forest diversion, tree felling, wildlife data"
+state_forest,Chhattisgarh Forest Dept,Chhattisgarh Forest Department,https://forest.cg.gov.in,forest dept,"CG forests, tribal areas","Forest diversion, tree felling, wildlife data"
+state_forest,Haryana Forest Dept,Haryana Forest Department,https://haryanaforestsf.gov.in,forest dept,Haryana forest dept,"Forest diversion, tree felling, wildlife data"
+state_forest,Manipur Forest Dept,Manipur Forest Department,https://forest.manipur.gov.in,forest dept,Manipur forest dept,"Forest diversion, tree felling, wildlife data"
+state_forest,Nagaland Forest Dept,Nagaland Forest Department,https://forest.nagaland.gov.in,forest dept,"Nagaland forest, community forests","Forest diversion, tree felling, wildlife data"
+state_forest,Tripura Forest Dept,Tripura Forest Department,https://forest.tripura.gov.in,forest dept,Tripura forest dept,"Forest diversion, tree felling, wildlife data"
+state_forest,Meghalaya Forest Dept,Meghalaya Forest Department,https://forest.meghalaya.gov.in,forest dept,"Meghalaya forests, sacred groves","Forest diversion, tree felling, wildlife data"
+state_forest,Mizoram Forest Dept,Mizoram Forest Department,https://forest.mizoram.gov.in,forest dept,Mizoram forests,"Forest diversion, tree felling, wildlife data"
+state_forest,Sikkim Forest Dept,Sikkim Forest Department,https://forest.sikkim.gov.in,forest dept,Sikkim forests,"Forest diversion, tree felling, wildlife data"
+state_forest,Arunachal Pradesh Forest Dept,Arunachal Pradesh Forest Department,https://forest.arunachalpradesh.gov.in,forest dept,Arunachal Pradesh forests,"Forest diversion, tree felling, wildlife data"
+state_gazette,Tamil Nadu,Tamil Nadu e-Gazette,https://stationeryprinting.tn.gov.in/gazette/,official gazette,"TN official notifications, land orders","Government notifications, land/forest/revenue orders"
+state_gazette,Maharashtra,Maharashtra e-Gazette,https://egazette.maharashtra.gov.in,official gazette,"MH gazette, environment orders","Government notifications, land/forest/revenue orders"
+state_gazette,Karnataka,Karnataka e-Gazette,https://gazettedept.kar.nic.in,official gazette,"KA gazette, forest/land orders","Government notifications, land/forest/revenue orders"
+state_gazette,Kerala,Kerala e-Gazette,https://egazette.kerala.gov.in,official gazette,"KL gazette, coastal orders","Government notifications, land/forest/revenue orders"
+state_gazette,Andhra Pradesh,Andhra Pradesh e-Gazette,https://apgazette.ap.gov.in,official gazette,"AP gazette, revenue orders","Government notifications, land/forest/revenue orders"
+state_gazette,Telangana,Telangana e-Gazette,https://gazette.telangana.gov.in,official gazette,"TS gazette, urban/env orders","Government notifications, land/forest/revenue orders"
+state_gazette,Gujarat,Gujarat e-Gazette,https://gujgazette.gov.in,official gazette,"GJ gazette, industrial/port orders","Government notifications, land/forest/revenue orders"
+state_gazette,Rajasthan,Rajasthan e-Gazette,https://rajpatra.rajasthan.gov.in,official gazette,"RJ gazette, mining orders","Government notifications, land/forest/revenue orders"
+state_gazette,West Bengal,West Bengal e-Gazette,https://wb.gov.in/pages/view/69-wb-gazette,official gazette,"WB gazette, Sundarbans orders","Government notifications, land/forest/revenue orders"
+state_gazette,Uttar Pradesh,Uttar Pradesh e-Gazette,https://upegazette.nic.in,official gazette,"UP gazette, revenue, forest orders","Government notifications, land/forest/revenue orders"
+state_gazette,Madhya Pradesh,Madhya Pradesh e-Gazette,https://mpgazette.nic.in,official gazette,"MP gazette, environment orders","Government notifications, land/forest/revenue orders"
+state_gazette,Bihar,Bihar e-Gazette,https://egazette.bih.nic.in,official gazette,Bihar gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Punjab,Punjab e-Gazette,https://egazette.punjab.gov.in,official gazette,Punjab gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Odisha,Odisha e-Gazette,https://odisha.gov.in/gazette,official gazette,Odisha gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Chhattisgarh,Chhattisgarh e-Gazette,https://cggazette.nic.in,official gazette,"CG gazette, mining/forest","Government notifications, land/forest/revenue orders"
+state_gazette,Delhi,Delhi e-Gazette,https://delhi.gov.in/page/delhi-gazette,official gazette,Delhi gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Assam,Assam e-Gazette,https://www.assam.gov.in/documents/gazette,official gazette,Assam gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Haryana,Haryana e-Gazette,https://haryana.gov.in/documents/gazette,official gazette,Haryana gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Jharkhand,Jharkhand e-Gazette,https://egazette.jharkhand.gov.in,official gazette,Jharkhand gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Himachal Pradesh,Himachal Pradesh e-Gazette,https://egazette.himachalpradesh.gov.in,official gazette,HP gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Uttarakhand,Uttarakhand e-Gazette,https://egazette.uttarakhand.gov.in,official gazette,Uttarakhand gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Goa,Goa e-Gazette,https://egazette.goa.gov.in,official gazette,"Goa gazette, coastal zone orders","Government notifications, land/forest/revenue orders"
+state_gazette,Tripura,Tripura e-Gazette,https://egazette.tripura.gov.in,official gazette,Tripura gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Manipur,Manipur e-Gazette,https://egazette.manipur.gov.in,official gazette,Manipur gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Meghalaya,Meghalaya e-Gazette,https://egazette.meghalaya.gov.in,official gazette,Meghalaya gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Nagaland,Nagaland e-Gazette,https://egazette.nagaland.gov.in,official gazette,Nagaland gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Mizoram,Mizoram e-Gazette,https://egazette.mizoram.gov.in,official gazette,Mizoram gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Sikkim,Sikkim e-Gazette,https://egazette.sikkim.gov.in,official gazette,Sikkim gazette,"Government notifications, land/forest/revenue orders"
+state_gazette,Arunachal Pradesh,Arunachal Pradesh e-Gazette,https://egazette.arunachalpradesh.gov.in,official gazette,Arunachal gazette,"Government notifications, land/forest/revenue orders"
+state_data,Andhra Pradesh,Andhra Pradesh Open Data/Portal,https://ap.data.gov.in,state portal,AP state open data,State government data and services
+state_data,Karnataka,Karnataka Open Data/Portal,https://karnataka.data.gov.in,state portal,KA state open data,State government data and services
+state_data,Kerala,Kerala Open Data/Portal,https://kerala.data.gov.in,state portal,KL state open data,State government data and services
+state_data,Tamil Nadu,Tamil Nadu Open Data/Portal,https://tn.data.gov.in,state portal,TN state open data,State government data and services
+state_data,Odisha,Odisha Open Data/Portal,https://odisha.data.gov.in,state portal,Odisha state open data,State government data and services
+state_data,Punjab,Punjab Open Data/Portal,https://punjab.data.gov.in,state portal,Punjab state open data,State government data and services
+state_data,Uttar Pradesh,Uttar Pradesh Open Data/Portal,https://up.data.gov.in,state portal,UP state open data,State government data and services
+state_data,Jammu Kashmir,Jammu Kashmir Open Data/Portal,https://jk.data.gov.in,state portal,JK state open data,State government data and services
+state_data,Telangana,Telangana Open Data/Portal,https://data.telangana.gov.in,state portal,Telangana open data,State government data and services
+state_data,Sikkim,Sikkim Open Data/Portal,https://sikkim.data.gov.in,state portal,Sikkim open data,State government data and services
+state_data,Maharashtra,Maharashtra Open Data/Portal,https://data.maharashtra.gov.in,state portal,Maharashtra open data,State government data and services
+state_data,Rajasthan Jan Soochna,Rajasthan Jan Soochna Open Data/Portal,https://jansoochna.rajasthan.gov.in,state portal,Rajasthan RTI and open data,State government data and services
+state_data,Bihar State Portal,Bihar State Portal Open Data/Portal,https://state.bihar.gov.in,state portal,Bihar state portal and data,State government data and services
+state_data,West Bengal Portal,West Bengal Portal Open Data/Portal,https://wb.gov.in,state portal,West Bengal government portal,State government data and services
+state_data,Delhi Portal,Delhi Portal Open Data/Portal,https://delhi.gov.in,state portal,Delhi government portal,State government data and services
+state_data,Assam Portal,Assam Portal Open Data/Portal,https://assam.gov.in,state portal,Assam government portal,State government data and services
+state_data,Chhattisgarh Portal,Chhattisgarh Portal Open Data/Portal,https://cgstate.gov.in,state portal,Chhattisgarh portal,State government data and services
+state_data,Jharkhand Portal,Jharkhand Portal Open Data/Portal,https://jharkhand.gov.in,state portal,Jharkhand government portal,State government data and services
+state_data,Himachal Pradesh Portal,Himachal Pradesh Portal Open Data/Portal,https://himachal.nic.in,state portal,HP government portal,State government data and services
+state_data,Uttarakhand Portal,Uttarakhand Portal Open Data/Portal,https://uk.gov.in,state portal,Uttarakhand portal,State government data and services
+state_data,Goa Portal,Goa Portal Open Data/Portal,https://goa.gov.in,state portal,Goa government portal,State government data and services
+state_data,Haryana Portal,Haryana Portal Open Data/Portal,https://haryana.gov.in,state portal,Haryana portal,State government data and services
+state_data,Tripura Portal,Tripura Portal Open Data/Portal,https://tripura.gov.in,state portal,Tripura portal,State government data and services
+state_data,Meghalaya Portal,Meghalaya Portal Open Data/Portal,https://meghalaya.gov.in,state portal,Meghalaya portal,State government data and services
+state_data,Manipur Portal,Manipur Portal Open Data/Portal,https://manipur.gov.in,state portal,Manipur portal,State government data and services
+state_data,Nagaland Portal,Nagaland Portal Open Data/Portal,https://nagaland.gov.in,state portal,Nagaland portal,State government data and services
+state_data,Arunachal Pradesh Portal,Arunachal Pradesh Portal Open Data/Portal,https://arunachalpradesh.gov.in,state portal,AP portal,State government data and services
+state_data,Mizoram Portal,Mizoram Portal Open Data/Portal,https://mizoram.gov.in,state portal,Mizoram portal,State government data and services
+state_data,Sikkim Portal,Sikkim Portal Open Data/Portal,https://sikkim.gov.in,state portal,Sikkim portal,State government data and services
+state_data,Madhya Pradesh eDistrict,Madhya Pradesh eDistrict Open Data/Portal,https://mpedistrict.gov.in,state portal,MP e-district services,State government data and services
+state_data,Gujarat Portal,Gujarat Portal Open Data/Portal,https://gujarat.gov.in,state portal,Gujarat government portal,State government data and services
+ibef,India Brand Equity Foundation (IBEF),IBEF Home,https://www.ibef.org,economy data,India Brand Equity Foundation portal,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Indian Economy Overview,https://www.ibef.org/economy/indian-economy-overview,economy data,"Economy overview, GDP, trade",IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Foreign Direct Investment,https://www.ibef.org/economy/foreign-direct-investment,economy data,FDI data and trends,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Government Schemes,https://www.ibef.org/economy/government-schemes,economy data,All major government schemes,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Make in India,https://www.ibef.org/economy/make-in-india,economy data,Make in India initiative data,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Union Budget 2025-26,https://www.ibef.org/economy/union-budget-2025-26,economy data,Budget analysis,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Union Budget 2026-27,https://www.ibef.org/economy/union-budget-2026-27,economy data,Budget analysis,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Economic Survey 2025-26,https://www.ibef.org/economy/economic-survey-2025-26,economy data,Economic survey,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Export By Products,https://www.ibef.org/export-products,economy data,Export product data,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Export By Country,https://www.ibef.org/indian-exports,economy data,Export country data,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Monthly Economic Report,https://www.ibef.org/economy/monthly-economic-report,economy data,Monthly economic data,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),Startup India,https://www.ibef.org/economy/startup-india,economy data,Startup ecosystem data,IBEF sector analysis and investment data
+ibef,India Brand Equity Foundation (IBEF),IBEF Agriculture Sector,https://www.ibef.org/industry/agriculture-india,industry report,IBEF sector analysis: Agriculture,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Automobiles Sector,https://www.ibef.org/industry/automobiles,industry report,IBEF sector analysis: Automobiles,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Aviation Sector,https://www.ibef.org/industry/aviation,industry report,IBEF sector analysis: Aviation,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Banking Sector,https://www.ibef.org/industry/banking,industry report,IBEF sector analysis: Banking,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Biotechnology Sector,https://www.ibef.org/industry/biotechnology,industry report,IBEF sector analysis: Biotechnology,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Defence Manufacturing Sector,https://www.ibef.org/industry/defence-manufacturing,industry report,IBEF sector analysis: Defence Manufacturing,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF E-Commerce Sector,https://www.ibef.org/industry/e-commerce,industry report,IBEF sector analysis: E-Commerce,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Education Sector,https://www.ibef.org/industry/education-and-training,industry report,IBEF sector analysis: Education,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Electric Vehicles Sector,https://www.ibef.org/industry/electric-vehicle,industry report,IBEF sector analysis: Electric Vehicles,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Electronics ESDM Sector,https://www.ibef.org/industry/electronics-system-design-manufacturing,industry report,IBEF sector analysis: Electronics ESDM,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Financial Services Sector,https://www.ibef.org/industry/financial-services,industry report,IBEF sector analysis: Financial Services,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Food Processing Sector,https://www.ibef.org/industry/food-processing,industry report,IBEF sector analysis: Food Processing,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Healthcare Sector,https://www.ibef.org/industry/healthcare,industry report,IBEF sector analysis: Healthcare,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Infrastructure Sector,https://www.ibef.org/industry/infrastructure,industry report,IBEF sector analysis: Infrastructure,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF IT & BPM Sector,https://www.ibef.org/industry/it-bpm,industry report,IBEF sector analysis: IT & BPM,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Manufacturing Sector,https://www.ibef.org/industry/manufacturing-sector-india,industry report,IBEF sector analysis: Manufacturing,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Metals and Mining Sector,https://www.ibef.org/industry/metals-and-mining,industry report,IBEF sector analysis: Metals and Mining,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF MSME Sector,https://www.ibef.org/industry/msme,industry report,IBEF sector analysis: MSME,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Oil and Gas Sector,https://www.ibef.org/industry/oil-and-gas,industry report,IBEF sector analysis: Oil and Gas,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Pharmaceuticals Sector,https://www.ibef.org/industry/pharmaceuticals,industry report,IBEF sector analysis: Pharmaceuticals,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Power Sector,https://www.ibef.org/industry/power,industry report,IBEF sector analysis: Power,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Railways Sector,https://www.ibef.org/industry/railways,industry report,IBEF sector analysis: Railways,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Real Estate Sector,https://www.ibef.org/industry/real-estate,industry report,IBEF sector analysis: Real Estate,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Renewable Energy Sector,https://www.ibef.org/industry/renewable-energy,industry report,IBEF sector analysis: Renewable Energy,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Retail Sector,https://www.ibef.org/industry/retail,industry report,IBEF sector analysis: Retail,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Roads Sector,https://www.ibef.org/industry/roads,industry report,IBEF sector analysis: Roads,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Steel Sector,https://www.ibef.org/industry/steel,industry report,IBEF sector analysis: Steel,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Telecommunications Sector,https://www.ibef.org/industry/telecommunications,industry report,IBEF sector analysis: Telecommunications,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Textiles Sector,https://www.ibef.org/industry/textiles,industry report,IBEF sector analysis: Textiles,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Tourism and Hospitality Sector,https://www.ibef.org/industry/tourism-and-hospitality,industry report,IBEF sector analysis: Tourism and Hospitality,Sector-wise investment and market data
+ibef,India Brand Equity Foundation (IBEF),IBEF Andhra Pradesh,https://www.ibef.org/states/andhra-pradesh,state investment profile,State economy and investment profile: Andhra Pradesh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Arunachal Pradesh,https://www.ibef.org/states/arunachal-pradesh,state investment profile,State economy and investment profile: Arunachal Pradesh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Assam,https://www.ibef.org/states/assam,state investment profile,State economy and investment profile: Assam,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Bihar,https://www.ibef.org/states/bihar,state investment profile,State economy and investment profile: Bihar,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Chhattisgarh,https://www.ibef.org/states/chhattisgarh,state investment profile,State economy and investment profile: Chhattisgarh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Delhi,https://www.ibef.org/states/delhi,state investment profile,State economy and investment profile: Delhi,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Goa,https://www.ibef.org/states/goa,state investment profile,State economy and investment profile: Goa,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Gujarat,https://www.ibef.org/states/gujarat,state investment profile,State economy and investment profile: Gujarat,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Haryana,https://www.ibef.org/states/haryana,state investment profile,State economy and investment profile: Haryana,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Himachal Pradesh,https://www.ibef.org/states/himachal-pradesh,state investment profile,State economy and investment profile: Himachal Pradesh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Jammu and Kashmir,https://www.ibef.org/states/jammu-and-kashmir,state investment profile,State economy and investment profile: Jammu and Kashmir,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Jharkhand,https://www.ibef.org/states/jharkhand,state investment profile,State economy and investment profile: Jharkhand,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Karnataka,https://www.ibef.org/states/karnataka,state investment profile,State economy and investment profile: Karnataka,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Kerala,https://www.ibef.org/states/kerala,state investment profile,State economy and investment profile: Kerala,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Ladakh,https://www.ibef.org/states/ladakh,state investment profile,State economy and investment profile: Ladakh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Madhya Pradesh,https://www.ibef.org/states/madhya-pradesh,state investment profile,State economy and investment profile: Madhya Pradesh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Maharashtra,https://www.ibef.org/states/maharashtra,state investment profile,State economy and investment profile: Maharashtra,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Manipur,https://www.ibef.org/states/manipur,state investment profile,State economy and investment profile: Manipur,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Meghalaya,https://www.ibef.org/states/meghalaya,state investment profile,State economy and investment profile: Meghalaya,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Mizoram,https://www.ibef.org/states/mizoram,state investment profile,State economy and investment profile: Mizoram,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Nagaland,https://www.ibef.org/states/nagaland,state investment profile,State economy and investment profile: Nagaland,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Odisha,https://www.ibef.org/states/odisha,state investment profile,State economy and investment profile: Odisha,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Punjab,https://www.ibef.org/states/punjab,state investment profile,State economy and investment profile: Punjab,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Rajasthan,https://www.ibef.org/states/rajasthan,state investment profile,State economy and investment profile: Rajasthan,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Sikkim,https://www.ibef.org/states/sikkim,state investment profile,State economy and investment profile: Sikkim,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Tamil Nadu,https://www.ibef.org/states/tamil-nadu,state investment profile,State economy and investment profile: Tamil Nadu,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Telangana,https://www.ibef.org/states/telangana,state investment profile,State economy and investment profile: Telangana,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Tripura,https://www.ibef.org/states/tripura,state investment profile,State economy and investment profile: Tripura,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Uttar Pradesh,https://www.ibef.org/states/uttar-pradesh,state investment profile,State economy and investment profile: Uttar Pradesh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Uttarakhand,https://www.ibef.org/states/uttarakhand,state investment profile,State economy and investment profile: Uttarakhand,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF West Bengal,https://www.ibef.org/states/west-bengal,state investment profile,State economy and investment profile: West Bengal,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Andaman & Nicobar,https://www.ibef.org/states/andaman-nicobar,state investment profile,State economy and investment profile: Andaman & Nicobar,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Chandigarh,https://www.ibef.org/states/chandigarh,state investment profile,State economy and investment profile: Chandigarh,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Puducherry,https://www.ibef.org/states/puducherry,state investment profile,State economy and investment profile: Puducherry,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Lakshadweep,https://www.ibef.org/states/lakshadweep,state investment profile,State economy and investment profile: Lakshadweep,State-wise economy overview
+ibef,India Brand Equity Foundation (IBEF),IBEF Dadra Nagar Haveli,https://www.ibef.org/states/dadra-nagar-haveli-and-daman-diu,state investment profile,State economy and investment profile: Dadra Nagar Haveli,State-wise economy overview
+defence,Defence/DRDO/DPSUs,MoD Portal,https://mod.gov.in,defence data,"Defence policy, procurement","Defence policy, procurement"
+defence,Defence/DRDO/DPSUs,DRDO Portal,https://drdo.gov.in,defence data,"Defence R&D, labs, projects","Defence R&D, labs, projects"
+defence,Defence/DRDO/DPSUs,DRDO Annual Report,https://drdo.gov.in/annual-reports,defence data,Defence R&D budget and projects,Defence R&D budget and projects
+defence,Defence/DRDO/DPSUs,Defence Acquisition Portal DAP,https://dap.mod.gov.in,defence data,"DAP 2020 acquisitions, vendor lists","DAP 2020 acquisitions, vendor lists"
+defence,Defence/DRDO/DPSUs,Dept of Defence Production,https://ddpmod.gov.in,defence data,"Make-in-India defence, DPSUs","Make-in-India defence, DPSUs"
+defence,Defence/DRDO/DPSUs,HAL Hindustan Aeronautics,https://hal-india.co.in,defence data,"Aircraft, helicopters, LCA Tejas","Aircraft, helicopters, LCA Tejas"
+defence,Defence/DRDO/DPSUs,BEL Bharat Electronics,https://bel-india.in,defence data,"Electronics, radars, tenders","Electronics, radars, tenders"
+defence,Defence/DRDO/DPSUs,BEML Limited,https://www.beml.co.in,defence data,"Mining, construction, defence vehicles","Mining, construction, defence vehicles"
+defence,Defence/DRDO/DPSUs,BDL Bharat Dynamics,https://bdl-india.in,defence data,"Missiles, weapon systems","Missiles, weapon systems"
+defence,Defence/DRDO/DPSUs,MDL Mazagon Dock,https://mazdocklimited.org,defence data,"Submarine, warship building","Submarine, warship building"
+defence,Defence/DRDO/DPSUs,GRSE Naval Shipyard,https://www.grse.in,defence data,Naval ship construction,Naval ship construction
+defence,Defence/DRDO/DPSUs,OFB Ordnance Factory Board,https://ofbindia.gov.in,defence data,"Ordnance, ammunition production","Ordnance, ammunition production"
+defence,Defence/DRDO/DPSUs,OGD Defence Production Dataset,https://www.data.gov.in/catalog/defence-production-and-export,defence data,Year-wise production and exports,Year-wise production and exports
+defence,Defence/DRDO/DPSUs,OGD DRDO Manpower,https://www.data.gov.in/catalog/manpower-details-drdo,defence data,DRDO staffing data,DRDO staffing data
+defence,Defence/DRDO/DPSUs,CBI MES Corruption Cases,https://www.data.gov.in/resource/year-wise-details-corruption-cases-registered-cbi-under-prevention-corruption-act-1988,defence data,Defence corruption cases,Defence corruption cases
+defence,Defence/DRDO/DPSUs,OGD MoD Ministry Page,https://www.data.gov.in/ministrydepartment/Ministry%20of%20Defence,defence data,All MoD datasets,All MoD datasets
+defence,Defence/DRDO/DPSUs,Dept Ex-Servicemen Welfare,https://desw.gov.in,defence data,Veterans welfare data,Veterans welfare data
+security,Security/Law Enforcement,NCRB Crime Statistics,https://ncrb.gov.in,law enforcement,"Crime in India by IPC section, state","Crime in India by IPC section, state"
+security,Security/Law Enforcement,NCRB Prison Statistics,https://ncrb.gov.in/en/prison-statistics-india,law enforcement,"Prison data, undertrial details","Prison data, undertrial details"
+security,Security/Law Enforcement,CBI Portal,https://cbi.gov.in,law enforcement,"Cases, press releases, fugitives","Cases, press releases, fugitives"
+security,Security/Law Enforcement,CVC Vigilance Commission,https://cvc.gov.in,law enforcement,"Vigilance circulars, orders, penalties","Vigilance circulars, orders, penalties"
+security,Security/Law Enforcement,CVC Tender Scrutiny,https://cvc.gov.in/tenders.php,law enforcement,Single-bid tender oversight,Single-bid tender oversight
+security,Security/Law Enforcement,CVC Major Penalty Orders,https://cvc.gov.in/major-penalties.htm,law enforcement,IAS/IPS corruption actions,IAS/IPS corruption actions
+security,Security/Law Enforcement,CIC RTI Orders,https://cic.gov.in,law enforcement,"RTI appeals, orders, compliance","RTI appeals, orders, compliance"
+security,Security/Law Enforcement,NIA Portal,https://nia.gov.in,law enforcement,"Terror cases, chargesheets, notices","Terror cases, chargesheets, notices"
+security,Security/Law Enforcement,ED Enforcement Directorate,https://enforcementdirectorate.gov.in,law enforcement,"PMLA, FEMA, attachments","PMLA, FEMA, attachments"
+security,Security/Law Enforcement,SFIO Serious Fraud Office,https://sfio.nic.in,law enforcement,Corporate fraud investigations,Corporate fraud investigations
+security,Security/Law Enforcement,MHA Portal,https://www.mha.gov.in,law enforcement,"Home affairs, internal security","Home affairs, internal security"
+security,Security/Law Enforcement,MHA Annual Report,https://www.mha.gov.in/MHA1/AnnualReports.aspx,law enforcement,Comprehensive home affairs data,Comprehensive home affairs data
+security,Security/Law Enforcement,UIDAI Statistics,https://uidai.gov.in/en/my-aadhaar/about-your-aadhaar/statistics.html,law enforcement,Aadhaar enrolment by state,Aadhaar enrolment by state
+security,Security/Law Enforcement,BPR&D Police Research,https://bprd.nic.in,law enforcement,"Police research, training data","Police research, training data"
+security,Security/Law Enforcement,Assam Rifles,https://www.assamrifles.gov.in,law enforcement,NE paramilitary force,NE paramilitary force
+security,Security/Law Enforcement,BSF Border Security Force,https://bsf.gov.in,law enforcement,Border security data,Border security data
+security,Security/Law Enforcement,CISF Central Industrial Security,https://cisf.gov.in,law enforcement,Industrial security force,Industrial security force
+security,Security/Law Enforcement,CRPF Central Reserve Police,https://crpf.gov.in,law enforcement,Internal security force,Internal security force
+security,Security/Law Enforcement,ITBP Indo-Tibetan Border Police,https://itbpolice.nic.in,law enforcement,Himalayan border force,Himalayan border force
+security,Security/Law Enforcement,NSG National Security Guard,https://nsg.gov.in,law enforcement,Counter-terrorism force,Counter-terrorism force
+security,Security/Law Enforcement,SSB Sashastra Seema Bal,https://ssb.gov.in,law enforcement,Nepal/Bhutan border force,Nepal/Bhutan border force
+security,Security/Law Enforcement,SVPNPA Police Academy,https://svpnpa.gov.in,law enforcement,Police training institute,Police training institute
+security,Security/Law Enforcement,NICFS Forensic Science,https://nicfs.gov.in,law enforcement,Criminology and forensics,Criminology and forensics
+security,Security/Law Enforcement,DCPW Police Wireless,https://dcpw.gov.in,law enforcement,Police wireless coordination,Police wireless coordination
+security,Security/Law Enforcement,SEBI SCORES Investor Portal,https://scores.sebi.gov.in,law enforcement,Investor complaints tracking,Investor complaints tracking
+energy,Energy/Oil/Mining,CEA Central Electricity Authority,https://cea.nic.in,energy data,"Generation, transmission, grid stats","Generation, transmission, grid stats"
+energy,Energy/Oil/Mining,National Power Portal,https://npp.gov.in,energy data,Real-time power system data,Real-time power system data
+energy,Energy/Oil/Mining,Grid-India Grid Controller,https://grid-india.in,energy data,"Grid operation, merit order","Grid operation, merit order"
+energy,Energy/Oil/Mining,MNRE Renewables Ministry,https://mnre.gov.in,energy data,"Solar, wind, hydro capacity by state","Solar, wind, hydro capacity by state"
+energy,Energy/Oil/Mining,PPAC Petroleum Stats,https://ppac.gov.in,energy data,"Oil prices, consumption, reserves","Oil prices, consumption, reserves"
+energy,Energy/Oil/Mining,Coal India Limited,https://www.coalindia.in,energy data,"Coal production, dispatch, financials","Coal production, dispatch, financials"
+energy,Energy/Oil/Mining,Coal Ministry Portal,https://www.coal.nic.in,energy data,"Coal production, auctions, policy","Coal production, auctions, policy"
+energy,Energy/Oil/Mining,MoPNG Petroleum Ministry,https://mopng.gov.in,energy data,"Oil and gas policy, E&P blocks","Oil and gas policy, E&P blocks"
+energy,Energy/Oil/Mining,ONGC Portal,https://ongcindia.com,energy data,"Oil production, reserves, annual reports","Oil production, reserves, annual reports"
+energy,Energy/Oil/Mining,DGH Directorate Hydrocarbons,https://www.dghindia.gov.in,energy data,"Upstream oil, gas blocks, OALP","Upstream oil, gas blocks, OALP"
+energy,Energy/Oil/Mining,CERC Electricity Regulator,https://cercind.gov.in,energy data,"Tariff orders, open access","Tariff orders, open access"
+energy,Energy/Oil/Mining,IOCL Indian Oil,https://iocl.com,energy data,"Fuel distribution, retail, finance","Fuel distribution, retail, finance"
+energy,Energy/Oil/Mining,BPCL Bharat Petroleum,https://www.bharatpetroleum.in,energy data,Oil retail and distribution,Oil retail and distribution
+energy,Energy/Oil/Mining,HPCL Hindustan Petroleum,https://www.hindustanpetroleum.com,energy data,Oil retail and distribution,Oil retail and distribution
+energy,Energy/Oil/Mining,OALP Round Oil Blocks,https://oalp.petrosoftindia.com,energy data,"Oil block allocation, bidder data","Oil block allocation, bidder data"
+energy,Energy/Oil/Mining,Coal Block Auctions,https://www.coal.nic.in/content/commercial-mining,energy data,Commercial coal mine auctions,Commercial coal mine auctions
+energy,Energy/Oil/Mining,IBM Mining Statistics,https://ibm.gov.in/index.php?c=pages&m=index&id=444,energy data,Mineral production by mine,Mineral production by mine
+energy,Energy/Oil/Mining,PMKKKY DMF Portal,https://pmkkky.gov.in,energy data,District Mineral Fund utilisation,District Mineral Fund utilisation
+energy,Energy/Oil/Mining,Ministry of Mines,https://mines.gov.in,energy data,Mineral policy and data,Mineral policy and data
+energy,Energy/Oil/Mining,OGD Power Generation,https://www.data.gov.in/catalog/power-generation,energy data,Station-wise generation dataset,Station-wise generation dataset
+energy,Energy/Oil/Mining,OGD Power Sector,https://www.data.gov.in/sector/Power%20and%20Energy,energy data,All power/energy datasets,All power/energy datasets
+energy,Energy/Oil/Mining,Indian Bureau of Mines IBM,https://ibm.gov.in,energy data,"Mining statistics, regulation","Mining statistics, regulation"
+energy,Energy/Oil/Mining,Ministry of Steel,https://steel.gov.in,energy data,"Steel production, policy","Steel production, policy"
+health,Health/Medical,HMIS Health Management Info,https://hmis.mohfw.gov.in,health data,"PHC, CHC, hospital data by state","PHC, CHC, hospital data by state"
+health,Health/Medical,IHIP Disease Surveillance,https://ihip.mohfw.gov.in,health data,"Notifiable disease tracking, outbreaks","Notifiable disease tracking, outbreaks"
+health,Health/Medical,NFHS-5 National Health Survey,https://rchiips.org/nfhs/nfhs5.shtml,health data,District-level health/nutrition data,District-level health/nutrition data
+health,Health/Medical,PM-JAY Ayushman Bharat,https://pmjay.gov.in,health data,Health insurance scheme data,Health insurance scheme data
+health,Health/Medical,NPPA Drug Pricing,https://nppa.gov.in,health data,"Drug price ceiling, DPCO orders","Drug price ceiling, DPCO orders"
+health,Health/Medical,CDSCO Drug Regulator,https://cdsco.gov.in,health data,"Drug approvals, alerts, recalls","Drug approvals, alerts, recalls"
+health,Health/Medical,NMC Medical Council,https://www.nmc.org.in,health data,"Doctor registration, college data","Doctor registration, college data"
+health,Health/Medical,ICMR Medical Research,https://www.icmr.gov.in,health data,"Medical research, disease studies","Medical research, disease studies"
+health,Health/Medical,MoHFW Portal,https://mohfw.gov.in,health data,"Health policy, programs, COVID data","Health policy, programs, COVID data"
+health,Health/Medical,DHR Dept Health Research,https://dhr.gov.in,health data,Research funding and programs,Research funding and programs
+health,Health/Medical,OGD Health Infrastructure,https://www.data.gov.in/catalog/public-health-facilities-india,health data,Facility count dataset,Facility count dataset
+health,Health/Medical,OGD Health Sector,https://www.data.gov.in/sector/Health,health data,All health datasets,All health datasets
+health,Health/Medical,AYUSH Ministry,https://www.ayush.gov.in,health data,Traditional medicine data,Traditional medicine data
+science,ISRO/Science/Technology,ISRO Portal,https://www.isro.gov.in,science data,"Space missions, tech transfer","Space missions, tech transfer"
+science,ISRO/Science/Technology,ISRO Technology Transfer,https://www.isro.gov.in/technology-transfer,science data,ISRO tech deals — track undervalued transfers,ISRO tech deals — track undervalued transfers
+science,ISRO/Science/Technology,ISRO Annual Reports,https://www.isro.gov.in/annual-reports,science data,"Missions, budget, programme status","Missions, budget, programme status"
+science,ISRO/Science/Technology,Antrix ISRO Commercial,https://www.antrix.gov.in,science data,"ISRO commercial launches, revenue","ISRO commercial launches, revenue"
+science,ISRO/Science/Technology,SAC Space Applications,https://www.sac.gov.in,science data,"Space applications, reports","Space applications, reports"
+science,ISRO/Science/Technology,IIRS Remote Sensing Edu,https://www.iirs.gov.in,science data,Remote sensing training data,Remote sensing training data
+science,ISRO/Science/Technology,DST Science Statistics,https://dst.gov.in/statistical-data,science data,"R&D expenditure, patents","R&D expenditure, patents"
+science,ISRO/Science/Technology,NSTMIS R&D Data,https://www.nstmis-dst.org,science data,"India S&T indicators, GERD","India S&T indicators, GERD"
+science,ISRO/Science/Technology,DBT Biotechnology Dept,https://dbtindia.gov.in,science data,Biotech programs and funding,Biotech programs and funding
+science,ISRO/Science/Technology,DSIR Industrial Research,https://dsir.gov.in,science data,"Research labs, projects","Research labs, projects"
+science,ISRO/Science/Technology,Department of Space DOS,https://dos.gov.in,science data,Space program policy,Space program policy
+science,ISRO/Science/Technology,IMD Meteorological Dept,https://mausam.imd.gov.in,science data,"Weather, cyclone, rainfall data","Weather, cyclone, rainfall data"
+science,ISRO/Science/Technology,MoES Earth Sciences,https://moes.gov.in,science data,"Ocean, atmosphere, seismic data","Ocean, atmosphere, seismic data"
+science,ISRO/Science/Technology,DAE Atomic Energy,https://dae.gov.in,science data,"Nuclear energy, BARC data","Nuclear energy, BARC data"
+governance,Governance/Elections/Transparency,RTI Online Portal,https://rtionline.gov.in,governance data,"File RTI, track status","File RTI, track status"
+governance,Governance/Elections/Transparency,CIC RTI Orders,https://cic.gov.in/cic-decisions,governance data,Searchable CIC decisions,Searchable CIC decisions
+governance,Governance/Elections/Transparency,CPGRAMS Grievances,https://pgportal.gov.in,governance data,Citizen grievances portal,Citizen grievances portal
+governance,Governance/Elections/Transparency,DARPG Admin Reforms,https://darpg.gov.in,governance data,"Administrative reforms, e-governance","Administrative reforms, e-governance"
+governance,Governance/Elections/Transparency,NITI Aayog Data Hub,https://www.niti.gov.in/data,governance data,"SDG, health, district data","SDG, health, district data"
+governance,Governance/Elections/Transparency,Aspirational Districts,https://aim.gov.in/aspirational-districts,governance data,115 underdeveloped districts,115 underdeveloped districts
+governance,Governance/Elections/Transparency,ECI Election Commission,https://eci.gov.in,governance data,"Elections, candidates, parties, EVM","Elections, candidates, parties, EVM"
+governance,Governance/Elections/Transparency,ECI Electoral Bond Data,https://eci.gov.in/files/file/14491-state-bank-of-india-details-of-electoral-bonds-purchased-and-redeemed/,governance data,Donor-party transactions (SC order),Donor-party transactions (SC order)
+governance,Governance/Elections/Transparency,ECI Election Results,https://results.eci.gov.in,governance data,All election results by constituency,All election results by constituency
+governance,Governance/Elections/Transparency,MyNeta ADR,https://myneta.info,governance data,"Politician assets, criminal records","Politician assets, criminal records"
+governance,Governance/Elections/Transparency,PFMS Fund Flows,https://pfms.nic.in,governance data,"Scheme-wise fund flows, DBT","Scheme-wise fund flows, DBT"
+governance,Governance/Elections/Transparency,DBT Direct Benefits,https://dbtbharat.gov.in,governance data,"All DBT schemes, beneficiaries","All DBT schemes, beneficiaries"
+governance,Governance/Elections/Transparency,GeM Government Marketplace,https://gem.gov.in,governance data,All central govt contracts,All central govt contracts
+governance,Governance/Elections/Transparency,GeM Open Data Reports,https://gem.gov.in/resources/download/report,governance data,Monthly procurement analytics,Monthly procurement analytics
+governance,Governance/Elections/Transparency,CPPP Central Procurement,https://eprocure.gov.in,governance data,All central govt tenders,All central govt tenders
+governance,Governance/Elections/Transparency,DISHA Scheme Dashboard,https://disha.gov.in,governance data,District-level fund utilisation,District-level fund utilisation
+governance,Governance/Elections/Transparency,MyScheme Portal,https://www.myscheme.gov.in,governance data,All central and state schemes,All central and state schemes
+governance,Governance/Elections/Transparency,ADR MP Asset Declarations,https://adrindia.org/research-and-support/lok-sabha-mp-profile,governance data,MP asset declarations,MP asset declarations
+governance,Governance/Elections/Transparency,OGD RTI Disposal,https://www.data.gov.in/keywords/RTI,governance data,Ministry-wise RTI disposal rates,Ministry-wise RTI disposal rates
+governance,Governance/Elections/Transparency,PMO Portal,https://www.pmo.gov.in,governance data,Prime Minister's Office,Prime Minister's Office
+governance,Governance/Elections/Transparency,Cabinet Secretariat,https://cabsec.gov.in,governance data,"Cabinet decisions, coordination","Cabinet decisions, coordination"
+governance,Governance/Elections/Transparency,President of India,https://presidentofindia.nic.in,governance data,"Acts, notifications, speeches","Acts, notifications, speeches"
+governance,Governance/Elections/Transparency,Vice President of India,https://vicepresidentofindia.nic.in,governance data,"Speeches, office","Speeches, office"
+governance,Governance/Elections/Transparency,UPSC Results,https://upsc.gov.in,governance data,"Civil service results, marks","Civil service results, marks"
+governance,Governance/Elections/Transparency,Pensioners Portal,https://pensionersportal.gov.in,governance data,Pension data,Pension data
+governance,Governance/Elections/Transparency,PSA Principal Scientific Adviser,https://psa.gov.in,governance data,Science policy advice,Science policy advice
+agriculture,Agriculture/Food,AGMARKNET Mandi Prices,https://agmarknet.gov.in,agriculture data,Daily mandi prices by crop/state,Daily mandi prices by crop/state
+agriculture,Agriculture/Food,eNAM National Agri Market,https://enam.gov.in,agriculture data,Electronic national agriculture market,Electronic national agriculture market
+agriculture,Agriculture/Food,PM-KISAN OGD,https://www.data.gov.in/keywords/PM-KISAN,agriculture data,"PM-KISAN beneficiaries, disbursement","PM-KISAN beneficiaries, disbursement"
+agriculture,Agriculture/Food,MGNREGA Dataset,https://www.data.gov.in/catalog/mahatma-gandhi-national-rural-employment-guarantee-scheme,agriculture data,"MGNREGA works, funds, employment","MGNREGA works, funds, employment"
+agriculture,Agriculture/Food,MGNREGA MIS Live,https://mnregaweb4.nic.in/netnrega/home.aspx,agriculture data,Real-time MGNREGA state data,Real-time MGNREGA state data
+agriculture,Agriculture/Food,ICAR Research Portal,https://icar.gov.in,agriculture data,"Crop varieties, farming research","Crop varieties, farming research"
+agriculture,Agriculture/Food,Land Use Statistics OGD,https://www.data.gov.in/catalog/land-use-statistics-lus,agriculture data,"Crop area, cultivated land","Crop area, cultivated land"
+agriculture,Agriculture/Food,Agricultural Census OGD,https://www.data.gov.in/catalog/agricultural-census,agriculture data,"Farm size, ownership, irrigation","Farm size, ownership, irrigation"
+agriculture,Agriculture/Food,APEDA Agri Exports,https://apeda.gov.in,agriculture data,Agricultural exports data,Agricultural exports data
+agriculture,Agriculture/Food,Fertilizer Ministry,https://fert.nic.in,agriculture data,"Fertilizer policy, subsidies","Fertilizer policy, subsidies"
+agriculture,Agriculture/Food,DMI Agri Marketing,https://dmi.gov.in,agriculture data,"Wholesale price index, market prices","Wholesale price index, market prices"
+agriculture,Agriculture/Food,OGD MSP Data,https://www.data.gov.in/keywords/MSP,agriculture data,Minimum support price by crop/year,Minimum support price by crop/year
+agriculture,Agriculture/Food,FCI Food Corporation,https://fci.gov.in,agriculture data,"Procurement, storage, movement","Procurement, storage, movement"
+agriculture,Agriculture/Food,NFSA PDS Portal,https://nfsa.gov.in,agriculture data,"Ration cards, PDS data","Ration cards, PDS data"
+agriculture,Agriculture/Food,Dept Food Distribution,https://dfpd.gov.in,agriculture data,"Food stocks, distribution, subsidies","Food stocks, distribution, subsidies"
+transport,Transport/Roads/Railways,Indian Railways Official,https://indianrailways.gov.in,transport data,"Railway statistics, annual report","Railway statistics, annual report"
+transport,Transport/Roads/Railways,Parivahan Vehicle Registration,https://parivahan.gov.in,transport data,"Vehicle registration, DL, traffic","Vehicle registration, DL, traffic"
+transport,Transport/Roads/Railways,Vahan National Register,https://vahan.nic.in,transport data,National vehicle register data,National vehicle register data
+transport,Transport/Roads/Railways,NHAI Highway Authority,https://nhai.gov.in,transport data,"Highway projects, tenders, tolls","Highway projects, tenders, tolls"
+transport,Transport/Roads/Railways,DGCA Aviation Regulator,https://dgca.gov.in,transport data,"Aircraft, airline, accident data","Aircraft, airline, accident data"
+transport,Transport/Roads/Railways,AAI Airports Authority,https://www.aai.aero,transport data,"Airport traffic, infrastructure","Airport traffic, infrastructure"
+transport,Transport/Roads/Railways,DG Shipping Maritime,https://dgps.gov.in,transport data,"Maritime safety, compliance","Maritime safety, compliance"
+transport,Transport/Roads/Railways,MoRTH Roads Ministry,https://morth.nic.in,transport data,"Roads, vehicle policy","Roads, vehicle policy"
+transport,Transport/Roads/Railways,OGD Road Accidents,https://www.data.gov.in/catalog/road-accidents-india,transport data,"Accident deaths, causes, states","Accident deaths, causes, states"
+transport,Transport/Roads/Railways,OGD Port Traffic,https://www.data.gov.in/keywords/port,transport data,Major port traffic data,Major port traffic data
+transport,Transport/Roads/Railways,Ports Shipping Ministry,https://shipmin.gov.in,transport data,"Ports, shipping, waterways","Ports, shipping, waterways"
+transport,Transport/Roads/Railways,CRIS Railway IT,https://cris.org.in,transport data,Rail IT systems,Rail IT systems
+statistics,Statistics/Census/MoSPI,MoSPI Portal,https://mospi.gov.in,statistics,"GDP, NSS, CPI, IIP, NAS","GDP, NSS, CPI, IIP, NAS"
+statistics,Statistics/Census/MoSPI,NSO Statistical Yearbook,https://www.mospi.gov.in/statistical-year-book-india,statistics,Annual comprehensive statistics,Annual comprehensive statistics
+statistics,Statistics/Census/MoSPI,Census of India,https://censusindia.gov.in,statistics,2011 census data by district/state,2011 census data by district/state
+statistics,Statistics/Census/MoSPI,PLFS Employment Survey,https://mospi.gov.in/periodic-labour-force-survey-plfs,statistics,"Quarterly employment, wages","Quarterly employment, wages"
+statistics,Statistics/Census/MoSPI,SRS Vital Statistics,https://censusindia.gov.in/vital_statistics/SRS_Reports.html,statistics,"Birth, death, fertility rates","Birth, death, fertility rates"
+statistics,Statistics/Census/MoSPI,OGD GDP Datasets,https://www.data.gov.in/keywords/GDP,statistics,"GDP growth, sector-wise","GDP growth, sector-wise"
+statistics,Statistics/Census/MoSPI,OGD CPI Inflation,https://www.data.gov.in/keywords/CPI,statistics,Consumer price index by state,Consumer price index by state
+statistics,Statistics/Census/MoSPI,OGD IIP Industrial,https://www.data.gov.in/keywords/IIP,statistics,Industrial production index monthly,Industrial production index monthly
+statistics,Statistics/Census/MoSPI,NSSO Household Survey,https://mospi.gov.in/national-sample-survey-nss,statistics,"Household income, employment, poverty","Household income, employment, poverty"
+labour,Labour/Employment,EPFO Payroll Data,https://www.epfindia.gov.in/site_en/Media_EPFO_Payroll_Data.php,labour data,Monthly payroll additions indicator,Monthly payroll additions indicator
+labour,Labour/Employment,ESIC Employee Insurance,https://www.esic.gov.in,labour data,Workers in organized sector,Workers in organized sector
+labour,Labour/Employment,NCS Jobs Portal,https://www.ncs.gov.in,labour data,"Jobs, employment exchange","Jobs, employment exchange"
+labour,Labour/Employment,Labour Bureau Stats,https://labourbureau.gov.in,labour data,"Wages, CPI-IW, employment","Wages, CPI-IW, employment"
+labour,Labour/Employment,OGD Labour Sector,https://www.data.gov.in/sector/Labour,labour data,"PLFS, wages, employment data","PLFS, wages, employment data"
+labour,Labour/Employment,Ministry of Labour,https://labour.gov.in,labour data,"Labour policy, reports","Labour policy, reports"
+education,Education,UDISE+ School Data,https://udiseplus.gov.in,education data,"School infrastructure, enrolment","School infrastructure, enrolment"
+education,Education,AISHE Higher Education,https://aishe.gov.in,education data,"Colleges, enrolment, faculty","Colleges, enrolment, faculty"
+education,Education,NAAC Accreditation,https://naac.gov.in,education data,College and university grades,College and university grades
+education,Education,NIRF Rankings,https://www.nirfindia.org,education data,Institution performance metrics,Institution performance metrics
+education,Education,CBSE Board Exams,https://www.cbse.gov.in,education data,"Board exams, school data","Board exams, school data"
+education,Education,UGC University Grants,https://www.ugc.gov.in,education data,"University recognition, grants","University recognition, grants"
+education,Education,NCERT Textbooks,https://ncert.nic.in,education data,"Curriculum, textbooks","Curriculum, textbooks"
+education,Education,OGD Education Sector,https://www.data.gov.in/sector/Education,education data,All education datasets,All education datasets
+schemes,Government Schemes/Welfare,PMAY Gramin Rural Housing,https://pmayg.nic.in,schemes,Rural house construction progress,Rural house construction progress
+schemes,Government Schemes/Welfare,PMAY Urban Housing,https://pmay-urban.gov.in,schemes,"Urban housing sanctions, completions","Urban housing sanctions, completions"
+schemes,Government Schemes/Welfare,Jal Jeevan Dashboard,https://ejalshakti.gov.in/jjmreport/JJMIndia.aspx,schemes,Tap water village-wise progress,Tap water village-wise progress
+schemes,Government Schemes/Welfare,AMRUT Urban Dashboard,https://amrut.gov.in,schemes,Urban infrastructure project status,Urban infrastructure project status
+schemes,Government Schemes/Welfare,Smart Cities Mission,https://smartcities.gov.in,schemes,100 smart cities scores,100 smart cities scores
+schemes,Government Schemes/Welfare,NMCG Clean Ganga,https://nmcg.nic.in,schemes,"Ganga cleaning projects, STPs","Ganga cleaning projects, STPs"
+schemes,Government Schemes/Welfare,PMGSY Rural Roads,https://ommas.nic.in,schemes,Rural road habitation coverage,Rural road habitation coverage
+schemes,Government Schemes/Welfare,Swachh Bharat SBM,https://sbmurban.org,schemes,"ODF towns, toilet data","ODF towns, toilet data"
+schemes,Government Schemes/Welfare,eGramSwaraj Panchayat,https://egramswaraj.gov.in,schemes,"Panchayat accounts, planning","Panchayat accounts, planning"
+schemes,Government Schemes/Welfare,Aajeevika NRLM,https://aajeevika.gov.in,schemes,SHG livelihoods data,SHG livelihoods data
+schemes,Government Schemes/Welfare,UMANG App Services,https://web.umang.gov.in,schemes,All govt scheme services,All govt scheme services
+commerce,Commerce/Trade/Industry,DGFT Trade Portal,https://dgft.gov.in,commerce data,"Export-import, IEC licences","Export-import, IEC licences"
+commerce,Commerce/Trade/Industry,SEZ India Portal,https://sezindia.nic.in,commerce data,"SEZ approvals, units, exports","SEZ approvals, units, exports"
+commerce,Commerce/Trade/Industry,DPIIT Industrial Policy,https://dpiit.gov.in,commerce data,"FDI, industrial policy, reforms","FDI, industrial policy, reforms"
+commerce,Commerce/Trade/Industry,CCI Competition Authority,https://www.cci.gov.in,commerce data,"Anti-trust, mergers, market dominance","Anti-trust, mergers, market dominance"
+commerce,Commerce/Trade/Industry,TRAI Telecom Regulator,https://trai.gov.in,commerce data,"Telecom regulation, tariffs","Telecom regulation, tariffs"
+commerce,Commerce/Trade/Industry,OGD Export Data,https://www.data.gov.in/keywords/export,commerce data,Monthly trade statistics,Monthly trade statistics
+commerce,Commerce/Trade/Industry,IP India Patents,https://ipindia.gov.in,commerce data,"Patents, trademarks, GI data","Patents, trademarks, GI data"
+commerce,Commerce/Trade/Industry,MSME Portal,https://msme.gov.in,commerce data,"MSME schemes, statistics","MSME schemes, statistics"
+commerce,Commerce/Trade/Industry,DCA Consumer Affairs,https://consumeraffairs.nic.in,commerce data,"Consumer protection, pricing","Consumer protection, pricing"
+commerce,Commerce/Trade/Industry,MOFPI Food Processing,https://mofpi.gov.in,commerce data,Food processing industry data,Food processing industry data
+commerce,Commerce/Trade/Industry,MEITY Electronics IT,https://www.meity.gov.in,commerce data,IT/electronics policy,IT/electronics policy
+commerce,Commerce/Trade/Industry,DoT Telecom Policy,https://dot.gov.in,commerce data,"Telecom policy, licensing","Telecom policy, licensing"
+commerce,Commerce/Trade/Industry,India Post Postal Dept,https://www.indiapost.gov.in,commerce data,"Postal services, tracking","Postal services, tracking"
+commerce,Commerce/Trade/Industry,NIC Govt IT,https://www.nic.in,commerce data,Government IT infrastructure,Government IT infrastructure
+commerce,Commerce/Trade/Industry,Digital India Portal,https://www.digitalindia.gov.in,commerce data,Digital initiatives,Digital initiatives
+investigative,Investigative/Civil Society,ICIJ Offshore Leaks,https://offshoreleaks.icij.org,investigative source,"Panama, Paradise, Pandora Papers","Panama, Paradise, Pandora Papers"
+investigative,Investigative/Civil Society,OpenSanctions India,https://www.opensanctions.org/datasets/in_mha_banned_entities/,investigative source,"MHA banned entities, terror lists","MHA banned entities, terror lists"
+investigative,Investigative/Civil Society,FATF India Assessment,https://www.fatf-gafi.org/en/countries/detail/India.html,investigative source,"PMLA compliance, FIU assessment","PMLA compliance, FIU assessment"
+investigative,Investigative/Civil Society,ED PMLA Press Releases,https://enforcementdirectorate.gov.in/press_release,investigative source,"Attached properties, arrests","Attached properties, arrests"
+investigative,Investigative/Civil Society,SFIO Corporate Fraud Reports,https://sfio.nic.in/sites/default/files/reports.html,investigative source,Corporate fraud investigations,Corporate fraud investigations
+investigative,Investigative/Civil Society,MCA Struck-off Companies,https://www.mca.gov.in/content/mca/global/en/mca/master-data/MDS.html,investigative source,"Shell companies, struck-off list","Shell companies, struck-off list"
+investigative,Investigative/Civil Society,ADR India Asset Analysis,https://adrindia.org,investigative source,"Politician assets, criminal records","Politician assets, criminal records"
+investigative,Investigative/Civil Society,Factly Data Journalism,https://factly.in,investigative source,"Fact-checks, government data stories","Fact-checks, government data stories"
+investigative,Investigative/Civil Society,IndiaSpend Data Journalism,https://indiaspend.com,investigative source,"Budget, health, crime analysis","Budget, health, crime analysis"
+investigative,Investigative/Civil Society,Vidhi Legal Research,https://vidhilegalpolicy.in,investigative source,"Bills analysis, constitutional issues","Bills analysis, constitutional issues"
+investigative,Investigative/Civil Society,Land Conflict Watch,https://www.landconflictwatch.org,investigative source,"Land acquisition disputes, adivasi","Land acquisition disputes, adivasi"
+investigative,Investigative/Civil Society,IFF Digital Rights,https://internetfreedom.in,investigative source,"Internet shutdowns, surveillance tracker","Internet shutdowns, surveillance tracker"
+investigative,Investigative/Civil Society,Wikidata India Entities,https://www.wikidata.org,investigative source,"Entity enrichment, career data","Entity enrichment, career data"
+investigative,Investigative/Civil Society,OpenCorporates India,https://opencorporates.com/companies/in,investigative source,Company search and registration,Company search and registration
+investigative,Investigative/Civil Society,India Climate Dialogue,https://indiaclimatedialogue.net,investigative source,"Climate policy, coal plant data","Climate policy, coal plant data"
+investigative,Investigative/Civil Society,OGD CBI Cases,https://www.data.gov.in/keywords/CBI,investigative source,CBI registered cases dataset,CBI registered cases dataset
+social,Social/Welfare,NCW Women Commission,https://ncw.nic.in,social data,"Women's complaints, reports","Women's complaints, reports"
+social,Social/Welfare,NCPCR Child Rights,https://ncpcr.gov.in,social data,"Child rights, violations, POCSO","Child rights, violations, POCSO"
+social,Social/Welfare,NHRC Human Rights,https://nhrc.nic.in,social data,"Rights complaints, annual reports","Rights complaints, annual reports"
+social,Social/Welfare,NALSA Legal Aid,https://nalsa.gov.in,social data,"Legal aid, undertrials data","Legal aid, undertrials data"
+social,Social/Welfare,NGO Darpan,https://ngodarpan.gov.in,social data,NGO registration and funding,NGO registration and funding
+social,Social/Welfare,Tribal Affairs Ministry,https://tribal.nic.in,social data,"Tribal welfare, PESA, FRA data","Tribal welfare, PESA, FRA data"
+social,Social/Welfare,Minority Affairs,https://minorityaffairs.gov.in,social data,Minority welfare data,Minority welfare data
+social,Social/Welfare,NCM Minorities Commission,https://minoritycommission.nic.in,social data,"Minority issues, complaints","Minority issues, complaints"
+social,Social/Welfare,NCST Scheduled Tribes,https://ncst.nic.in,social data,"ST issues, reports","ST issues, reports"
+social,Social/Welfare,OGD SC/ST Welfare,https://www.data.gov.in/keywords/scheduled-caste,social data,SC/ST population and welfare data,SC/ST population and welfare data
+external,Ministry of External Affairs,MEA External Affairs,https://www.mea.gov.in,external affairs,"Foreign affairs, passports, visas","Foreign affairs, passports, visas"
+external,Ministry of External Affairs,Passport Seva Portal,https://www.passportindia.gov.in,external affairs,Passport services,Passport services
+external,Ministry of External Affairs,Indian Visa Online,https://indianvisaonline.gov.in,external affairs,Visa services,Visa services
+ministry_portal,Ministry of Agriculture,Ministry of Agriculture Portal,https://agriwelfare.gov.in,portal,"Agriculture policy, schemes",Official ministry portal
+ministry_portal,Dept Agricultural Research,Dept Agricultural Research Portal,https://www.data.gov.in/catalogs?ministry=Department+of+Agricultural+Research+and+Education+%28DARE%29,portal,DARE datasets,Official ministry portal
+ministry_portal,Min of Chemicals and Fertilizers,Min of Chemicals and Fertilizers Portal,https://chemicals.nic.in,portal,"Chemicals, fertilizer policy",Official ministry portal
+ministry_portal,Dept of Pharmaceuticals,Dept of Pharmaceuticals Portal,https://pharmaceuticals.gov.in,portal,"Drug policy, pharma",Official ministry portal
+ministry_portal,Ministry of Culture,Ministry of Culture Portal,https://www.indiaculture.gov.in,portal,"Culture, heritage",Official ministry portal
+ministry_portal,Ministry Dev North Eastern Region,Ministry Dev North Eastern Region Portal,https://doner.gov.in,portal,NE development data,Official ministry portal
+ministry_portal,Min Fisheries Animal Husbandry,Min Fisheries Animal Husbandry Portal,https://dof.gov.in,portal,Fisheries policy,Official ministry portal
+ministry_portal,Dept Animal Husbandry Dairying,Dept Animal Husbandry Dairying Portal,https://dahd.nic.in,portal,"Livestock, dairying",Official ministry portal
+ministry_portal,Min of Heavy Industries,Min of Heavy Industries Portal,https://heavyindustries.gov.in,portal,"Industry policy, schemes",Official ministry portal
+ministry_portal,Dept of Public Enterprises,Dept of Public Enterprises Portal,https://dpe.gov.in,portal,"PSU policy, data",Official ministry portal
+ministry_portal,Housing Urban Affairs,Housing Urban Affairs Portal,https://mohua.gov.in,portal,Urban policy,Official ministry portal
+ministry_portal,Ministry of Education,Ministry of Education Portal,https://education.gov.in,portal,Education policy,Official ministry portal
+ministry_portal,Information and Broadcasting,Information and Broadcasting Portal,https://mib.gov.in,portal,"Broadcasting, media",Official ministry portal
+ministry_portal,Ministry of Jal Shakti,Ministry of Jal Shakti Portal,https://jalshakti-dowr.gov.in,portal,Water resources,Official ministry portal
+ministry_portal,Dept Drinking Water Sanitation,Dept Drinking Water Sanitation Portal,https://jaljeevanmission.gov.in,portal,"Sanitation, tap water",Official ministry portal
+ministry_portal,Ministry of Law and Justice,Ministry of Law and Justice Portal,https://lawmin.gov.in,portal,Legal affairs,Official ministry portal
+ministry_portal,Dept of Justice,Dept of Justice Portal,https://doj.gov.in,portal,"Justice delivery, e-courts",Official ministry portal
+ministry_portal,Ministry of Panchayati Raj,Ministry of Panchayati Raj Portal,https://panchayat.gov.in,portal,Local governance,Official ministry portal
+ministry_portal,Dept Personnel Training,Dept Personnel Training Portal,https://dopt.gov.in,portal,"Civil services, personnel",Official ministry portal
+ministry_portal,Ministry of Power,Ministry of Power Portal,https://powermin.gov.in,portal,Power policy,Official ministry portal
+ministry_portal,Min of Rural Development,Min of Rural Development Portal,https://rural.gov.in,portal,Rural welfare,Official ministry portal
+ministry_portal,Ministry of Science Technology,Ministry of Science Technology Portal,https://dst.gov.in,portal,Science policy,Official ministry portal
+ministry_portal,Skill Development Ministry,Skill Development Ministry Portal,https://www.msde.gov.in,portal,"Skills, training",Official ministry portal
+ministry_portal,Min Social Justice,Min Social Justice Portal,https://socialjustice.gov.in,portal,Welfare schemes,Official ministry portal
+ministry_portal,Dept Disability Empowerment,Dept Disability Empowerment Portal,https://depwd.gov.in,portal,Disability schemes,Official ministry portal
+ministry_portal,Ministry of Textiles,Ministry of Textiles Portal,https://texmin.nic.in,portal,"Textile schemes, stats",Official ministry portal
+ministry_portal,Ministry of Tourism,Ministry of Tourism Portal,https://tourism.gov.in,portal,Tourism statistics,Official ministry portal
+ministry_portal,Min Women Child Dev,Min Women Child Dev Portal,https://wcd.nic.in,portal,"Women, child welfare",Official ministry portal
+ministry_portal,Min Youth Affairs Sports,Min Youth Affairs Sports Portal,https://yas.nic.in,portal,"Youth, sports",Official ministry portal

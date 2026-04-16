@@ -5,12 +5,6 @@ function sanitize(str) {
 }
 
 const State = {
-// Sanitize untrusted strings before inserting into innerHTML
-function sanitize(str) {
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
-}
   theme: localStorage.getItem("bg-theme") || "dark",
   language: "en",
   searchResults: [],
@@ -212,6 +206,37 @@ const Views = {
                    placeholder="Search entities..." id="search-input-field"
                    autocomplete="off">
             <button class="search-bar__btn" id="search-btn">Search</button>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:var(--space-3);
+                      margin-bottom:var(--space-3);flex-wrap:wrap">
+            <select id="lang-select" style="font-size:var(--font-size-xs);padding:4px 8px;
+                    background:var(--bg-secondary);color:var(--text-primary);
+                    border:1px solid var(--border-color);border-radius:6px;cursor:pointer"
+                    onchange="State.language=this.value">
+              <option value="en">🇮🇳 English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="ta">தமிழ்</option>
+              <option value="te">తెలుగు</option>
+              <option value="kn">ಕನ್ನಡ</option>
+              <option value="ml">മലയാളം</option>
+              <option value="mr">मराठी</option>
+              <option value="bn">বাংলা</option>
+              <option value="gu">ગુજરાતી</option>
+              <option value="pa">ਪੰਜਾਬੀ</option>
+              <option value="or">ଓଡ଼ିଆ</option>
+              <option value="as">অসমীয়া</option>
+              <option value="ur">اردو</option>
+              <option value="kok">कोंकणी</option>
+              <option value="mai">मैथिली</option>
+              <option value="mni">ꯃꯩꯇꯩꯂꯣꯟ</option>
+              <option value="sat">ᱥᱟᱱᱛᱟᱲᱤ</option>
+              <option value="ks">كٲشُر</option>
+              <option value="ne">नेपाली</option>
+              <option value="doi">डोगरी</option>
+              <option value="sa">संस्कृतम्</option>
+              <option value="sd">سنڌي</option>
+            </select>
           </div>
 
           <div style="display:flex;align-items:center;gap:var(--space-2);
@@ -542,6 +567,184 @@ const Views = {
     }
   },
 
+
+  "connection-map": (params) => {
+    const urlParams = new URLSearchParams(window.location.hash.split("?")[1] || "");
+    const entityId  = urlParams.get("entity") || "";
+    const entityName = urlParams.get("name") || entityId;
+    const main = document.getElementById("app-main");
+    main.innerHTML = `
+      <div style="padding:var(--space-8) 0">
+        <div class="container">
+          <h2 style="font-size:var(--font-size-xl);font-weight:700;color:var(--text-primary);margin-bottom:4px">
+            Connection Map
+          </h2>
+          <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin-bottom:var(--space-6)">
+            Evidence-based relationship map for: <strong>${sanitize(entityName)}</strong>
+          </p>
+
+          <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--space-6)">
+            <!-- Graph area -->
+            <div style="background:var(--bg-secondary);border-radius:12px;
+                        border:1px solid var(--border-color);min-height:500px;
+                        display:flex;flex-direction:column">
+              <div style="padding:12px 16px;border-bottom:1px solid var(--border-color);
+                          display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:12px;font-weight:600;color:var(--text-secondary)">
+                  Relationship Graph
+                </span>
+                <div style="display:flex;gap:6px">
+                  <span style="font-size:10px;color:var(--text-muted)">
+                    ● Strong  ◐ Medium  ○ Weak
+                  </span>
+                </div>
+              </div>
+              <div id="conn-graph" style="flex:1;min-height:440px;position:relative">
+                <div class="spinner" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+              </div>
+            </div>
+
+            <!-- Evidence list -->
+            <div>
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;
+                          letter-spacing:.08em;color:var(--text-muted);margin-bottom:10px">
+                Evidence Chain
+              </div>
+              <div id="conn-evidence-list">
+                <div class="spinner" style="margin:20px auto"></div>
+              </div>
+
+              <div style="margin-top:16px">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;
+                            letter-spacing:.08em;color:var(--text-muted);margin-bottom:10px">
+                  Path Finder
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <input id="path-target" class="search-bar__input"
+                         placeholder="Target entity ID..."
+                         style="font-size:12px;padding:8px 12px">
+                  <button onclick="Views._findPath('${encodeURIComponent(entityId)}')"
+                          class="btn btn--secondary" style="font-size:12px">Find Shortest Path</button>
+                </div>
+                <div id="path-result" style="margin-top:10px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    \`;
+
+    if (!entityId) return;
+
+    // Load evidence
+    Api.nodeEvidence(entityId).then(data => {
+      const edges = data.edges || [];
+      const listEl = document.getElementById("conn-evidence-list");
+      if (!listEl) return;
+
+      listEl.innerHTML = edges.length ? edges.map(e => \`
+        <div style="padding:10px 12px;margin-bottom:6px;background:var(--bg-secondary);
+                    border-radius:8px;border:1px solid var(--border-color);cursor:pointer"
+             onclick="EvidencePanel.open('\${sanitize(e.connected_id||'')}','\${sanitize(e.connected_to||'')}')">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;
+                      color:var(--color-saffron);margin-bottom:2px">\${sanitize(e.rel_label||"")}</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-primary)">
+            \${sanitize(e.connected_to||e.connected_id||"—")}
+          </div>
+          <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">
+            \${sanitize(e.why||"")}
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
+            📄 \${sanitize(e.source||"")}
+          </div>
+        </div>\`).join("") : \`<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px">
+          No connections in current dataset</div>\`;
+
+      // Render D3 graph
+      Views._renderConnectionGraph(entityId, entityName, edges);
+    }).catch(() => {
+      const el = document.getElementById("conn-graph");
+      if (el) el.innerHTML = \`<div style="text-align:center;padding:60px;color:var(--text-muted)">
+        Could not load graph data</div>\`;
+    });
+  },
+
+  _findPath: (entityA) => {
+    const b = document.getElementById("path-target").value.trim();
+    const res = document.getElementById("path-result");
+    if (!b || !res) return;
+    res.innerHTML = \`<div class="spinner" style="margin:10px auto"></div>\`;
+    Api._request(\`/connection-map?a=\${encodeURIComponent(entityA)}&b=\${encodeURIComponent(b)}\`)
+      .then(data => {
+        const path = data.path || data.paths || [];
+        res.innerHTML = path.length ? \`
+          <div style="padding:10px;background:var(--bg-secondary);border-radius:8px;
+                      border:1px solid var(--border-color);font-size:12px">
+            <div style="font-weight:600;color:var(--color-saffron);margin-bottom:6px">
+              \${path.length} hop path found
+            </div>
+            \${(Array.isArray(path[0]) ? path[0] : path).map(n =>
+              \`<span style="color:var(--text-primary)">\${sanitize(n)}</span>
+               <span style="color:var(--text-muted);margin:0 4px">→</span>\`
+            ).join("").replace(/<span[^>]*>→<\/span>$/, "")}
+          </div>\` : \`
+          <div style="color:var(--text-muted);font-size:12px">No path found</div>\`;
+      }).catch(() => {
+        res.innerHTML = \`<div style="color:var(--text-muted);font-size:12px">Path search unavailable</div>\`;
+      });
+  },
+
+  _renderConnectionGraph: (centerId, centerName, edges) => {
+    const container = document.getElementById("conn-graph");
+    if (!container || !window.d3) {
+      if (container) container.innerHTML = \`
+        <div style="text-align:center;padding:60px;color:var(--text-muted);font-size:12px">
+          Graph visualization requires D3.js</div>\`;
+      return;
+    }
+
+    const w = container.clientWidth || 600, h = container.clientHeight || 440;
+    container.innerHTML = "";
+
+    const nodes = [{id: centerId, name: centerName, group: "center"}];
+    const links = [];
+    const seen = new Set([centerId]);
+    edges.slice(0, 20).forEach(e => {
+      const tid = e.connected_id || e.connected_to || Math.random().toString();
+      if (!seen.has(tid)) { seen.add(tid); nodes.push({id:tid, name:e.connected_to||tid, group:e.rel_label||"OTHER"}); }
+      links.push({source:centerId, target:tid, label:e.rel_label||"", strength:e.strength||"medium"});
+    });
+
+    const svg = d3.select(container).append("svg").attr("width","100%").attr("height","100%")
+      .attr("viewBox",\`0 0 \${w} \${h}\`);
+    const sim = d3.forceSimulation(nodes)
+      .force("link",d3.forceLink(links).id(d=>d.id).distance(120))
+      .force("charge",d3.forceManyBody().strength(-300))
+      .force("center",d3.forceCenter(w/2,h/2));
+
+    const link = svg.append("g").selectAll("line").data(links).join("line")
+      .attr("stroke","#555").attr("stroke-width",1.5).attr("stroke-opacity",0.6);
+
+    const node = svg.append("g").selectAll("circle").data(nodes).join("circle")
+      .attr("r", d => d.group==="center"?16:10)
+      .attr("fill", d => d.group==="center"?"var(--color-saffron)":"var(--accent-primary)")
+      .attr("stroke","var(--bg-primary)").attr("stroke-width",2)
+      .style("cursor","pointer")
+      .on("click", (e,d) => { if(d.id!==centerId) EvidencePanel.open(d.id, d.name); });
+
+    const label = svg.append("g").selectAll("text").data(nodes).join("text")
+      .text(d => (d.name||d.id).slice(0,18))
+      .attr("font-size","10px").attr("fill","var(--text-primary)")
+      .attr("text-anchor","middle").attr("dy","26px");
+
+    sim.on("tick", () => {
+      link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y)
+          .attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
+      node.attr("cx",d=>d.x).attr("cy",d=>d.y);
+      label.attr("x",d=>d.x).attr("y",d=>d.y);
+    });
+  },
+
   about: () => {
     const main = document.getElementById("app-main");
     main.innerHTML = `
@@ -592,6 +795,7 @@ function initApp() {
   Router.register("/",         Views.home);
   Router.register("/search",   Views.search);
   Router.register("/entity/:id", Views.entity);
+  Router.register("/connection-map", Views["connection-map"]);
   Router.register("/live-feed", Views.liveFeed);
   Router.register("/about",    Views.about);
 

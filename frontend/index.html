@@ -134,13 +134,29 @@
   <script src="js/evidence_panel.js"></script>
   <script src="js/app.js"></script>
   <script>
-    Api.health().then(() => {
-      document.getElementById("api-status-dot").style.background = "var(--color-risk-low)";
-      document.getElementById("api-status-text").textContent = "Connected";
-    }).catch(() => {
-      document.getElementById("api-status-dot").style.background = "var(--color-risk-very-high)";
-      document.getElementById("api-status-text").textContent = "Offline";
-    });
+    // Retry health check up to 3 times (HF Space cold-starts can take 10-15s)
+    (function checkHealth(attempt) {
+      Api.health().then(data => {
+        var dot  = document.getElementById("api-status-dot");
+        var text = document.getElementById("api-status-text");
+        if (dot && text) {
+          dot.style.background  = "var(--color-risk-low)";
+          text.textContent      = data.neo4j_connected ? "Connected" : "API Only";
+          text.title            = "v" + (data.version || "?") + " | Neo4j: " + data.neo4j_connected;
+        }
+      }).catch(function() {
+        if (attempt < 3) {
+          setTimeout(function() { checkHealth(attempt + 1); }, 5000);
+        } else {
+          var dot  = document.getElementById("api-status-dot");
+          var text = document.getElementById("api-status-text");
+          if (dot && text) {
+            dot.style.background = "var(--color-risk-very-high)";
+            text.textContent     = "Offline";
+          }
+        }
+      });
+    })(1);
   </script>
   <script>
   if ("serviceWorker" in navigator) {

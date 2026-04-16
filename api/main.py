@@ -76,6 +76,19 @@ app.include_router(adversarial.router,     tags=["Adversarial"])
 app.include_router(debate.router,          tags=["Debate"])
 
 
+
+@app.get("/")
+def root():
+    """API root — returns version and link to docs."""
+    return {
+        "name": "BharatGraph API",
+        "version": "0.28.0",
+        "status": "running",
+        "docs": "/docs",
+        "health": "/health",
+        "description": "Public transparency intelligence platform for India. All data from official government records.",
+    }
+
 @app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse)
 def health_check():
     driver    = get_driver()
