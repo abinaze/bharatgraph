@@ -632,7 +632,7 @@ const Views = {
           </div>
         </div>
       </div>
-    \`;
+    `;
 
     if (!entityId) return;
 
@@ -642,30 +642,30 @@ const Views = {
       const listEl = document.getElementById("conn-evidence-list");
       if (!listEl) return;
 
-      listEl.innerHTML = edges.length ? edges.map(e => \`
+      listEl.innerHTML = edges.length ? edges.map(e => `
         <div style="padding:10px 12px;margin-bottom:6px;background:var(--bg-secondary);
                     border-radius:8px;border:1px solid var(--border-color);cursor:pointer"
-             onclick="EvidencePanel.open('\${sanitize(e.connected_id||'')}','\${sanitize(e.connected_to||'')}')">
+             onclick="EvidencePanel.open('${sanitize(e.connected_id||'')}','${sanitize(e.connected_to||'')}')">
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;
-                      color:var(--color-saffron);margin-bottom:2px">\${sanitize(e.rel_label||"")}</div>
+                      color:var(--color-saffron);margin-bottom:2px">${sanitize(e.rel_label||"")}</div>
           <div style="font-size:12px;font-weight:600;color:var(--text-primary)">
-            \${sanitize(e.connected_to||e.connected_id||"—")}
+            ${sanitize(e.connected_to||e.connected_id||"—")}
           </div>
           <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">
-            \${sanitize(e.why||"")}
+            ${sanitize(e.why||"")}
           </div>
           <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-            📄 \${sanitize(e.source||"")}
+            📄 ${sanitize(e.source||"")}
           </div>
-        </div>\`).join("") : \`<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px">
-          No connections in current dataset</div>\`;
+        </div>`).join("") : `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px">
+          No connections in current dataset</div>`;
 
       // Render D3 graph
       Views._renderConnectionGraph(entityId, entityName, edges);
     }).catch(() => {
       const el = document.getElementById("conn-graph");
-      if (el) el.innerHTML = \`<div style="text-align:center;padding:60px;color:var(--text-muted)">
-        Could not load graph data</div>\`;
+      if (el) el.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted)">
+        Could not load graph data</div>`;
     });
   },
 
@@ -673,33 +673,33 @@ const Views = {
     const b = document.getElementById("path-target").value.trim();
     const res = document.getElementById("path-result");
     if (!b || !res) return;
-    res.innerHTML = \`<div class="spinner" style="margin:10px auto"></div>\`;
-    Api._request(\`/connection-map?a=\${encodeURIComponent(entityA)}&b=\${encodeURIComponent(b)}\`)
+    res.innerHTML = `<div class="spinner" style="margin:10px auto"></div>`;
+    Api._request(`/connection-map?a=${encodeURIComponent(entityA)}&b=${encodeURIComponent(b)}`)
       .then(data => {
         const path = data.path || data.paths || [];
-        res.innerHTML = path.length ? \`
+        res.innerHTML = path.length ? `
           <div style="padding:10px;background:var(--bg-secondary);border-radius:8px;
                       border:1px solid var(--border-color);font-size:12px">
             <div style="font-weight:600;color:var(--color-saffron);margin-bottom:6px">
-              \${path.length} hop path found
+              ${path.length} hop path found
             </div>
-            \${(Array.isArray(path[0]) ? path[0] : path).map(n =>
-              \`<span style="color:var(--text-primary)">\${sanitize(n)}</span>
-               <span style="color:var(--text-muted);margin:0 4px">→</span>\`
+            ${(Array.isArray(path[0]) ? path[0] : path).map(n =>
+              `<span style="color:var(--text-primary)">${sanitize(n)}</span>
+               <span style="color:var(--text-muted);margin:0 4px">→</span>`
             ).join("").replace(/<span[^>]*>→<\/span>$/, "")}
-          </div>\` : \`
-          <div style="color:var(--text-muted);font-size:12px">No path found</div>\`;
+          </div>` : `
+          <div style="color:var(--text-muted);font-size:12px">No path found</div>`;
       }).catch(() => {
-        res.innerHTML = \`<div style="color:var(--text-muted);font-size:12px">Path search unavailable</div>\`;
+        res.innerHTML = `<div style="color:var(--text-muted);font-size:12px">Path search unavailable</div>`;
       });
   },
 
   _renderConnectionGraph: (centerId, centerName, edges) => {
     const container = document.getElementById("conn-graph");
     if (!container || !window.d3) {
-      if (container) container.innerHTML = \`
+      if (container) container.innerHTML = `
         <div style="text-align:center;padding:60px;color:var(--text-muted);font-size:12px">
-          Graph visualization requires D3.js</div>\`;
+          Graph visualization requires D3.js</div>`;
       return;
     }
 
@@ -716,7 +716,7 @@ const Views = {
     });
 
     const svg = d3.select(container).append("svg").attr("width","100%").attr("height","100%")
-      .attr("viewBox",\`0 0 \${w} \${h}\`);
+      .attr("viewBox",`0 0 ${w} ${h}`);
     const sim = d3.forceSimulation(nodes)
       .force("link",d3.forceLink(links).id(d=>d.id).distance(120))
       .force("charge",d3.forceManyBody().strength(-300))

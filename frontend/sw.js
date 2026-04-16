@@ -1,7 +1,7 @@
-const CACHE = "bharatgraph-v1";
+const CACHE = "bharatgraph-v3";
 const STATIC = ["/","/index.html","/css/design-system.css",
   "/css/components.css","/js/router.js","/js/api.js",
-  "/js/components.js","/js/graph.js","/js/app.js"];
+  "/js/components.js","/js/graph.js","/js/timeline.js","/js/evidence_panel.js","/js/app.js"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)));
