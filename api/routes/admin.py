@@ -16,10 +16,12 @@ _pipeline_status = {
 
 @router.post("/admin/seed")
 def seed_database(driver=Depends(get_db)):
-    """Load sample data into Neo4j — use when pipeline has not run yet."""
+    """Load sample nodes AND relationships into Neo4j for demonstration.
+    Run POST /admin/pipeline to load all 21 live data sources."""
     from graph.seed import (
         SAMPLE_POLITICIANS, SAMPLE_COMPANIES,
-        SAMPLE_CONTRACTS, SAMPLE_AUDIT_REPORTS
+        SAMPLE_CONTRACTS, SAMPLE_AUDIT_REPORTS,
+        SAMPLE_DIRECTOR_LINKS,
     )
     from graph.loader import GraphLoader
 
@@ -28,6 +30,7 @@ def seed_database(driver=Depends(get_db)):
     c = loader.load_companies(SAMPLE_COMPANIES)
     k = loader.load_contracts(SAMPLE_CONTRACTS)
     a = loader.load_audit_reports(SAMPLE_AUDIT_REPORTS)
+    d = loader.load_politician_company_links(SAMPLE_DIRECTOR_LINKS)
 
     return {
         "status":        "seeded",
@@ -35,9 +38,16 @@ def seed_database(driver=Depends(get_db)):
         "companies":     c,
         "contracts":     k,
         "audit_reports": a,
-        "try_searching": ["Modi", "Gandhi", "Adani", "Tata", "Infosys",
-                          "road construction", "audit Maharashtra"],
-        "next":          "POST /admin/pipeline to run all 20 live scrapers",
+        "director_links": d,
+        "try_searching": [
+            "Modi", "Gandhi", "Adani", "Tata", "Infosys",
+            "Amit Shah", "Anurag Thakur", "road construction", "audit Maharashtra"
+        ],
+        "note": (
+            "Sample data loaded with DIRECTOR_OF and WON_CONTRACT relationships. "
+            "Search any name above to see the investigation graph."
+        ),
+        "next": "POST /admin/pipeline to ingest all 21 live government sources",
     }
 
 
