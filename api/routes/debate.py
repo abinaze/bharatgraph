@@ -30,10 +30,13 @@ def run_debate(entity_id: str, driver=Depends(get_db)):
 
     findings = []
     try:
-        from ai.risk_scorer import RiskScorer
-        scorer   = RiskScorer(driver=driver)
-        result   = scorer.score(entity_id, name)
-        findings = result.get("findings", [])
+        # BUG-03 FIX: RiskScorer() takes no constructor args; use risk route instead
+        from api.routes.risk import get_risk
+        risk_result = get_risk(entity_id, driver)
+        findings = [
+            {"name": f.name, "score": f.score, "description": f.description}
+            for f in risk_result.factors
+        ]
     except Exception as e:
         logger.warning(f"[Debate] Could not load findings: {e}")
 
