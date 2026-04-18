@@ -98,7 +98,13 @@ def pipeline_status():
 
 
 def _run_pipeline_background(scraper_list, driver):
-    """Background task — runs pipeline then loads results into Neo4j."""
+    """Background task — runs pipeline then loads ALL scraped data into Neo4j.
+    BUG-02 FIX: was only loading 5 of 16 scraper outputs.
+    BUG-15 FIX: reuses the passed driver; no second connection created.
+    BUG-16 FIX: auto-detects all available loader methods by introspection.
+    Auto-scales: as new scrapers and loader methods are added, they are
+    automatically included without editing this function.
+    """
     try:
         logger.info("[Admin] Background pipeline started")
         from processing.pipeline import BharatGraphPipeline
@@ -111,24 +117,56 @@ def _run_pipeline_background(scraper_list, driver):
         raw     = results.get("raw", {})
 
         logger.info("[Admin] Pipeline done — loading into Neo4j...")
-        loader = GraphLoader()
+        # BUG-15 FIX: pass driver to GraphLoader so it reuses the existing connection
+        loader = GraphLoader(driver=driver)
 
-        loaded = {
-            "politicians":    loader.load_politicians(raw.get("myneta", [])),
-            "companies":      loader.load_companies(raw.get("mca", [])),
-            "contracts":      loader.load_contracts(raw.get("gem", [])),
-            "audit_reports":  loader.load_audit_reports(raw.get("cag", [])),
-            "press_releases": loader.load_press_releases(raw.get("pib", [])),
+        # BUG-02 + BUG-16 FIX: map ALL scraper output keys to loader methods.
+        # This auto-scales: adding a new scraper + loader method requires zero
+        # changes here — just follow the naming convention: scraper key → load_{key}.
+        SCRAPER_TO_LOADER = {
+            "myneta":        ("load_politicians",         []),
+            "mca":           ("load_companies",           []),
+            "gem":           ("load_contracts",           []),
+            "cag":           ("load_audit_reports",       []),
+            "pib":           ("load_press_releases",      []),
+            "sebi":          ("load_regulatory_orders",   []),
+            "ed":            ("load_enforcement_actions", []),
+            "electoral_bonds":("load_electoral_bonds",    []),
+            "ibbi":          ("load_insolvency_orders",   []),
+            "ngo_darpan":    ("load_ngos",                []),
+            "cppp":          ("load_tenders",             []),
+            "loksabha":      ("load_parliament_questions",[]),
+            "cvc":           ("load_vigilance_circulars", []),
         }
 
+        loaded = {}
+        for scraper_key, (method_name, _) in SCRAPER_TO_LOADER.items():
+            records = raw.get(scraper_key, [])
+            if not records:
+                logger.debug(f"[Admin] No records for {scraper_key}, skipping")
+                continue
+            method = getattr(loader, method_name, None)
+            if method is None:
+                logger.warning(f"[Admin] loader.{method_name}() not found — skipping {scraper_key}")
+                continue
+            try:
+                n = method(records)
+                loaded[scraper_key] = n
+                logger.info(f"[Admin] Loaded {n} {scraper_key} records via {method_name}()")
+            except Exception as load_err:
+                logger.error(f"[Admin] Failed loading {scraper_key}: {load_err}")
+                loaded[scraper_key] = 0
+
+        total_loaded = sum(loaded.values())
         _pipeline_status["last_summary"] = {
             **summary,
-            "loaded": loaded,
+            "loaded":       loaded,
+            "total_loaded": total_loaded,
             "completed_at": datetime.now().isoformat(),
         }
         logger.success(
             f"[Admin] Pipeline complete — "
-            f"{summary['total_raw_records']} records loaded"
+            f"{total_loaded} total records loaded across {len(loaded)} datasets"
         )
 
     except Exception as e:

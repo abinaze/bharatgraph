@@ -160,4 +160,39 @@ def get_profile(entity_id: str, driver=Depends(get_db)):
             generated_at=datetime.now().isoformat(),
         )
 
+    # BUG-07 FIX: Generic fallback handles AuditReport, Contract, NGO,
+    # ElectoralBond, EnforcementAction, Tender, InsolvencyOrder, etc.
+    # Previously these all returned 404.
+    with driver.session() as session:
+        generic = session.run(
+            "MATCH (n {id: $id}) RETURN n, labels(n)[0] AS label",
+            id=entity_id
+        ).single()
+
+    if generic:
+        n     = dict(generic["n"])
+        label = generic["label"] or "Unknown"
+        name  = (n.get("name") or n.get("title") or n.get("ngo_name")
+                 or n.get("company_name") or n.get("purchaser_name") or entity_id)
+
+        # Build overview from all non-null node properties
+        overview = {
+            k: v for k, v in n.items()
+            if k not in ("id",) and v is not None and str(v).strip()
+        }
+
+        return ProfileResponse(
+            entity_id=entity_id,
+            entity_type=label,
+            name=name,
+            overview=overview,
+            sections=[],
+            sources=[SourceDocument(
+                institution="BharatGraph Knowledge Graph",
+                document_title=f"{label} Record — Official Source",
+                url="https://abinaze.github.io/bharatgraph",
+            )],
+            generated_at=datetime.now().isoformat(),
+        )
+
     raise HTTPException(status_code=404, detail=f"Entity {entity_id} not found")

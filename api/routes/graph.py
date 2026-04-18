@@ -41,36 +41,52 @@ def get_connections(
                             if k not in ("id", "name", "title")},
             )
 
+        # BUG-09 FIX: Use explicit node/rel return instead of path object (avoids
+        # Neo4j Python driver path API inconsistencies). Depth via param not f-string.
+        depth_safe = min(max(int(depth), 1), 3)
         rows = session.run(
-            f"""
-            MATCH path = (start {{id: $id}})-[*1..{depth}]-(end)
-            RETURN path LIMIT 200
+            """
+            MATCH (start {id: $id})-[r*1..$depth]-(end)
+            RETURN DISTINCT
+                start.id AS src_id,
+                labels(start)[0] AS src_label,
+                coalesce(start.name, start.title, start.id) AS src_name,
+                properties(start) AS src_props,
+                [rel IN r | {
+                    src: startNode(rel).id,
+                    tgt: endNode(rel).id,
+                    type: type(rel)
+                }] AS rels,
+                end.id AS end_id,
+                labels(end)[0] AS end_label,
+                coalesce(end.name, end.title, end.id) AS end_name,
+                properties(end) AS end_props
+            LIMIT 200
             """,
-            id=entity_id
+            id=entity_id, depth=depth_safe
         ).data()
 
         for row in rows:
-            path = row.get("path", {})
-            for node in path.get("nodes", []):
-                nid   = node.get("id", str(id(node)))
-                labs  = list(node.labels) if hasattr(node, "labels") else ["Unknown"]
-                props = dict(node)
-                if nid not in nodes:
+            for nid, nlabel, nname, nprops in [
+                (row.get("src_id"), row.get("src_label"), row.get("src_name"), row.get("src_props") or {}),
+                (row.get("end_id"), row.get("end_label"), row.get("end_name"), row.get("end_props") or {}),
+            ]:
+                if nid and nid not in nodes:
                     nodes[nid] = GraphNode(
                         id=nid,
-                        label=labs[0] if labs else "Unknown",
-                        name=props.get("name", props.get("title", nid)),
-                        properties={k: str(v) for k, v in props.items()
-                                    if k not in ("id","name","title")},
+                        label=nlabel or "Unknown",
+                        name=nname or nid,
+                        properties={k: str(v) for k, v in nprops.items()
+                                    if k not in ("id","name","title") and v is not None},
                     )
-            for rel in path.get("relationships", []):
-                src   = rel.start_node.get("id","") if hasattr(rel,"start_node") else ""
-                tgt   = rel.end_node.get("id","")   if hasattr(rel,"end_node")   else ""
-                rtype = rel.type if hasattr(rel,"type") else "RELATED_TO"
+            for rel_step in (row.get("rels") or []):
+                src   = rel_step.get("src", "")
+                tgt   = rel_step.get("tgt", "")
+                rtype = rel_step.get("type", "RELATED_TO")
                 if src and tgt:
                     edges.append(GraphEdge(
                         source=src, target=tgt, relationship=rtype,
-                        properties={k: str(v) for k, v in dict(rel).items()},
+                        properties={},
                     ))
 
     return GraphResponse(

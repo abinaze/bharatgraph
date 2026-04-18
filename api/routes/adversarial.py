@@ -32,10 +32,14 @@ def adversarial_analysis(entity_id: str, driver=Depends(get_db)):
     # Pull findings from risk scorer to pass into adversarial engine
     findings = []
     try:
-        scorer = RiskScorer(driver=driver)
-        result = scorer.score(entity_id, name)
-        findings = result.get("findings", [])
+        # BUG-03 FIX: RiskScorer() takes no constructor args; use score_entity() not score()
+        from api.routes.risk import get_risk
+        risk_result = get_risk(entity_id, driver)
+        findings = [
+            {"name": f.name, "score": f.score, "description": f.description}
+            for f in risk_result.factors
+        ]
     except Exception as e:
-        logger.warning(f"[Adversarial] Could not load findings from risk scorer: {e}")
+        logger.warning(f"[Adversarial] Could not load findings from risk route: {e}")
 
     return engine.analyze(entity_id, name, findings, driver=driver)
