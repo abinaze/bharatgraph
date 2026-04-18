@@ -106,12 +106,12 @@ SAMPLE_AUDIT_REPORTS = [
 
 # ── Politician-Company Director links (entity resolution) ──────────────────────
 SAMPLE_DIRECTOR_LINKS = [
-    {"politician_id": "pol_003", "company_id": "co_001",
-     "politician_name": "Amit Shah", "company_name": "Adani Enterprises Limited"},
-    {"politician_id": "pol_001", "company_id": "co_007",
-     "politician_name": "Narendra Modi", "company_name": "ONGC Limited"},
-    {"politician_id": "pol_010", "company_id": "co_003",
-     "politician_name": "Anurag Thakur", "company_name": "Tata Consultancy Services"},
+    # Keys must be name_a / name_b — these match graph/loader.py load_politician_company_links()
+    {"name_a": "Amit Shah",      "name_b": "Adani Enterprises Limited",  "score": 0.92},
+    {"name_a": "Narendra Modi",  "name_b": "ONGC Limited",               "score": 0.88},
+    {"name_a": "Anurag Thakur",  "name_b": "Tata Consultancy Services",  "score": 0.81},
+    {"name_a": "Amit Shah",      "name_b": "Reliance Industries Limited","score": 0.78},
+    {"name_a": "Arvind Kejriwal","name_b": "Bharti Airtel Limited",      "score": 0.72},
 ]
 
 
