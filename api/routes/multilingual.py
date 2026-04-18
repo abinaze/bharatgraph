@@ -199,3 +199,17 @@ def translate_text(
         "lang_name":    get_language_name(target_lang),
         "generated_at": datetime.now().isoformat(),
     }
+
+@router.get("/ui-labels")
+def get_ui_labels(lang: str = "en"):
+    """Return ALL UI labels translated for the requested language.
+    Auto-scales: new keys added to config/languages.py are returned automatically."""
+    from config.languages import get_all_labels_for_lang, SCHEDULED_LANGUAGES
+    labels = get_all_labels_for_lang(lang)
+    return {
+        "language":      lang,
+        "language_name": SCHEDULED_LANGUAGES.get(lang, {}).get("name", "English"),
+        "native_name":   SCHEDULED_LANGUAGES.get(lang, {}).get("native", "English"),
+        "labels":        labels,
+        "generated_at":  datetime.now().isoformat(),
+    }
