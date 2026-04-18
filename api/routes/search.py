@@ -164,7 +164,9 @@ def search_entities(
             if not targets:
                 targets = list(LABEL_QUERIES.keys())
 
-        per_label = max(5, limit // len(targets))
+        # BUG-05 FIX: 20÷14=1, so every type got only 1 result.
+        # Use at least 10 per type; for "all" mode use a generous cap.
+        per_label = max(10, (limit * 2) // max(len(targets), 1))
 
         for key in targets:
             label, cypher = LABEL_QUERIES[key]
