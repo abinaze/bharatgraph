@@ -213,7 +213,7 @@ const Views = {
             <select id="lang-select" style="font-size:var(--font-size-xs);padding:4px 8px;
                     background:var(--bg-secondary);color:var(--text-primary);
                     border:1px solid var(--border-color);border-radius:6px;cursor:pointer"
-                    onchange="State.language=this.value">
+                    onchange="State.language=this.value;applyLanguage(this.value)">
               <option value="en">🇮🇳 English</option>
               <option value="hi">हिन्दी</option>
               <option value="ta">தமிழ்</option>
@@ -789,6 +789,44 @@ function toggleTheme() {
   if (btn) btn.textContent = State.theme === "dark" ? "Light" : "Dark";
 }
 
+
+// ── Language Application ──────────────────────────────────────────────────────
+async function applyLanguage(lang) {
+  if (!lang || lang === "en") {
+    // Reset to English defaults
+    const ph = document.querySelector(".search-bar__input");
+    if (ph) ph.placeholder = "Search any politician, company, scheme, or contract...";
+    const badge = document.getElementById("lang-badge");
+    if (badge) badge.textContent = "EN";
+    return;
+  }
+  try {
+    const data = await Api.uiLabels(lang);
+    const labels = data.labels || {};
+
+    // Update search placeholder
+    const ph = document.querySelector(".search-bar__input");
+    if (ph && labels.search_placeholder) ph.placeholder = labels.search_placeholder;
+
+    // Update language badge
+    const badge = document.getElementById("lang-badge");
+    if (badge) badge.textContent = lang.toUpperCase();
+
+    // Update page subtitle / tagline
+    const tagline = document.querySelector("[data-i18n='tagline']");
+    if (tagline && labels.tagline) tagline.textContent = labels.tagline;
+
+    // Store labels for use in search results
+    State.uiLabels = labels;
+    State.langName  = data.language_name || lang;
+    State.nativeName = data.native_name  || lang;
+
+  } catch (e) {
+    console.warn("[i18n] Could not load UI labels for", lang, e.message);
+  }
+}
+window.applyLanguage = applyLanguage;
+
 function initApp() {
   document.documentElement.setAttribute("data-theme", State.theme);
 
@@ -806,6 +844,11 @@ function initApp() {
   });
 
   Router.init();
+
+  // Apply language on load if not English
+  if (State.language && State.language !== "en") {
+    applyLanguage(State.language);
+  }
 }
 
 window.addEventListener("DOMContentLoaded", initApp);
