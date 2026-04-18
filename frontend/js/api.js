@@ -40,8 +40,6 @@ const Api = {
   politicianContracts: (limit = 50) =>
     Api._request(`/graph/pattern/politician-contracts?limit=${limit}`),
 
-  languages: () => Api._request("/languages"),
-
   multilingualSearch: (query, lang = "en") => {
     const params = new URLSearchParams({ q: query, lang });
     return Api._request(`/search/multilingual?${params}`);
@@ -55,6 +53,15 @@ const Api = {
   verifyHash: (hash) => Api._request(`/verify/${hash}`),
 
   nodeEvidence: (entityId) => Api._request(`/node-evidence/${entityId}`),
+
+  translate: (text, sourceLang = "en", targetLang = "hi") => {
+    const params = new URLSearchParams({ text, source_lang: sourceLang, target_lang: targetLang });
+    return Api._request(`/translate?${params}`, { method: "POST" });
+  },
+
+  languages: () => Api._request("/languages"),
+
+  uiLabels: (lang = "en") => Api._request(`/ui-labels?lang=${lang}`),
 
   createFeedSocket: () => {
     const wsUrl = API_BASE.replace(/^http/, "ws") + "/ws/feed";

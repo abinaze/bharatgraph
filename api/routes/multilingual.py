@@ -71,33 +71,34 @@ def multilingual_search(
     search_variants = transliterator.normalize_for_search(q)
     logger.info(f"[Multilingual] Search variants: {search_variants}")
 
+    # Use indexed label-specific queries instead of full graph scan (prevents 500 / timeout)
+    INDEXED_QUERIES = [
+        ("Politician",    "MATCH (n:Politician) WHERE toLower(n.name) CONTAINS toLower($q) OR any(a IN coalesce(n.aliases,[]) WHERE toLower(a) CONTAINS toLower($q)) RETURN n.id AS id, 'Politician' AS type, n.name AS name, n.state AS state, n.source AS source LIMIT 5"),
+        ("Company",       "MATCH (n:Company)    WHERE toLower(n.name) CONTAINS toLower($q) OR toLower(coalesce(n.cin,'')) CONTAINS toLower($q) RETURN n.id AS id, 'Company' AS type, n.name AS name, n.state AS state, n.source AS source LIMIT 5"),
+        ("AuditReport",   "MATCH (n:AuditReport) WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) OR toLower(coalesce(n.ministry,'')) CONTAINS toLower($q) RETURN n.id AS id, 'AuditReport' AS type, n.title AS name, n.state AS state, n.source AS source LIMIT 3"),
+        ("Contract",      "MATCH (n:Contract)   WHERE toLower(coalesce(n.item_desc,'')) CONTAINS toLower($q) OR toLower(coalesce(n.buyer_org,'')) CONTAINS toLower($q) RETURN n.id AS id, 'Contract' AS type, coalesce(n.item_desc,n.order_id) AS name, null AS state, n.source AS source LIMIT 3"),
+        ("Ministry",      "MATCH (n:Ministry)   WHERE toLower(n.name) CONTAINS toLower($q) RETURN n.id AS id, 'Ministry' AS type, n.name AS name, null AS state, n.source AS source LIMIT 3"),
+        ("Party",         "MATCH (n:Party)      WHERE toLower(n.name) CONTAINS toLower($q) RETURN n.id AS id, 'Party' AS type, n.name AS name, null AS state, n.source AS source LIMIT 3"),
+        ("PressRelease",  "MATCH (n:PressRelease) WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) RETURN n.id AS id, 'PressRelease' AS type, n.title AS name, null AS state, n.source AS source LIMIT 3"),
+        ("ElectoralBond", "MATCH (n:ElectoralBond) WHERE toLower(coalesce(n.purchaser_name,'')) CONTAINS toLower($q) OR toLower(coalesce(n.redeemed_by,'')) CONTAINS toLower($q) RETURN n.id AS id, 'ElectoralBond' AS type, coalesce(n.purchaser_name,n.redeemed_by) AS name, null AS state, n.source AS source LIMIT 3"),
+        ("NGO",           "MATCH (n:NGO)        WHERE toLower(coalesce(n.ngo_name,'')) CONTAINS toLower($q) RETURN n.id AS id, 'NGO' AS type, n.ngo_name AS name, n.state AS state, n.source AS source LIMIT 3"),
+    ]
+
     results = []
+    seen_ids = set()
     with driver.session() as session:
+        # Try each search variant (transliterations) across all labels
         for variant in search_variants[:3]:
-            rows = session.run(
-                """
-                MATCH (n)
-                WHERE (n:Politician OR n:Company OR n:AuditReport OR
-                       n:Contract OR n:Ministry OR n:Party OR
-                       n:Scheme OR n:PressRelease)
-                  AND (
-                    toLower(coalesce(n.name,''))        CONTAINS toLower($q) OR
-                    toLower(coalesce(n.title,''))       CONTAINS toLower($q) OR
-                    toLower(coalesce(n.item_desc,''))   CONTAINS toLower($q) OR
-                    toLower(coalesce(n.buyer_org,''))   CONTAINS toLower($q) OR
-                    any(a IN coalesce(n.aliases,[])
-                        WHERE toLower(a) CONTAINS toLower($q))
-                  )
-                RETURN n.id AS id, labels(n)[0] AS type,
-                       coalesce(n.name, n.title) AS name,
-                       n.state AS state, n.source AS source
-                LIMIT 15
-                """,
-                q=variant
-            ).data()
-            for r in rows:
-                if r.get("id") and not any(x.get("id") == r["id"] for x in results):
-                    results.append(r)
+            for label, cypher in INDEXED_QUERIES:
+                try:
+                    rows = session.run(cypher, q=variant).data()
+                    for r in rows:
+                        rid = r.get("id", "")
+                        if rid and rid not in seen_ids:
+                            seen_ids.add(rid)
+                            results.append(r)
+                except Exception as qe:
+                    logger.debug(f"[Multilingual] {label} query skipped: {qe}")
 
     disclaimer = get_ui_label("legal_disclaimer", lang)
 
@@ -163,6 +164,23 @@ def multilingual_risk(
         "generated_at":      datetime.now().isoformat(),
     }
 
+
+
+
+@router.get("/ui-labels")
+def get_ui_labels(lang: str = "en"):
+    """Return all UI labels translated into the requested language."""
+    from config.languages import UI_LABELS, SCHEDULED_LANGUAGES
+    labels = {}
+    for key, translations in UI_LABELS.items():
+        labels[key] = translations.get(lang) or translations.get("en", key)
+    return {
+        "language":     lang,
+        "language_name": SCHEDULED_LANGUAGES.get(lang, {}).get("name", "English"),
+        "native_name":  SCHEDULED_LANGUAGES.get(lang, {}).get("native", "English"),
+        "labels":       labels,
+        "generated_at": datetime.now().isoformat(),
+    }
 
 @router.post("/translate")
 def translate_text(
