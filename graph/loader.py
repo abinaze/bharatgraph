@@ -421,42 +421,71 @@ class GraphLoader:
     def load_politician_company_links(self, matches: list) -> int:
         """
         Create DIRECTOR_OF relationships for politician-company matches.
-        These are the CORE corruption-detection links.
+        BUG-17 FIX: was using make_id(name) which doesn't match canonical IDs
+        created by load_politicians() (which uses make_id(name, state, election)).
+        Fix: MATCH by name using toLower() to find existing nodes, only MERGE the
+        relationship. If no existing node found, create one with name-only ID as
+        fallback so the edge is never silently lost.
         """
         count = 0
         for match in matches:
-            pol_name = match.get("name_a", "").strip()
-            co_name  = match.get("name_b", "").strip()
+            pol_name = match.get("name_a", match.get("politician_name", "")).strip()
+            co_name  = match.get("name_b", match.get("company_name", "")).strip()
             score    = match.get("score", 0.0)
             if not pol_name or not co_name:
                 continue
-            pol_id = make_id(pol_name)
-            co_id  = make_id(co_name)
+
+            # BUG-17 FIX: match by name (case-insensitive) to find the canonical node,
+            # fall back to make_id(name) only if not found in graph yet.
             query = """
-            MERGE (p:Politician {id: $pol_id})
-            SET p.name = $pol_name
-            MERGE (c:Company {id: $co_id})
-            SET c.name = $co_name
+            MERGE (p:Politician {id: coalesce(
+                (MATCH (x:Politician) WHERE toLower(x.name) = toLower($pol_name) RETURN x.id LIMIT 1)[0],
+                $pol_id_fallback
+            )})
+            SET p.name = coalesce(p.name, $pol_name)
+            MERGE (c:Company {id: coalesce(
+                (MATCH (x:Company) WHERE toLower(x.name) = toLower($co_name) RETURN x.id LIMIT 1)[0],
+                $co_id_fallback
+            )})
+            SET c.name = coalesce(c.name, $co_name)
             MERGE (p)-[r:DIRECTOR_OF]->(c)
             SET r.confidence  = $score,
                 r.source      = 'entity_resolution',
                 r.detected_at = $now
             """
-            self._run(query, {
-                "pol_id":   pol_id,
-                "pol_name": pol_name,
-                "co_id":    co_id,
-                "co_name":  co_name,
-                "score":    score,
-                "now":      datetime.now().isoformat(),
-            })
-            count += 1
-            self.stats["rels_created"] += 1
+            # Simpler, more reliable approach using two separate lookups
+            link_query = """
+            OPTIONAL MATCH (existing_p:Politician)
+            WHERE toLower(existing_p.name) = toLower($pol_name)
+            WITH coalesce(existing_p.id, $pol_id_fallback) AS pol_id
+            MERGE (p:Politician {id: pol_id})
+            SET p.name = coalesce(p.name, $pol_name)
+            WITH p
+            OPTIONAL MATCH (existing_c:Company)
+            WHERE toLower(existing_c.name) = toLower($co_name)
+            WITH p, coalesce(existing_c.id, $co_id_fallback) AS co_id
+            MERGE (c:Company {id: co_id})
+            SET c.name = coalesce(c.name, $co_name)
+            MERGE (p)-[r:DIRECTOR_OF]->(c)
+            SET r.confidence  = $score,
+                r.source      = 'entity_resolution',
+                r.detected_at = $now
+            """
+            try:
+                self._run(link_query, {
+                    "pol_name":        pol_name,
+                    "pol_id_fallback": make_id(pol_name),
+                    "co_name":         co_name,
+                    "co_id_fallback":  make_id(co_name),
+                    "score":           score,
+                    "now":             datetime.now().isoformat(),
+                })
+                count += 1
+                self.stats["rels_created"] += 1
+            except Exception as e:
+                logger.warning(f"[Loader] DIRECTOR_OF link {pol_name}→{co_name} failed: {e}")
 
-        if count > 0:
-            logger.warning(f"[Loader] DIRECTOR_OF links created: {count}")
-        else:
-            logger.info("[Loader] No politician-company links to load")
+        logger.info(f"[Loader] DIRECTOR_OF links created/updated: {count}")
         return count
 
     def load_from_pipeline_output(self, filepath: str) -> dict:
