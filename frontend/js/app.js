@@ -333,7 +333,7 @@ const Views = {
       const container = document.getElementById("search-results");
       if (container) container.innerHTML = `
         <div style="text-align:center;padding:var(--space-8);color:var(--color-risk-very-high)">
-          Search failed. Ensure the API is running. (${err.message})
+          Search failed. The API may be starting up — please retry in a moment.
         </div>
       `;
     });
@@ -791,36 +791,38 @@ function toggleTheme() {
 
 
 // ── Language Application ──────────────────────────────────────────────────────
+// BUG-10 FIX: full DOM translation via data-i18n attributes
 async function applyLanguage(lang) {
+  const badge = document.getElementById("lang-badge");
   if (!lang || lang === "en") {
-    // Reset to English defaults
-    const ph = document.querySelector(".search-bar__input");
-    if (ph) ph.placeholder = "Search any politician, company, scheme, or contract...";
-    const badge = document.getElementById("lang-badge");
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const def = el.getAttribute("data-i18n-default");
+      if (!def) return;
+      if (el.hasAttribute("placeholder")) el.placeholder = def;
+      else el.textContent = def;
+    });
     if (badge) badge.textContent = "EN";
+    State.uiLabels = {};
     return;
   }
   try {
-    const data = await Api.uiLabels(lang);
+    const data   = await Api.uiLabels(lang);
     const labels = data.labels || {};
-
-    // Update search placeholder
-    const ph = document.querySelector(".search-bar__input");
+    // Apply every translated label to every matching data-i18n DOM element.
+    // Auto-scales: new keys in languages.py are applied automatically.
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const value = labels[el.getAttribute("data-i18n")];
+      if (!value) return;
+      if (el.hasAttribute("placeholder")) el.placeholder = value;
+      else el.textContent = value;
+    });
+    // Also update dynamic search input (rendered after page load)
+    const ph = document.querySelector(".search-bar__input, #search-input");
     if (ph && labels.search_placeholder) ph.placeholder = labels.search_placeholder;
-
-    // Update language badge
-    const badge = document.getElementById("lang-badge");
-    if (badge) badge.textContent = lang.toUpperCase();
-
-    // Update page subtitle / tagline
-    const tagline = document.querySelector("[data-i18n='tagline']");
-    if (tagline && labels.tagline) tagline.textContent = labels.tagline;
-
-    // Store labels for use in search results
-    State.uiLabels = labels;
-    State.langName  = data.language_name || lang;
-    State.nativeName = data.native_name  || lang;
-
+    if (badge) { badge.textContent = lang.toUpperCase(); badge.title = data.native_name || lang; }
+    State.uiLabels   = labels;
+    State.langName   = data.language_name || lang;
+    State.nativeName = data.native_name   || lang;
   } catch (e) {
     console.warn("[i18n] Could not load UI labels for", lang, e.message);
   }
