@@ -51,14 +51,16 @@ class DeepInvestigator:
                 ).single()
                 entity_label = (row["label"] if row else "Unknown") or "Unknown"
 
-            for i, fn in enumerate([
-                lambda s: self._layer_1_direct(entity_id, s),
-                lambda s: self._layer_2_expansion(entity_id, s),
-                lambda s: self._layer_3_patterns(entity_id, s),
-                lambda s: self._layer_4_timeline(entity_id, s),
-                lambda s: self._layer_5_influence(entity_id, s),
-                lambda s: self._layer_6_validation(entity_id, entity_name, s),
-            ], 1):
+            # BUG-04 FIX: default-argument capture prevents lambda closure over loop var
+            layer_fns = [
+                (1, lambda s, _id=entity_id: self._layer_1_direct(_id, s)),
+                (2, lambda s, _id=entity_id: self._layer_2_expansion(_id, s)),
+                (3, lambda s, _id=entity_id: self._layer_3_patterns(_id, s)),
+                (4, lambda s, _id=entity_id: self._layer_4_timeline(_id, s)),
+                (5, lambda s, _id=entity_id: self._layer_5_influence(_id, s)),
+                (6, lambda s, _id=entity_id, _nm=entity_name: self._layer_6_validation(_id, _nm, s)),
+            ]
+            for i, fn in layer_fns:
                 try:
                     result = fn(session)
                     result["description"] = LAYER_DESCRIPTIONS.get(result.get("name",""), "")
