@@ -1,8 +1,6 @@
-function sanitize(str) {
-  const d = document.createElement("div");
-  d.textContent = String(str || "");
-  return d.innerHTML;
-}
+// BUG-05 FIX: sanitize() removed from components.js — defined once in app.js.
+// Both files previously defined it; second definition silently overwrote the first.
+// app.js loads last, so its sanitize() was always the active one, but this was fragile.
 
 const Components = {
   Spinner: (size = "sm") => {
@@ -64,11 +62,13 @@ const Components = {
     el.setAttribute("role", "button");
     el.setAttribute("tabindex", "0");
     const type = (entity.entity_type || "").toLowerCase();
+    // BUG-16 FIX: removed duplicate ministry: "M" key
     const icons = { politician: "P", company: "C", contract: "K",
-                  tender: "T", regulatory: "R", enforcement: "E",
-                  electoralbond: "B", insolvency: "I", ngo: "N",
-                  ministry: "M", party: "W", scheme: "S",
-                    auditreport: "A", ministry: "M" };
+                    tender: "T", regulatory: "R", enforcement: "E",
+                    electoralbond: "B", insolvency: "I", ngo: "N",
+                    ministry: "M", party: "W", scheme: "S",
+                    auditreport: "A", courtcase: "J", localbody: "L",
+                    pressrelease: "PR", parliamentquestion: "Q" };
     const icon = icons[type] || "?";
     el.innerHTML = `
       <div class="result-card__icon result-card__icon--${type}">
@@ -102,14 +102,15 @@ const Components = {
       .slice(0, 3)
       .map(e => `<span class="evidence-chip">${e.substring(0, 60)}</span>`)
       .join("");
+    // BUG-20 FIX: finding.description was put directly in innerHTML — XSS risk
     el.innerHTML = `
       <div class="finding-item__severity" style="color:${
         finding.severity === "HIGH" ? "var(--color-risk-high)"
         : finding.severity === "VERY_HIGH" ? "var(--color-risk-very-high)"
         : finding.severity === "MODERATE" ? "#856404"
         : "var(--color-risk-low)"
-      }">${finding.severity || "LOW"}</div>
-      <div class="finding-item__desc">${finding.description || ""}</div>
+      }">${sanitize(finding.severity || "LOW")}</div>
+      <div class="finding-item__desc">${sanitize(finding.description || "")}</div>
       ${evidence ? `<div style="margin-top:var(--space-2)">${evidence}</div>` : ""}
     `;
     return el;

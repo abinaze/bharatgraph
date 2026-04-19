@@ -120,7 +120,7 @@ class TimelineBuilder:
                     RETURN a.year AS year, a.title AS title,
                            a.irregularity_amount_crore AS amount
                     LIMIT 10
-                    """, name=entity_id
+                    """, name=entity_name  # BUG-18 FIX: was entity_id — audit events search by name not ID
                 ).data()
                 return [{
                     "date":     str(r.get("year","")) + "-01-01",
@@ -167,7 +167,7 @@ class TimelineBuilder:
                     WHERE toLower(pr.title) CONTAINS toLower($name)
                     RETURN pr.date AS date, pr.title AS title
                     ORDER BY pr.date DESC LIMIT 10
-                    """, name=entity_id
+                    """, name=entity_name  # BUG-18 FIX: was entity_id — audit events search by name not ID
                 ).data()
                 return [{
                     "date":     r.get("date",""),

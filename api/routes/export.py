@@ -13,15 +13,13 @@ from ai.report_hasher import ReportHasher
 from ai.multi_investigator import MultiInvestigator
 
 router   = APIRouter()
-_generator = None
-_hasher    = None
+_hasher = None
 
 
 def get_generator() -> DossierGenerator:
-    global _generator
-    if _generator is None:
-        _generator = DossierGenerator(driver=get_driver())
-    return _generator
+    """BUG-08 FIX: was caching generator with stale driver.
+    Now creates a fresh generator per request — driver is always fresh."""
+    return DossierGenerator(driver=get_driver())
 
 
 def get_hasher() -> ReportHasher:

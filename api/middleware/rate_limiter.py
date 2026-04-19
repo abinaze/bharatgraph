@@ -24,7 +24,12 @@ class SlidingWindowRateLimiter(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
+        # BUG-14 NOTE: in-memory state — each worker starts fresh on restart.
+        # Rate limits are per-worker, not cross-worker. Acceptable for single-process HF Spaces.
+        # For multi-worker: replace with Redis-backed sliding window.
         self._windows: dict[str, list[float]] = defaultdict(list)
+        # BUG-14 FIX: add eviction to prevent unbounded memory growth on long-running server
+        self._evict_at = 0.0
 
     def _get_limit(self, path: str) -> tuple[int, int]:
         for prefix, limit in LIMITS.items():
@@ -45,6 +50,13 @@ class SlidingWindowRateLimiter(BaseHTTPMiddleware):
         max_req, window = self._get_limit(path)
         key = f"{ip}:{path.split('/')[1]}"
         now = time.time()
+
+        # Evict stale entries every 5 minutes to prevent memory leak (BUG-14)
+        if now - self._evict_at > 300:
+            stale_keys = [k for k, ts in self._windows.items() if not ts or now - ts[-1] > window]
+            for k in stale_keys:
+                del self._windows[k]
+            self._evict_at = now
 
         self._windows[key] = [t for t in self._windows[key] if now - t < window]
 

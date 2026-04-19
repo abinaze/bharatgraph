@@ -80,11 +80,14 @@ class ProfileSection(BaseModel):
 
 
 class ProfileResponse(BaseModel):
+    """BUG-22 FIX: added sources field — profile.py was returning it but model lacked it,
+    causing Pydantic ValidationError silently on some entity types."""
     entity_id: str
     entity_type: str
     name: str
     overview: Dict[str, Any] = {}
     sections: List[ProfileSection] = []
+    sources: List[SourceDocument] = []
     risk_score: Optional[int] = None
     generated_at: str
 

@@ -79,7 +79,8 @@ const EvidencePanel = {
         <button onclick="EvidencePanel._investigate('${entityId}')"
                 id="ep-investigate-btn"
                 class="btn btn--secondary" style="flex:1;font-size:12px">Investigate (6 Layers)</button>
-        <button onclick="EvidencePanel._openConnectionMap('${entityId}','${sanitize(entityName||entityId)}')"
+        <button data-eid="${sanitize(entityId)}" data-ename="${sanitize(entityName||entityId)}"
+          onclick="EvidencePanel._openConnectionMap(this.getAttribute('data-eid'),this.getAttribute('data-ename'))"
                 class="btn btn--secondary" style="flex:1;font-size:12px">Map Links</button>
       </div>
     `;
@@ -227,7 +228,8 @@ const EvidencePanel = {
           ${items.map(e => `
             <div style="padding:10px 12px;margin-bottom:6px;background:var(--bg-tertiary);
                         border-radius:8px;cursor:pointer"
-                 onclick="EvidencePanel.open('${sanitize(e.connected_id||"")}','${sanitize(e.connected_to||"")}')">
+                 data-eid="${sanitize(e.connected_id||"")}" data-ename="${sanitize(e.connected_to||"")}"
+                  onclick="EvidencePanel.open(this.getAttribute('data-eid'),this.getAttribute('data-ename'))">
               <div style="display:flex;justify-content:space-between">
                 <span style="font-size:13px;font-weight:600;color:var(--text-primary)">
                   ${sanitize(e.connected_to||e.connected_id||"—")}

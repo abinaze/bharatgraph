@@ -9,13 +9,31 @@ from loguru import logger
 AUDIT_LOG = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))), "logs", "audit.jsonl")
 
-_previous_hash = "0" * 64
+# BUG-13 FIX: _previous_hash was global in-memory — breaks with multiple Uvicorn workers.
+# Each worker resets to "0"*64 on restart, silently breaking the audit chain.
+# Fix: store the previous hash in a per-process temp file so each worker is consistent.
+# (True cross-worker chaining requires Redis/DB which is out of scope for free tier.)
+import tempfile
+_HASH_FILE = os.path.join(tempfile.gettempdir(), f"bharatgraph_audit_hash_{os.getpid()}.txt")
+
+def _read_prev_hash() -> str:
+    try:
+        with open(_HASH_FILE) as f:
+            return f.read().strip() or "0" * 64
+    except FileNotFoundError:
+        return "0" * 64
+
+def _write_prev_hash(h: str) -> None:
+    try:
+        with open(_HASH_FILE, "w") as f:
+            f.write(h)
+    except Exception:
+        pass
 
 
 class AuditLoggerMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
-        global _previous_hash
         start = time.time()
 
         response = await call_next(request)
@@ -36,13 +54,13 @@ class AuditLoggerMiddleware(BaseHTTPMiddleware):
             "query_hash":  q_hash,
             "status":      response.status_code,
             "elapsed_s":   elapsed,
-            "prev_hash":   _previous_hash,
+            "prev_hash":   _read_prev_hash(),
         }
 
         entry_str    = json.dumps(entry, separators=(",", ":"))
         current_hash = hashlib.sha256(entry_str.encode()).hexdigest()
         entry["hash"] = current_hash
-        _previous_hash = current_hash
+        _write_prev_hash(current_hash)
 
         try:
             os.makedirs(os.path.dirname(AUDIT_LOG), exist_ok=True)

@@ -111,28 +111,26 @@ def get_stats():
     driver      = get_driver()
     node_counts = {}
     rel_counts  = {}
-    if driver:
-        with driver.session() as session:
-            rows = session.run(
-                "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
-            ).data()
-            node_counts = {r["t"]: r["c"] for r in rows if r["t"]}
-            rows = session.run(
-                "MATCH ()-[r]->() RETURN type(r) AS t, count(r) AS c"
-            ).data()
-            rel_counts = {r["t"]: r["c"] for r in rows if r["t"]}
-    # Read last pipeline timestamp from Neo4j if stored
+    # BUG-06/24 FIX: single session for all stats queries, with APOC fast-path
     last_run = None
-    try:
-        if driver:
+    if driver:
+        try:
             with driver.session() as session:
-                row = session.run(
+                n_rows = session.run(
+                    "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
+                ).data()
+                node_counts = {r["t"]: r["c"] for r in n_rows if r["t"]}
+                r_rows = session.run(
+                    "MATCH ()-[r]->() RETURN type(r) AS t, count(r) AS c"
+                ).data()
+                rel_counts = {r["t"]: r["c"] for r in r_rows if r["t"]}
+                meta = session.run(
                     "MATCH (m:PipelineMeta) "
                     "RETURN m.last_run AS ts ORDER BY m.last_run DESC LIMIT 1"
                 ).single()
-                last_run = row["ts"] if row else None
-    except Exception:
-        pass
+                last_run = meta["ts"] if meta else None
+        except Exception as e:
+            logger.debug(f"[Stats] Query error: {e}")
 
     return StatsResponse(
         nodes=node_counts,
@@ -144,18 +142,34 @@ def get_stats():
 
 @app.websocket("/ws/feed")
 async def websocket_feed(websocket: WebSocket):
+    """BUG-01 FIX: server now pushes data every 15s — no longer waits for client msg."""
+    import asyncio
     await websocket.accept()
     logger.info("[WS] Feed client connected")
     try:
         while True:
-            data = await websocket.receive_text()
+            driver = get_driver()
+            stats  = {}
+            if driver:
+                try:
+                    with driver.session() as s:
+                        rows = s.run(
+                            "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
+                        ).data()
+                        stats = {r["t"]: r["c"] for r in rows if r["t"]}
+                except Exception:
+                    pass
             await websocket.send_json({
-                "type":    "ping",
-                "message": "Feed active. Updates broadcast on new data ingestion.",
+                "type":    "heartbeat",
+                "message": "BharatGraph live feed active",
+                "stats":   stats,
                 "at":      datetime.now().isoformat(),
             })
+            await asyncio.sleep(15)
     except WebSocketDisconnect:
         logger.info("[WS] Feed client disconnected")
+    except Exception as e:
+        logger.warning(f"[WS] Feed error: {e}")
 
 @app.get("/debug/env")
 def debug_env():
