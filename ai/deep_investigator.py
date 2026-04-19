@@ -36,47 +36,49 @@ class DeepInvestigator:
             return self._offline_response(entity_id, entity_name)
 
         layers = []
-        with self.driver.session() as session:
-            # Resolve name if not given
-            if not entity_name:
-                row = session.run(
-                    "MATCH (n {id:$id}) RETURN n.name AS name, labels(n)[0] AS label",
-                    id=entity_id
-                ).single()
-                entity_name = (row["name"] if row else entity_id) or entity_id
-                entity_label = (row["label"] if row else "Unknown") or "Unknown"
-            else:
-                row = session.run(
-                    "MATCH (n {id:$id}) RETURN labels(n)[0] AS label", id=entity_id
-                ).single()
-                entity_label = (row["label"] if row else "Unknown") or "Unknown"
+        # BUG-15 FIX: each layer now gets its own session.
+        # Previously all 6 layers shared ONE session — if any layer timed out or
+        # threw, the entire session (and all remaining layers) was killed.
+        # Resolve name/label in its own short session first.
+        try:
+            with self.driver.session() as session:
+                if not entity_name:
+                    row = session.run(
+                        "MATCH (n {id:$id}) RETURN n.name AS name, labels(n)[0] AS label",
+                        id=entity_id
+                    ).single()
+                    entity_name = (row["name"] if row else entity_id) or entity_id
+                    entity_label = (row["label"] if row else "Unknown") or "Unknown"
+                else:
+                    row = session.run(
+                        "MATCH (n {id:$id}) RETURN labels(n)[0] AS label", id=entity_id
+                    ).single()
+                    entity_label = (row["label"] if row else "Unknown") or "Unknown"
+        except Exception as e:
+            logger.warning(f"[DeepInvestigator] Name lookup failed: {e}")
 
-            # BUG-04 FIX: default-argument capture prevents lambda closure over loop var
-            layer_fns = [
-                (1, lambda s, _id=entity_id: self._layer_1_direct(_id, s)),
-                (2, lambda s, _id=entity_id: self._layer_2_expansion(_id, s)),
-                (3, lambda s, _id=entity_id: self._layer_3_patterns(_id, s)),
-                (4, lambda s, _id=entity_id: self._layer_4_timeline(_id, s)),
-                (5, lambda s, _id=entity_id: self._layer_5_influence(_id, s)),
-                (6, lambda s, _id=entity_id, _nm=entity_name: self._layer_6_validation(_id, _nm, s)),
-            ]
-            for i, fn in layer_fns:
-                try:
-                    result = fn(session)
-                    result["description"] = LAYER_DESCRIPTIONS.get(result.get("name",""), "")
-                    layers.append(result)
-                    logger.info(f"[DeepInvestigator] Layer {i}: {result.get('count',0)} items")
-                except Exception as e:
-                    logger.warning(f"[DeepInvestigator] Layer {i} failed: {e}")
-                    layers.append({
-                        "layer": i,
-                        "name": LAYER_NAMES[i-1],
-                        "count": 0,
-                        "items": [],
-                        "description": LAYER_DESCRIPTIONS.get(LAYER_NAMES[i-1],""),
-                        "error": str(e),
-                        "status": "layer_error"
-                    })
+        # Each layer uses its own session — isolated, independently failable
+        LAYER_METHODS = [
+            (1, "direct_evidence",        lambda _id=entity_id: self._run_layer(self._layer_1_direct, _id)),
+            (2, "relationship_expansion", lambda _id=entity_id: self._run_layer(self._layer_2_expansion, _id)),
+            (3, "pattern_investigation",  lambda _id=entity_id: self._run_layer(self._layer_3_patterns, _id)),
+            (4, "timeline_investigation", lambda _id=entity_id: self._run_layer(self._layer_4_timeline, _id)),
+            (5, "network_influence",      lambda _id=entity_id: self._run_layer(self._layer_5_influence, _id)),
+            (6, "evidence_validation",    lambda _id=entity_id, _nm=entity_name: self._run_layer(self._layer_6_validation, _id, _nm)),
+        ]
+        for i, layer_name, fn in LAYER_METHODS:
+            try:
+                result = fn()
+                result["description"] = LAYER_DESCRIPTIONS.get(result.get("name",""), "")
+                layers.append(result)
+                logger.info(f"[DeepInvestigator] Layer {i}: {result.get('count',0)} items")
+            except Exception as e:
+                logger.warning(f"[DeepInvestigator] Layer {i} failed: {e}")
+                layers.append({
+                    "layer": i, "name": layer_name, "count": 0, "items": [],
+                    "description": LAYER_DESCRIPTIONS.get(layer_name, ""),
+                    "error": str(e), "status": "layer_error"
+                })
 
         total = sum(l.get("count", 0) for l in layers)
         logger.success(f"[DeepInvestigator] Complete: {total} items across 6 layers")
@@ -120,6 +122,11 @@ class DeepInvestigator:
             return {"score": 55, "level": "MODERATE", "reason": f"{layers_with_data}/6 investigation layers returned data."}
         else:
             return {"score": 25, "level": "LOW", "reason": f"Only {layers_with_data}/6 investigation layers returned data. More data sources needed."}
+
+    def _run_layer(self, method, *args):
+        """BUG-15 FIX: each layer runs in its own session."""
+        with self.driver.session() as session:
+            return method(*args, session)
 
     def _layer_1_direct(self, entity_id: str, session) -> dict:
         rows = session.run(
