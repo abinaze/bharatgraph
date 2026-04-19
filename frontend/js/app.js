@@ -202,8 +202,9 @@ const Views = {
       <div style="padding:var(--space-8) 0">
         <div class="container">
           <div class="search-bar" style="max-width:700px;margin-bottom:var(--space-6)">
-            <input class="search-bar__input" id="search-input"
-                   placeholder="Search entities..." id="search-input-field"
+            <!-- BUG-10 FIX: removed duplicate id attribute -->
+              <input class="search-bar__input" id="search-input"
+                   placeholder="Search entities..."
                    autocomplete="off">
             <button class="search-bar__btn" id="search-btn">Search</button>
           </div>
@@ -213,7 +214,7 @@ const Views = {
             <select id="lang-select" style="font-size:var(--font-size-xs);padding:4px 8px;
                     background:var(--bg-secondary);color:var(--text-primary);
                     border:1px solid var(--border-color);border-radius:6px;cursor:pointer"
-                    onchange="State.language=this.value;applyLanguage(this.value)">
+                    onchange="State.language=this.value;applyLanguage(this.value);document.getElementById('navbar-lang-select')&&(document.getElementById('navbar-lang-select').value=this.value)">
               <option value="en">🇮🇳 English</option>
               <option value="hi">हिन्दी</option>
               <option value="ta">தமிழ்</option>
@@ -839,11 +840,27 @@ function initApp() {
   Router.register("/live-feed", Views.liveFeed);
   Router.register("/about",    Views.about);
 
-  Api.health().then(() => {
-    State.apiConnected = true;
-  }).catch(() => {
-    Components.Toast("API not connected. Start: uvicorn api.main:app --reload", "error");
-  });
+  // BUG-02 FIX: was single immediate check — failed permanently on HF cold start.
+  // BUG-25 FIX: message said "Start: uvicorn" — wrong for HuggingFace users.
+  // Fix: retry up to 5 times with exponential backoff (2s, 4s, 8s, 16s, 30s).
+  (function checkHealth(attempt) {
+    Api.health()
+      .then(data => {
+        State.apiConnected = true;
+        const dot  = document.getElementById("api-status-dot");
+        const text = document.getElementById("api-status-text");
+        if (dot)  dot.style.background  = data.neo4j_connected ? "var(--color-risk-low)" : "var(--color-saffron)";
+        if (text) text.textContent      = data.neo4j_connected ? "Connected" : "API Only";
+      })
+      .catch(() => {
+        if (attempt < 5) {
+          const delay = Math.min(2000 * Math.pow(2, attempt - 1), 30000);
+          setTimeout(() => checkHealth(attempt + 1), delay);
+        } else {
+          Components.Toast("API unavailable. Please refresh the page in a moment.", "error");
+        }
+      });
+  })(1);
 
   Router.init();
 
