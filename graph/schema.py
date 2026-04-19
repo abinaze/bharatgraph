@@ -202,14 +202,20 @@ RELATIONSHIP_SCHEMAS = {
 
 # ── Full-text index (run once) ───────────────────────────────────────────────
 # This powers instant search across all labels and fields simultaneously.
-FULLTEXT_INDEX_QUERY = """
-CALL db.index.fulltext.createNodeIndex(
-  'globalSearch',
-  ['Politician','Company','Contract','AuditReport','Scheme','Ministry','Party','PressRelease'],
-  ['name','title','aliases','description','item_desc','buyer_org',
-   'cin','ministry','summary','seller_name','order_id']
+FULLTEXT_INDEX_QUERY = (
+    # BUG-19 FIX: expanded from 8 to 16 node types + 14 searchable fields.
+    # Auto-scales: add new node labels and field names to the lists below.
+    "CALL db.index.fulltext.createNodeIndex("
+    "  \'globalSearch\',"
+    "  [\'Politician\',\'Company\',\'Contract\',\'AuditReport\',\'Scheme\',"
+    "   \'Ministry\',\'Party\',\'PressRelease\',\'Tender\',\'RegulatoryOrder\',"
+    "   \'EnforcementAction\',\'ElectoralBond\',\'InsolvencyOrder\',"
+    "   \'NGO\',\'CourtCase\',\'LocalBody\'],"
+    "  [\'name\',\'title\',\'aliases\',\'description\',\'item_desc\',"
+    "   \'buyer_org\',\'seller_name\',\'ngo_name\',\'company_name\',"
+    "   \'purchaser_name\',\'accused\',\'ministry\',\'constituency\',\'state\']"
+    ")"
 )
-"""
 
 SETUP_QUERIES = [
     # Uniqueness constraints (also create indexes automatically)
