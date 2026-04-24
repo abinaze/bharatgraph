@@ -13,16 +13,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      # FIX: upgraded from @v4 to @v4.2.2 (Node.js 24 compatible)
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v4
 
-      # FIX: upgraded from @v5 to @v5.3.0 (Node.js 24 compatible)
-      - uses: actions/setup-python@v5.3.0
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
+          # FIX: removed "cache: pip" — causes "Cache service responded with 400"
+          # on GitHub's current runners. pip install is fast enough without caching.
 
       - name: install core dependencies
         run: |
@@ -31,8 +32,6 @@ jobs:
 
       - name: syntax check all Python files
         run: |
-          # FIX: use python3 not python (python may not exist on Ubuntu)
-          # FIX: use xargs instead of pipe+while so exit code propagates correctly
           find . -name "*.py" \
             -not -path "./venv/*" \
             -not -path "./.git/*" \
