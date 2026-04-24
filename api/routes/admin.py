@@ -16,8 +16,7 @@ _pipeline_status = {
 
 @router.post("/admin/seed")
 def seed_database(driver=Depends(get_db)):
-    """Load sample nodes AND relationships into Neo4j for demonstration.
-    Run POST /admin/pipeline to load all 21 live data sources."""
+    """Load sample nodes AND relationships into Neo4j for demonstration."""
     from graph.seed import (
         SAMPLE_POLITICIANS, SAMPLE_COMPANIES,
         SAMPLE_CONTRACTS, SAMPLE_AUDIT_REPORTS,
@@ -25,7 +24,9 @@ def seed_database(driver=Depends(get_db)):
     )
     from graph.loader import GraphLoader
 
-    loader = GraphLoader()
+    # BUG-21 FIX: pass the existing driver so GraphLoader doesn't open a
+    # second connection (GraphLoader.__init__ now accepts driver= kwarg).
+    loader = GraphLoader(driver=driver)
     p = loader.load_politicians(SAMPLE_POLITICIANS)
     c = loader.load_companies(SAMPLE_COMPANIES)
     k = loader.load_contracts(SAMPLE_CONTRACTS)
@@ -38,7 +39,7 @@ def seed_database(driver=Depends(get_db)):
         "companies":     c,
         "contracts":     k,
         "audit_reports": a,
-        "director_links": d,
+        "director_links":d,
         "try_searching": [
             "Modi", "Gandhi", "Adani", "Tata", "Infosys",
             "Amit Shah", "Anurag Thakur", "road construction", "audit Maharashtra"
@@ -57,38 +58,29 @@ def trigger_pipeline(
     scrapers: str = "all",
     driver=Depends(get_db),
 ):
-    """
-    Trigger full 20-scraper pipeline in background.
-    scrapers: comma-separated list or 'all'
-    e.g. POST /admin/pipeline?scrapers=cag,gem,pib,myneta,wikidata
-    """
+    """Trigger full pipeline in background. scrapers: comma-separated or 'all'."""
     if _pipeline_status["running"]:
         return {
-            "status":   "already_running",
-            "started":  _pipeline_status["last_run"],
-            "message":  "Pipeline is already running. Check /admin/pipeline/status",
+            "status":  "already_running",
+            "started": _pipeline_status["last_run"],
+            "message": "Pipeline is already running. Check /admin/pipeline/status",
         }
 
     scraper_list = None if scrapers == "all" else scrapers.split(",")
-
-    background_tasks.add_task(
-        _run_pipeline_background, scraper_list, driver
-    )
-
+    background_tasks.add_task(_run_pipeline_background, scraper_list, driver)
     _pipeline_status["running"]  = True
     _pipeline_status["last_run"] = datetime.now().isoformat()
 
     return {
-        "status":   "started",
-        "scrapers": scrapers,
-        "message":  "Pipeline running in background. Check /admin/pipeline/status",
-        "note":     "Full run takes 3-8 minutes depending on network.",
+        "status":  "started",
+        "scrapers":scrapers,
+        "message": "Pipeline running in background. Check /admin/pipeline/status",
+        "note":    "Full run takes 3-8 minutes depending on network.",
     }
 
 
 @router.get("/admin/pipeline/status")
 def pipeline_status():
-    """Check if pipeline is running and see last result."""
     return {
         "running":      _pipeline_status["running"],
         "last_run":     _pipeline_status["last_run"],
@@ -98,49 +90,61 @@ def pipeline_status():
 
 
 def _run_pipeline_background(scraper_list, driver):
-    """Background task — runs pipeline then loads ALL scraped data into Neo4j.
-    BUG-02 FIX: was only loading 5 of 16 scraper outputs.
-    BUG-15 FIX: reuses the passed driver; no second connection created.
-    BUG-16 FIX: auto-detects all available loader methods by introspection.
-    Auto-scales: as new scrapers and loader methods are added, they are
-    automatically included without editing this function.
+    """
+    Background task — runs pipeline then loads ALL scraped data into Neo4j.
+
+    BUG-21 FIX: GraphLoader now receives the existing driver instead of
+    creating a second Neo4j connection (which would exceed the free-tier limit).
+
+    BUG-22 FIX: key was "electoral_bonds" (wrong) — corrected to "electoral_bond"
+    to match the scraper output key set by run_electoral_bond() in pipeline.py.
+
+    BUG-30 FIX: added the 7 missing scrapers: icij, opensanctions, njdg, lgd,
+    ncrb, wikidata, datagov — these were scraped but their loader methods were
+    never registered in SCRAPER_TO_LOADER so they were silently dropped.
     """
     try:
         logger.info("[Admin] Background pipeline started")
         from processing.pipeline import BharatGraphPipeline
         from graph.loader import GraphLoader
 
-        results = BharatGraphPipeline().run(
-            scrapers=scraper_list, parallel=True
-        )
+        results = BharatGraphPipeline().run(scrapers=scraper_list, parallel=True)
         summary = results["summary"]
         raw     = results.get("raw", {})
 
         logger.info("[Admin] Pipeline done — loading into Neo4j...")
-        # BUG-15 FIX: pass driver to GraphLoader so it reuses the existing connection
+        # BUG-21 FIX: reuse the existing driver, don't open a second connection
         loader = GraphLoader(driver=driver)
 
-        # BUG-02 + BUG-16 FIX: map ALL scraper output keys to loader methods.
-        # This auto-scales: adding a new scraper + loader method requires zero
-        # changes here — just follow the naming convention: scraper key → load_{key}.
+        # Complete mapping of all 20 scrapers to their loader methods.
+        # BUG-22 FIX: was "electoral_bonds" → corrected to "electoral_bond"
+        # BUG-30 FIX: added 7 previously missing scrapers
         SCRAPER_TO_LOADER = {
-            "myneta":        ("load_politicians",         []),
-            "mca":           ("load_companies",           []),
-            "gem":           ("load_contracts",           []),
-            "cag":           ("load_audit_reports",       []),
-            "pib":           ("load_press_releases",      []),
-            "sebi":          ("load_regulatory_orders",   []),
-            "ed":            ("load_enforcement_actions", []),
-            "electoral_bonds":("load_electoral_bonds",    []),
-            "ibbi":          ("load_insolvency_orders",   []),
-            "ngo_darpan":    ("load_ngos",                []),
-            "cppp":          ("load_tenders",             []),
-            "loksabha":      ("load_parliament_questions",[]),
-            "cvc":           ("load_vigilance_circulars", []),
+            "myneta":         "load_politicians",
+            "mca":            "load_companies",
+            "gem":            "load_contracts",
+            "cag":            "load_audit_reports",
+            "pib":            "load_press_releases",
+            "sebi":           "load_regulatory_orders",
+            "ed":             "load_enforcement_actions",
+            "electoral_bond": "load_electoral_bonds",       # BUG-22 FIX: was "electoral_bonds"
+            "ibbi":           "load_insolvency_orders",
+            "ngo_darpan":     "load_ngos",
+            "cppp":           "load_tenders",
+            "loksabha":       "load_parliament_questions",
+            "cvc":            "load_vigilance_circulars",
+            # BUG-30 FIX: 7 new scrapers added below
+            "icij":           "load_icij_entities",
+            "opensanctions":  "load_sanctioned_entities",
+            "njdg":           "load_court_cases",
+            "lgd":            "load_local_bodies",
+            "ncrb":           "load_crime_reports",
+            "wikidata":       "load_wikidata_enrichments",
+            "datagov":        "load_datagov_documents",
         }
 
         loaded = {}
-        for scraper_key, (method_name, _) in SCRAPER_TO_LOADER.items():
+        for scraper_key, method_name in SCRAPER_TO_LOADER.items():
             records = raw.get(scraper_key, [])
             if not records:
                 logger.debug(f"[Admin] No records for {scraper_key}, skipping")
