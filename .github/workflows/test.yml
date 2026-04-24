@@ -22,8 +22,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          # FIX: removed "cache: pip" — causes "Cache service responded with 400"
-          # on GitHub's current runners. pip install is fast enough without caching.
 
       - name: install core dependencies
         run: |
