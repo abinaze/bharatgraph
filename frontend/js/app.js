@@ -173,23 +173,55 @@ const Views = {
   },
 
   _connectFeedToHome: () => {
-    try {
-      const ws = Api.createFeedSocket();
+    // BUG-6 FIX: added ws.onclose with exponential-backoff reconnect so the
+    // home-feed recovers automatically when the backend restarts, instead of
+    // going silent permanently until the user hard-refreshes.
+    function connect(delay) {
+      delay = delay || 2000;
+      let ws;
+      try {
+        ws = Api.createFeedSocket();
+      } catch (_) { return; }
+
       ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        const container = document.getElementById("home-feed");
-        if (!container) { ws.close(); return; }
-        container.innerHTML = "";
-        const item = Components.FeedItem({
-          headline: data.message || "New intelligence available",
-          risk_level: "MODERATE",
-          detected_at: data.at,
-          source: "BharatGraph Feed",
-        });
-        container.appendChild(item);
+        try {
+          const data = JSON.parse(event.data);
+          const container = document.getElementById("home-feed");
+          if (!container) { ws.close(); return; }
+          container.innerHTML = "";
+          // Show real feed items when available, fall back to heartbeat message
+          const items = data.items || [];
+          if (items.length > 0) {
+            items.slice(0, 3).forEach(item => {
+              container.appendChild(Components.FeedItem({
+                headline:    `[${item.label || "Entity"}] ${item.name || "—"}`,
+                risk_level:  "MODERATE",
+                detected_at: item.scraped_at || data.at,
+                source:      item.source || "BharatGraph",
+              }));
+            });
+          } else {
+            container.appendChild(Components.FeedItem({
+              headline:    data.message || "New intelligence available",
+              risk_level:  "MODERATE",
+              detected_at: data.at,
+              source:      "BharatGraph Feed",
+            }));
+          }
+        } catch (_) {}
       };
+
       ws.onerror = () => {};
-    } catch (_) {}
+
+      // BUG-6 FIX: reconnect on close
+      ws.onclose = () => {
+        const container = document.getElementById("home-feed");
+        if (!container) return;          // user navigated away — stop retrying
+        const nextDelay = Math.min(delay * 2, 30000);
+        setTimeout(() => connect(nextDelay), nextDelay);
+      };
+    }
+    connect(2000);
   },
 
   search: () => {
@@ -214,7 +246,7 @@ const Views = {
             <select id="lang-select" style="font-size:var(--font-size-xs);padding:4px 8px;
                     background:var(--bg-secondary);color:var(--text-primary);
                     border:1px solid var(--border-color);border-radius:6px;cursor:pointer"
-                    onchange="State.language=this.value;applyLanguage(this.value);document.getElementById('navbar-lang-select')&&(document.getElementById('navbar-lang-select').value=this.value)">
+                    onchange="State.language=this.value;applyLanguage(this.value);document.getElementById('navbar-lang-select')&&(document.getElementById('navbar-lang-select').value=this.value);(function(){const q=document.getElementById('search-input')&&document.getElementById('search-input').value.trim()||new URLSearchParams(window.location.hash.split('?')[1]||'').get('q')||'';if(q){const t=new URLSearchParams(window.location.hash.split('?')[1]||'').get('type')||'';Router.navigate('/search?q='+encodeURIComponent(q)+(t?'&type='+encodeURIComponent(t):'')+'&lang='+this.value);}}).call(this)">
               <option value="en">🇮🇳 English</option>
               <option value="hi">हिन्दी</option>
               <option value="ta">தமிழ்</option>
@@ -252,7 +284,7 @@ const Views = {
           </div>
 
           <div id="search-results">
-            ${query ? Components.SkeletonGroup(5).outerHTML || "" : ""}
+            ${query ? (() => { const w = document.createElement("div"); w.appendChild(Components.SkeletonGroup(5)); return w.innerHTML; })() : ""}
           </div>
         </div>
       </div>
@@ -624,7 +656,7 @@ const Views = {
                   <input id="path-target" class="search-bar__input"
                          placeholder="Target entity ID..."
                          style="font-size:12px;padding:8px 12px">
-                  <button onclick="Views._findPath('${encodeURIComponent(entityId)}')"
+                  <button onclick="Views._findPath('${sanitize(entityId)}')"
                           class="btn btn--secondary" style="font-size:12px">Find Shortest Path</button>
                 </div>
                 <div id="path-result" style="margin-top:10px"></div>
