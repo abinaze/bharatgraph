@@ -15,9 +15,11 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      # FIX: upgraded from @v4 to @v4.2.2 (Node.js 24 compatible)
+      - uses: actions/checkout@v4.2.2
 
-      - uses: actions/setup-python@v5
+      # FIX: upgraded from @v5 to @v5.3.0 (Node.js 24 compatible)
+      - uses: actions/setup-python@v5.3.0
         with:
           python-version: "3.11"
           cache: pip
@@ -29,14 +31,14 @@ jobs:
 
       - name: syntax check all Python files
         run: |
-          FAIL=0
+          # FIX: use python3 not python (python may not exist on Ubuntu)
+          # FIX: use xargs instead of pipe+while so exit code propagates correctly
           find . -name "*.py" \
             -not -path "./venv/*" \
             -not -path "./.git/*" \
-            -not -path "./__pycache__/*" | while read f; do
-            python -m py_compile "$f" || { echo "SYNTAX ERROR: $f"; FAIL=1; }
-          done
-          exit $FAIL
+            -not -path "./__pycache__/*" \
+            -print0 | xargs -0 python3 -m py_compile
+          echo "PASS: All Python files have valid syntax"
 
       - name: run unit tests
         run: pytest tests/ -v --tb=short 2>/dev/null || echo "No tests found"
