@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 from dotenv import load_dotenv
 load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -10,19 +11,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from api.dependencies import get_driver, close_driver
-# NOTE: keep this on ONE line � CI test.yml regex requires it
 from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate
 from api.models import HealthResponse, StatsResponse
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("[API] Starting up — attempting Neo4j connection")
+    logger.info("[API] Starting up -- attempting Neo4j connection")
     driver = get_driver()
     if driver:
         logger.success("[API] Neo4j ready")
     else:
-        logger.warning("[API] Starting without Neo4j — set secrets to enable")
+        logger.warning("[API] Starting without Neo4j -- set secrets to enable")
     yield
     logger.info("[API] Shutting down")
     close_driver()
@@ -35,14 +35,10 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    # BUG-28 FIX: bumped version string from stale 0.29.0 → 0.30.0
     version="0.30.0",
     lifespan=lifespan,
 )
 
-# BUG-15 FIX: CORS origins now read from CORS_ORIGINS env var (comma-separated).
-# Defaults to localhost for local dev. Set CORS_ORIGINS=https://abinaze.github.io
-# in HuggingFace secrets for production.
 _cors_origins_raw = os.getenv(
     "CORS_ORIGINS",
     "http://localhost:8000,http://127.0.0.1:8000,https://abinaze.github.io"
@@ -95,8 +91,9 @@ def root():
         "status":      "running",
         "docs":        "/docs",
         "health":      "/health",
-        "description": "Public transparency intelligence platform for India. All data from official government records.",
+        "description": "Public transparency intelligence platform for India.",
     }
+
 
 @app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse)
 def health_check():
@@ -139,7 +136,6 @@ def get_stats():
                 last_run = meta["ts"] if meta else None
         except Exception as e:
             logger.debug(f"[Stats] Query error: {e}")
-
     return StatsResponse(
         nodes=node_counts,
         relationships=rel_counts,
@@ -148,7 +144,6 @@ def get_stats():
     )
 
 
-# High-signal node types to surface in the live feed
 _FEED_LABELS = [
     "AuditReport", "EnforcementAction", "RegulatoryOrder",
     "ElectoralBond", "Contract", "VigilanceCircular",
@@ -157,69 +152,49 @@ _FEED_LABELS = [
 
 @app.websocket("/ws/feed")
 async def websocket_feed(websocket: WebSocket):
-    """
-    BUG-5 FIX: now pushes real recent nodes instead of a static heartbeat.
-    BUG-9 FIX: finally block guarantees the socket is always closed on exit.
-    """
     import asyncio
     await websocket.accept()
     logger.info("[WS] Feed client connected")
     try:
         while True:
             driver = get_driver()
-            payload: dict = {
-                "type": "feed",
-                "at":   datetime.now().isoformat(),
-            }
-
+            payload = {"type": "feed", "at": datetime.now().isoformat()}
             if driver:
                 try:
                     with driver.session() as s:
-                        # Real data: most recent high-signal nodes
                         feed_rows = s.run(
-                            """
-                            MATCH (n)
-                            WHERE labels(n)[0] IN $labels
-                              AND n.scraped_at IS NOT NULL
-                            RETURN labels(n)[0] AS label,
-                                   coalesce(n.name, n.title, n.company_name, n.id) AS name,
-                                   n.scraped_at  AS scraped_at,
-                                   n.id          AS id,
-                                   n.source      AS source
-                            ORDER BY n.scraped_at DESC
-                            LIMIT 8
-                            """,
+                            "MATCH (n) WHERE labels(n)[0] IN $labels "
+                            "AND n.scraped_at IS NOT NULL "
+                            "RETURN labels(n)[0] AS label, "
+                            "coalesce(n.name, n.title, n.company_name, n.id) AS name, "
+                            "n.scraped_at AS scraped_at, n.id AS id, n.source AS source "
+                            "ORDER BY n.scraped_at DESC LIMIT 8",
                             labels=_FEED_LABELS
                         ).data()
-
                         if feed_rows:
-                            payload["items"] = feed_rows
+                            payload["items"]   = feed_rows
                             payload["message"] = (
-                                f"{feed_rows[0].get('label','Entity')}: "
-                                f"{feed_rows[0].get('name','—')}"
+                                feed_rows[0].get("label", "Entity") + ": " +
+                                feed_rows[0].get("name", "-")
                             )
                         else:
-                            # Fallback: at least show node counts
                             rows = s.run(
                                 "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
                             ).data()
                             payload["stats"]   = {r["t"]: r["c"] for r in rows if r["t"]}
-                            payload["message"] = "BharatGraph feed active — run /admin/pipeline to ingest data"
+                            payload["message"] = "Feed active -- run /admin/pipeline to ingest data"
                 except Exception as db_err:
                     logger.debug(f"[WS] DB query error: {db_err}")
-                    payload["message"] = "Feed active — database query pending"
+                    payload["message"] = "Feed active -- database query pending"
             else:
-                payload["message"] = "Feed active — no database connection"
-
+                payload["message"] = "Feed active -- no database connection"
             await websocket.send_json(payload)
             await asyncio.sleep(15)
-
     except WebSocketDisconnect:
         logger.info("[WS] Feed client disconnected")
     except Exception as e:
         logger.warning(f"[WS] Feed error: {e}")
     finally:
-        # BUG-9 FIX: always close — prevents hanging socket on unexpected exception
         try:
             await websocket.close()
         except Exception:
@@ -228,17 +203,16 @@ async def websocket_feed(websocket: WebSocket):
 
 @app.get("/debug/env")
 def debug_env():
-    import os
     return {
         "neo4j_uri_set":      bool(os.getenv("NEO4J_URI")),
         "neo4j_user_set":     bool(os.getenv("NEO4J_USER")),
         "neo4j_password_set": bool(os.getenv("NEO4J_PASSWORD")),
-        "neo4j_uri_prefix":   (os.getenv("NEO4J_URI","")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
+        "neo4j_uri_prefix":   (os.getenv("NEO4J_URI", "")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
     }
+
 
 @app.get("/debug/neo4j")
 def debug_neo4j():
-    import os
     from neo4j import GraphDatabase
     uri      = os.getenv("NEO4J_URI", "")
     user     = os.getenv("NEO4J_USER", "neo4j")
@@ -252,6 +226,6 @@ def debug_neo4j():
         logger.warning(f"[Debug] Neo4j connection test failed: {e.__class__.__name__}")
         return {
             "status":     "failed",
-            "error":      "Connection failed — check environment secrets",
+            "error":      "Connection failed -- check environment secrets",
             "uri_prefix": uri[:20] if uri else "NOT SET",
         }
