@@ -54,9 +54,30 @@ const Api = {
 
   nodeEvidence: (entityId) => Api._request(`/node-evidence/${entityId}`),
 
+  /**
+   * BUG-7 FIX: was always sending text as a URL query string on a POST,
+   * which caused 414 URI Too Long for text > ~2000 chars and silently
+   * truncated anything beyond the browser's URL limit.
+   *
+   * Fix: short text (< 400 chars) keeps the fast query-param path;
+   * long text is sent as a JSON body so there is no length limit.
+   */
   translate: (text, sourceLang = "en", targetLang = "hi") => {
-    const params = new URLSearchParams({ text, source_lang: sourceLang, target_lang: targetLang });
-    return Api._request(`/translate?${params}`, { method: "POST" });
+    const baseParams = new URLSearchParams({
+      source_lang: sourceLang,
+      target_lang: targetLang,
+    });
+    if (text.length < 400) {
+      // Short text: send via query string (original fast path)
+      baseParams.append("text", text);
+      return Api._request(`/translate?${baseParams}`, { method: "POST" });
+    }
+    // Long text: send as JSON body to avoid URL length limits
+    baseParams.append("text", "");           // keep param present but empty
+    return Api._request(`/translate?${baseParams}`, {
+      method: "POST",
+      body: JSON.stringify({ text }),
+    });
   },
 
   languages: () => Api._request("/languages"),

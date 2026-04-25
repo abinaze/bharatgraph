@@ -28,7 +28,7 @@ class BharatGraphPipeline:
         os.makedirs("data/samples",   exist_ok=True)
         logger.info("[Pipeline] Initialized")
 
-    # ── Core scrapers (already existed) ──────────────────────────────────────
+    # ── Scrapers ─────────────────────────────────────────────────────────────
 
     def run_datagov(self) -> list:
         try:
@@ -50,8 +50,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.cag_scraper import CAGScraper
             reports = CAGScraper().fetch_report_list(limit=50)
-            for r in reports:
-                r["_source"] = "cag"
+            for r in reports: r["_source"] = "cag"
             logger.success(f"[Pipeline] CAG: {len(reports)} reports")
             return reports
         except Exception as e:
@@ -105,23 +104,18 @@ class BharatGraphPipeline:
         try:
             from scrapers.pib_scraper import PIBScraper
             articles = PIBScraper().fetch_all_feeds(save=False)
-            for a in articles:
-                a["_source"] = "pib"
+            for a in articles: a["_source"] = "pib"
             logger.success(f"[Pipeline] PIB: {len(articles)} articles")
             return articles
         except Exception as e:
             logger.error(f"[Pipeline] PIB failed: {e}")
             return []
 
-    # ── NEW: 15 additional scrapers ───────────────────────────────────────────
-
     def run_loksabha(self) -> list:
         try:
             from scrapers.loksabha_scraper import LokSabhaScraper
-            s       = LokSabhaScraper()
-            records = s.fetch_questions(limit=50)
-            for r in records:
-                r["_source"] = "loksabha"
+            records = LokSabhaScraper().fetch_questions(limit=50)
+            for r in records: r["_source"] = "loksabha"
             logger.success(f"[Pipeline] LokSabha: {len(records)} records")
             return records
         except Exception as e:
@@ -132,8 +126,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.sebi_scraper import SEBIScraper
             records = SEBIScraper().fetch_enforcement_orders(limit=30)
-            for r in records:
-                r["_source"] = "sebi"
+            for r in records: r["_source"] = "sebi"
             logger.success(f"[Pipeline] SEBI: {len(records)} orders")
             return records
         except Exception as e:
@@ -144,8 +137,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.ed_scraper import EDScraper
             records = EDScraper().fetch_press_releases(limit=30)
-            for r in records:
-                r["_source"] = "ed"
+            for r in records: r["_source"] = "ed"
             logger.success(f"[Pipeline] ED: {len(records)} press releases")
             return records
         except Exception as e:
@@ -156,8 +148,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.cvc_scraper import CVCScraper
             records = CVCScraper().fetch_circulars(limit=30)
-            for r in records:
-                r["_source"] = "cvc"
+            for r in records: r["_source"] = "cvc"
             logger.success(f"[Pipeline] CVC: {len(records)} records")
             return records
         except Exception as e:
@@ -168,8 +159,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.njdg_scraper import NJDGScraper
             records = NJDGScraper().fetch_pendency_stats()
-            for r in records:
-                r["_source"] = "njdg"
+            for r in records: r["_source"] = "njdg"
             logger.success(f"[Pipeline] NJDG: {len(records)} records")
             return records
         except Exception as e:
@@ -180,8 +170,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.electoral_bond_scraper import ElectoralBondScraper
             records = ElectoralBondScraper().fetch_bond_data()
-            for r in records:
-                r["_source"] = "electoral_bond"
+            for r in records: r["_source"] = "electoral_bond"
             logger.success(f"[Pipeline] Electoral Bonds: {len(records)} records")
             return records
         except Exception as e:
@@ -195,10 +184,8 @@ class BharatGraphPipeline:
             records  = []
             scraper  = ICIJScraper()
             for name in entities:
-                hits = scraper.search_entity(name)
-                records.extend(hits)
-            for r in records:
-                r["_source"] = "icij"
+                records.extend(scraper.search_entity(name))
+            for r in records: r["_source"] = "icij"
             logger.success(f"[Pipeline] ICIJ: {len(records)} matches")
             return records
         except Exception as e:
@@ -212,10 +199,8 @@ class BharatGraphPipeline:
             records  = []
             scraper  = OpenSanctionsScraper()
             for name in entities:
-                hits = scraper.search_entity(name)
-                records.extend(hits)
-            for r in records:
-                r["_source"] = "opensanctions"
+                records.extend(scraper.search_entity(name))
+            for r in records: r["_source"] = "opensanctions"
             logger.success(f"[Pipeline] OpenSanctions: {len(records)} matches")
             return records
         except Exception as e:
@@ -231,8 +216,7 @@ class BharatGraphPipeline:
                 "Yogi Adityanath", "Shashi Tharoor", "Anurag Thakur",
             ]
             records = WikidataScraper().enrich_entity_list(politicians)
-            for r in records:
-                r["_source"] = "wikidata"
+            for r in records: r["_source"] = "wikidata"
             logger.success(f"[Pipeline] Wikidata: {len(records)} enrichments")
             return records
         except Exception as e:
@@ -243,8 +227,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.ibbi_scraper import IBBIScraper
             records = IBBIScraper().fetch_orders(limit=30)
-            for r in records:
-                r["_source"] = "ibbi"
+            for r in records: r["_source"] = "ibbi"
             logger.success(f"[Pipeline] IBBI: {len(records)} orders")
             return records
         except Exception as e:
@@ -255,8 +238,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.ngo_darpan_scraper import NGODarpanScraper
             records = NGODarpanScraper().fetch_ngo_list(limit=30)
-            for r in records:
-                r["_source"] = "ngo_darpan"
+            for r in records: r["_source"] = "ngo_darpan"
             logger.success(f"[Pipeline] NGO Darpan: {len(records)} NGOs")
             return records
         except Exception as e:
@@ -267,8 +249,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.cppp_scraper import CPPPScraper
             records = CPPPScraper().fetch_tenders(limit=30)
-            for r in records:
-                r["_source"] = "cppp"
+            for r in records: r["_source"] = "cppp"
             logger.success(f"[Pipeline] CPPP: {len(records)} tenders")
             return records
         except Exception as e:
@@ -279,8 +260,7 @@ class BharatGraphPipeline:
         try:
             from scrapers.ncrb_scraper import NCRBScraper
             records = NCRBScraper().fetch_crime_statistics(limit=20)
-            for r in records:
-                r["_source"] = "ncrb"
+            for r in records: r["_source"] = "ncrb"
             logger.success(f"[Pipeline] NCRB: {len(records)} records")
             return records
         except Exception as e:
@@ -291,17 +271,12 @@ class BharatGraphPipeline:
         try:
             from scrapers.lgd_scraper import LGDScraper
             records = LGDScraper().fetch_state_codes()
-            for r in records:
-                r["_source"] = "lgd"
+            for r in records: r["_source"] = "lgd"
             logger.success(f"[Pipeline] LGD: {len(records)} records")
             return records
         except Exception as e:
             logger.warning(f"[Pipeline] LGD failed: {e}")
             return []
-
-    # ── Runner map — all 20 scrapers ─────────────────────────────────────────
-
-    RUNNER_MAP = None  # set in run()
 
     def _get_runner_map(self):
         return {
@@ -327,8 +302,6 @@ class BharatGraphPipeline:
             "lgd":            self.run_lgd,
         }
 
-    # ── Entity resolution ────────────────────────────────────────────────────
-
     def find_politician_company_links(self, politicians, companies):
         logger.info("[Pipeline] Finding politician-company links...")
         matches = self.resolver.cross_dataset_match(
@@ -339,8 +312,6 @@ class BharatGraphPipeline:
             logger.warning(f"[Pipeline] {len(matches)} politician-company links found!")
         return matches
 
-    # ── Save ─────────────────────────────────────────────────────────────────
-
     def save(self, data: dict) -> str:
         filepath = f"data/processed/pipeline_{self.timestamp}.json"
         with open(filepath, "w", encoding="utf-8") as f:
@@ -348,14 +319,10 @@ class BharatGraphPipeline:
         logger.success(f"[Pipeline] Saved to {filepath}")
         return filepath
 
-    # ── Main run ─────────────────────────────────────────────────────────────
-
     def run(self, scrapers: list = None, parallel: bool = True) -> dict:
-        runner_map = self._get_runner_map()
+        runner_map   = self._get_runner_map()
         all_scrapers = list(runner_map.keys())
         to_run = scrapers if scrapers else all_scrapers
-
-        # validate
         to_run = [s.strip() for s in to_run if s.strip() in runner_map]
         if not to_run:
             to_run = all_scrapers
@@ -367,10 +334,7 @@ class BharatGraphPipeline:
 
         if parallel and len(to_run) > 1:
             with ThreadPoolExecutor(max_workers=6) as pool:
-                futures = {
-                    pool.submit(runner_map[name]): name
-                    for name in to_run
-                }
+                futures = {pool.submit(runner_map[name]): name for name in to_run}
                 for future in as_completed(futures):
                     name = futures[future]
                     try:
@@ -382,15 +346,27 @@ class BharatGraphPipeline:
             for name in to_run:
                 raw[name] = runner_map[name]()
 
-        politicians = raw.get("myneta", []) + raw.get("wikidata", [])
-        companies   = raw.get("mca", [])
-        links       = []
+        # BUG-13 FIX: entity resolver now runs on ALL data sources that could
+        # contain Indian persons/companies, not just myneta+mca.
+        # ICIJ and OpenSanctions entities are now resolved against politicians
+        # and companies so cross-dataset evidence chains are created.
+        politicians = (
+            raw.get("myneta",       []) +
+            raw.get("wikidata",     []) +
+            raw.get("opensanctions",[]) +    # BUG-13 FIX: added
+            raw.get("icij",         [])      # BUG-13 FIX: added
+        )
+        companies = (
+            raw.get("mca",  []) +
+            raw.get("ibbi", [])             # BUG-13 FIX: added
+        )
+        links = []
         if politicians and companies:
             politicians = self.resolver.resolve_dataset(politicians, "name")
             companies   = self.resolver.resolve_dataset(companies,   "name")
             links       = self.find_politician_company_links(politicians, companies)
 
-        duration = (datetime.now() - start).seconds
+        duration   = (datetime.now() - start).seconds
         per_source = {name: len(records) for name, records in raw.items()}
 
         summary = {
@@ -411,44 +387,32 @@ class BharatGraphPipeline:
                     f"{summary['total_raw_records']} total records")
 
         results = {
-            "raw":      raw,
-            "links":    links,
-            "summary":  summary,
-            "run_at":   start.isoformat(),
+            "raw":     raw,
+            "links":   links,
+            "summary": summary,
+            "run_at":  start.isoformat(),
         }
         results["saved_to"] = self.save(results)
         return results
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="BharatGraph Full Pipeline")
-    parser.add_argument("--scrapers",  type=str,  default=None,
-                        help="comma-separated list e.g. cag,gem,pib,wikidata")
-    parser.add_argument("--parallel",  action="store_true", default=True,
-                        help="run scrapers in parallel threads (default: True)")
-    parser.add_argument("--sequential",action="store_true", default=False,
-                        help="run scrapers one by one")
-    args    = parser.parse_args()
+    parser = argparse.ArgumentParser(description="BharatGraph Full Pipeline (20 scrapers)")
+    parser.add_argument("--scrapers",   type=str, default=None)
+    parser.add_argument("--parallel",   action="store_true", default=True)
+    parser.add_argument("--sequential", action="store_true", default=False)
+    args     = parser.parse_args()
     scrapers = args.scrapers.split(",") if args.scrapers else None
     parallel = not args.sequential
 
-    print("=" * 55)
-    print("BharatGraph - Full Data Pipeline (20 scrapers)")
-    print("=" * 55)
-
     results = BharatGraphPipeline().run(scrapers=scrapers, parallel=parallel)
     s = results["summary"]
-
-    print(f"\n{'='*55}")
-    print("PIPELINE SUMMARY")
-    print(f"{'='*55}")
+    print(f"\n{'='*55}\nPIPELINE SUMMARY\n{'='*55}")
     print(f"  Scrapers run:   {len(s['scrapers_run'])}")
     print(f"  Duration:       {s['duration_seconds']}s")
     print(f"  Total records:  {s['total_raw_records']}")
-    print(f"\n  Per source:")
     for src, n in sorted(s["per_source"].items(), key=lambda x: -x[1]):
         if n > 0:
             print(f"    {src:<20} {n}")
-    print(f"\n  Politician-co links: {s['politician_co_links']}")
-    print(f"  Saved to:       {results.get('saved_to')}")
-    print(f"{'='*55}")
+    print(f"  Saved to: {results.get('saved_to')}")
+    print("=" * 55)

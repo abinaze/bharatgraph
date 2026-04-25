@@ -13,6 +13,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +22,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
 
       - name: install core dependencies
         run: |
@@ -29,14 +30,12 @@ jobs:
 
       - name: syntax check all Python files
         run: |
-          FAIL=0
           find . -name "*.py" \
             -not -path "./venv/*" \
             -not -path "./.git/*" \
-            -not -path "./__pycache__/*" | while read f; do
-            python -m py_compile "$f" || { echo "SYNTAX ERROR: $f"; FAIL=1; }
-          done
-          exit $FAIL
+            -not -path "./__pycache__/*" \
+            -print0 | xargs -0 python3 -m py_compile
+          echo "PASS: All Python files have valid syntax"
 
       - name: run unit tests
         run: pytest tests/ -v --tb=short 2>/dev/null || echo "No tests found"
@@ -44,22 +43,10 @@ jobs:
       - name: verify no bolt://localhost in codebase
         run: |
           if grep -r "bolt://localhost" --include="*.py" .; then
-            echo "ERROR: bolt://localhost found in Python files"
+            echo "ERROR: bolt://localhost found"
             exit 1
           fi
           echo "PASS: No bolt://localhost references"
 
       - name: verify all registered API routes exist
-        run: |
-          python3 -c "
-          import re, os, sys
-          main = open('api/main.py').read()
-          m = re.findall(r'from api\.routes import (.*)', main)
-          if m:
-              mods = [x.strip() for x in m[0].split(',')]
-              missing = [x for x in mods if not os.path.exists(f'api/routes/{x}.py')]
-              if missing:
-                  print('MISSING ROUTE FILES:', missing)
-                  sys.exit(1)
-              print(f'PASS: All {len(mods)} route files present')
-          "
+        run: python3 scripts/verify_routes.py

@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 from dotenv import load_dotenv
 load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -16,12 +17,12 @@ from api.models import HealthResponse, StatsResponse
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("[API] Starting up — attempting Neo4j connection")
+    logger.info("[API] Starting up -- attempting Neo4j connection")
     driver = get_driver()
     if driver:
         logger.success("[API] Neo4j ready")
     else:
-        logger.warning("[API] Starting without Neo4j — set secrets to enable")
+        logger.warning("[API] Starting without Neo4j -- set secrets to enable")
     yield
     logger.info("[API] Shutting down")
     close_driver()
@@ -34,13 +35,19 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.29.0",
+    version="0.30.0",
     lifespan=lifespan,
 )
 
+_cors_origins_raw = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:8000,http://127.0.0.1:8000,https://abinaze.github.io"
+)
+_cors_origins = [o.strip() for o in _cors_origins_raw.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
@@ -56,38 +63,37 @@ app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(InputValidatorMiddleware)
 app.add_middleware(AuditLoggerMiddleware)
 
-app.include_router(search.router,      tags=["Search"])
-app.include_router(profile.router,     tags=["Profile"])
-app.include_router(graph.router,       tags=["Graph"])
-app.include_router(risk.router,        tags=["Risk"])
-app.include_router(multilingual.router,tags=["Multilingual"])
-app.include_router(export.router,      tags=["Export"])
+app.include_router(search.router,        tags=["Search"])
+app.include_router(profile.router,       tags=["Profile"])
+app.include_router(graph.router,         tags=["Graph"])
+app.include_router(risk.router,          tags=["Risk"])
+app.include_router(multilingual.router,  tags=["Multilingual"])
+app.include_router(export.router,        tags=["Export"])
 app.include_router(admin.router,         tags=["Admin"])
 app.include_router(investigation.router, tags=["Investigation"])
 app.include_router(affidavit.router,     tags=["Affidavit"])
 app.include_router(biography.router,     tags=["Biography"])
-app.include_router(benami.router,       tags=["Benami"])
-app.include_router(sources.router,      tags=["Sources"])
+app.include_router(benami.router,        tags=["Benami"])
+app.include_router(sources.router,       tags=["Sources"])
 app.include_router(procurement.router,   tags=["Procurement"])
-app.include_router(conflict.router,       tags=["Conflict"])
-app.include_router(linguistic.router,     tags=["Linguistic"])
-app.include_router(policy.router,         tags=["Policy"])
-app.include_router(adversarial.router,     tags=["Adversarial"])
-app.include_router(debate.router,          tags=["Debate"])
-
+app.include_router(conflict.router,      tags=["Conflict"])
+app.include_router(linguistic.router,    tags=["Linguistic"])
+app.include_router(policy.router,        tags=["Policy"])
+app.include_router(adversarial.router,   tags=["Adversarial"])
+app.include_router(debate.router,        tags=["Debate"])
 
 
 @app.get("/")
 def root():
-    """API root — returns version and link to docs."""
     return {
-        "name": "BharatGraph API",
-        "version": "0.29.0",
-        "status": "running",
-        "docs": "/docs",
-        "health": "/health",
-        "description": "Public transparency intelligence platform for India. All data from official government records.",
+        "name":        "BharatGraph API",
+        "version":     "0.30.0",
+        "status":      "running",
+        "docs":        "/docs",
+        "health":      "/health",
+        "description": "Public transparency intelligence platform for India.",
     }
+
 
 @app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse)
 def health_check():
@@ -101,7 +107,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.29.0",
+        version="0.30.0",
         generated_at=datetime.now().isoformat(),
     )
 
@@ -111,8 +117,7 @@ def get_stats():
     driver      = get_driver()
     node_counts = {}
     rel_counts  = {}
-    # BUG-06/24 FIX: single session for all stats queries, with APOC fast-path
-    last_run = None
+    last_run    = None
     if driver:
         try:
             with driver.session() as session:
@@ -131,7 +136,6 @@ def get_stats():
                 last_run = meta["ts"] if meta else None
         except Exception as e:
             logger.debug(f"[Stats] Query error: {e}")
-
     return StatsResponse(
         nodes=node_counts,
         relationships=rel_counts,
@@ -140,50 +144,75 @@ def get_stats():
     )
 
 
+_FEED_LABELS = [
+    "AuditReport", "EnforcementAction", "RegulatoryOrder",
+    "ElectoralBond", "Contract", "VigilanceCircular",
+]
+
+
 @app.websocket("/ws/feed")
 async def websocket_feed(websocket: WebSocket):
-    """BUG-01 FIX: server now pushes data every 15s — no longer waits for client msg."""
     import asyncio
     await websocket.accept()
     logger.info("[WS] Feed client connected")
     try:
         while True:
             driver = get_driver()
-            stats  = {}
+            payload = {"type": "feed", "at": datetime.now().isoformat()}
             if driver:
                 try:
                     with driver.session() as s:
-                        rows = s.run(
-                            "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
+                        feed_rows = s.run(
+                            "MATCH (n) WHERE labels(n)[0] IN $labels "
+                            "AND n.scraped_at IS NOT NULL "
+                            "RETURN labels(n)[0] AS label, "
+                            "coalesce(n.name, n.title, n.company_name, n.id) AS name, "
+                            "n.scraped_at AS scraped_at, n.id AS id, n.source AS source "
+                            "ORDER BY n.scraped_at DESC LIMIT 8",
+                            labels=_FEED_LABELS
                         ).data()
-                        stats = {r["t"]: r["c"] for r in rows if r["t"]}
-                except Exception:
-                    pass
-            await websocket.send_json({
-                "type":    "heartbeat",
-                "message": "BharatGraph live feed active",
-                "stats":   stats,
-                "at":      datetime.now().isoformat(),
-            })
+                        if feed_rows:
+                            payload["items"]   = feed_rows
+                            payload["message"] = (
+                                feed_rows[0].get("label", "Entity") + ": " +
+                                feed_rows[0].get("name", "-")
+                            )
+                        else:
+                            rows = s.run(
+                                "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
+                            ).data()
+                            payload["stats"]   = {r["t"]: r["c"] for r in rows if r["t"]}
+                            payload["message"] = "Feed active -- run /admin/pipeline to ingest data"
+                except Exception as db_err:
+                    logger.debug(f"[WS] DB query error: {db_err}")
+                    payload["message"] = "Feed active -- database query pending"
+            else:
+                payload["message"] = "Feed active -- no database connection"
+            await websocket.send_json(payload)
             await asyncio.sleep(15)
     except WebSocketDisconnect:
         logger.info("[WS] Feed client disconnected")
     except Exception as e:
         logger.warning(f"[WS] Feed error: {e}")
+    finally:
+        try:
+            await websocket.close()
+        except Exception:
+            pass
+
 
 @app.get("/debug/env")
 def debug_env():
-    import os
     return {
         "neo4j_uri_set":      bool(os.getenv("NEO4J_URI")),
         "neo4j_user_set":     bool(os.getenv("NEO4J_USER")),
         "neo4j_password_set": bool(os.getenv("NEO4J_PASSWORD")),
-        "neo4j_uri_prefix":   (os.getenv("NEO4J_URI","")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
+        "neo4j_uri_prefix":   (os.getenv("NEO4J_URI", "")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
     }
+
 
 @app.get("/debug/neo4j")
 def debug_neo4j():
-    import os
     from neo4j import GraphDatabase
     uri      = os.getenv("NEO4J_URI", "")
     user     = os.getenv("NEO4J_USER", "neo4j")
@@ -194,7 +223,9 @@ def debug_neo4j():
         driver.close()
         return {"status": "connected", "uri_prefix": uri[:20]}
     except Exception as e:
-        logger.warning(f"[Debug] Neo4j connection test failed: {type(e).__name__}")
-        return {"status": "failed",
-                "error": "Connection failed — check environment secrets",
-                "uri_prefix": uri[:20] if uri else "NOT SET"}
+        logger.warning(f"[Debug] Neo4j connection test failed: {e.__class__.__name__}")
+        return {
+            "status":     "failed",
+            "error":      "Connection failed -- check environment secrets",
+            "uri_prefix": uri[:20] if uri else "NOT SET",
+        }

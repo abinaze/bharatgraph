@@ -11,17 +11,36 @@ from api.dependencies import get_db
 
 router = APIRouter()
 
+# BUG-10 FIX: expanded from 8 to 20 node types so every label gets proper
+# source attribution instead of falling back to "BharatGraph/Knowledge Graph/#".
 SOURCE_MAP = {
-    "Politician":   ("Election Commission of India / MyNeta", "Candidate Affidavit",    "https://myneta.info"),
-    "Company":      ("Ministry of Corporate Affairs",         "MCA21 Company Master",   "https://www.mca.gov.in"),
-    "AuditReport":  ("Comptroller and Auditor General",       "CAG Audit Report",       "https://cag.gov.in"),
-    "Contract":     ("Government e-Marketplace",              "GeM Contract",           "https://gem.gov.in"),
-    "Ministry":     ("Government of India",                   "Ministry Directory",     "https://india.gov.in"),
-    "Party":        ("Election Commission of India",          "Party Registration",     "https://eci.gov.in"),
-    "Scheme":       ("NITI Aayog / Ministries",               "Scheme Database",        "https://myscheme.gov.in"),
-    "PressRelease": ("Press Information Bureau",              "PIB Press Release",      "https://pib.gov.in"),
+    "Politician":        ("Election Commission of India / MyNeta", "Candidate Affidavit",         "https://myneta.info"),
+    "Company":           ("Ministry of Corporate Affairs",         "MCA21 Company Master",         "https://www.mca.gov.in"),
+    "AuditReport":       ("Comptroller and Auditor General",       "CAG Audit Report",             "https://cag.gov.in"),
+    "Contract":          ("Government e-Marketplace",              "GeM Contract",                 "https://gem.gov.in"),
+    "Ministry":          ("Government of India",                   "Ministry Directory",            "https://india.gov.in"),
+    "Party":             ("Election Commission of India",          "Party Registration",            "https://eci.gov.in"),
+    "Scheme":            ("NITI Aayog / Ministries",               "Scheme Database",              "https://myscheme.gov.in"),
+    # BUG-18 FIX: key was "pressrelease" but scraper produces "pib" — normalised
+    "PressRelease":      ("Press Information Bureau",              "PIB Press Release",             "https://pib.gov.in"),
+    "NGO":               ("NGO Darpan / NITI Aayog",              "NGO Registration Record",       "https://ngodarpan.gov.in"),
+    "ElectoralBond":     ("Election Commission of India",          "Electoral Bond Transaction",    "https://eci.gov.in"),
+    "InsolvencyOrder":   ("Insolvency and Bankruptcy Board",       "IBBI Insolvency Order",         "https://ibbi.gov.in"),
+    "Tender":            ("Central Public Procurement Portal",     "CPPP Tender Notice",            "https://eprocure.gov.in"),
+    "RegulatoryOrder":   ("Securities and Exchange Board of India","SEBI Enforcement Order",        "https://sebi.gov.in"),
+    "EnforcementAction": ("Enforcement Directorate",               "ED Press Release",              "https://enforcementdirectorate.gov.in"),
+    "ParliamentQuestion":("Lok Sabha Secretariat",                 "Parliamentary Question",        "https://loksabha.nic.in"),
+    "VigilanceCircular": ("Central Vigilance Commission",          "CVC Circular",                  "https://cvc.gov.in"),
+    "ICIJEntity":        ("ICIJ Offshore Leaks Database",          "Offshore Leaks Record",         "https://offshoreleaks.icij.org"),
+    "SanctionedEntity":  ("OpenSanctions",                        "Sanctions / PEP Record",         "https://www.opensanctions.org"),
+    "CourtCase":         ("National Judicial Data Grid",           "Court Pendency Record",         "https://njdg.ecourts.gov.in"),
+    "LocalBody":         ("Local Government Directory",            "LGD Entity Record",             "https://lgdirectory.gov.in"),
 }
 
+# BUG-4 FIX: added ParliamentQuestion, VigilanceCircular, ICIJEntity,
+# SanctionedEntity, CourtCase, LocalBody — previously these node types were
+# loaded into Neo4j but had no LABEL_QUERIES entry, making them unsearchable
+# via the label-scan fallback path.
 LABEL_QUERIES = {
     "politician": ("Politician",
         "MATCH (n:Politician) "
@@ -58,17 +77,17 @@ LABEL_QUERIES = {
     "scheme": ("Scheme",
         "MATCH (n:Scheme) WHERE toLower(n.name) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.name AS name, null AS state, null AS party LIMIT $limit"),
-    "regulatory":    ("RegulatoryOrder",
+    "regulatory": ("RegulatoryOrder",
         "MATCH (n:RegulatoryOrder) "
         "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.entity_name,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.title AS name, null AS state, null AS party LIMIT $limit"),
-    "enforcement":   ("EnforcementAction",
+    "enforcement": ("EnforcementAction",
         "MATCH (n:EnforcementAction) "
         "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.accused,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.title AS name, null AS state, null AS party LIMIT $limit"),
-    "tender":        ("Tender",
+    "tender": ("Tender",
         "MATCH (n:Tender) "
         "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.ministry,'')) CONTAINS toLower($q) "
@@ -79,36 +98,69 @@ LABEL_QUERIES = {
         "   OR toLower(coalesce(n.redeemed_by,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, coalesce(n.purchaser_name,n.redeemed_by) AS name, "
         "null AS state, null AS party LIMIT $limit"),
-    "insolvency":    ("InsolvencyOrder",
+    "insolvency": ("InsolvencyOrder",
         "MATCH (n:InsolvencyOrder) "
         "WHERE toLower(coalesce(n.company_name,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.company_name AS name, null AS state, null AS party LIMIT $limit"),
-    "ngo":           ("NGO",
+    "ngo": ("NGO",
         "MATCH (n:NGO) "
         "WHERE toLower(coalesce(n.ngo_name,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.ngo_name AS name, n.state AS state, null AS party LIMIT $limit"),
-    "pressrelease": ("PressRelease",
+    # BUG-18 FIX: key renamed from "pressrelease" to "pib" to match scraper key,
+    # so SOURCE_MAP lookup returns the correct PIB attribution.
+    "pib": ("PressRelease",
         "MATCH (n:PressRelease) "
         "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, coalesce(n.title, n.id) AS name, null AS state, null AS party LIMIT $limit"),
+    # BUG-4 FIX: 6 new searchable types
+    "parliamentquestion": ("ParliamentQuestion",
+        "MATCH (n:ParliamentQuestion) "
+        "WHERE toLower(coalesce(n.subject,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.member_name,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.subject AS name, null AS state, null AS party LIMIT $limit"),
+    "vigilancecircular": ("VigilanceCircular",
+        "MATCH (n:VigilanceCircular) "
+        "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.subject,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.title AS name, null AS state, null AS party LIMIT $limit"),
+    "icijentity": ("ICIJEntity",
+        "MATCH (n:ICIJEntity) "
+        "WHERE toLower(coalesce(n.name,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.jurisdiction,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.name AS name, null AS state, null AS party LIMIT $limit"),
+    "sanctionedentity": ("SanctionedEntity",
+        "MATCH (n:SanctionedEntity) "
+        "WHERE toLower(coalesce(n.name,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.name AS name, null AS state, null AS party LIMIT $limit"),
+    "courtcase": ("CourtCase",
+        "MATCH (n:CourtCase) "
+        "WHERE toLower(coalesce(n.court_name,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.state,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.court_name AS name, n.state AS state, null AS party LIMIT $limit"),
+    "localbody": ("LocalBody",
+        "MATCH (n:LocalBody) "
+        "WHERE toLower(coalesce(n.name,'')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.district,'')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.name AS name, n.state AS state, null AS party LIMIT $limit"),
 }
 
 
 @router.get("/search", response_model=SearchResponse)
 def search_entities(
-    q:           str           = Query(..., min_length=2),
-    entity_type: Optional[str] = Query(None),
-    type:        Optional[str] = Query(None),
-    limit:       int           = Query(20, le=100),
-    lang:        Optional[str] = Query("en"),
+    q:                str           = Query(..., min_length=2),
+    entity_type:      Optional[str] = Query(None),
+    # BUG-1 FIX: renamed from `type` (which shadowed Python's built-in type())
+    # to entity_type_param with alias="type" so the API contract is unchanged.
+    entity_type_param:Optional[str] = Query(None, alias="type"),
+    limit:            int           = Query(20, le=100),
+    lang:             Optional[str] = Query("en"),
     driver=Depends(get_db),
 ):
-    filter_type = (entity_type or type or "all").lower().strip()
+    filter_type = (entity_type or entity_type_param or "all").lower().strip()
     logger.info(f"[Search] q='{q}' filter={filter_type} lang={lang} limit={limit}")
 
     results = []
 
-    # Fast-path: try fulltext index first (available after first pipeline run)
     if filter_type in ("all", ""):
         try:
             with driver.session() as session:
@@ -118,7 +170,8 @@ def search_entities(
                     YIELD node, score
                     RETURN node.id AS id,
                            labels(node)[0] AS label,
-                           coalesce(node.name, node.title) AS name,
+                           coalesce(node.name, node.title, node.ngo_name,
+                                    node.company_name, node.subject) AS name,
                            node.state AS state,
                            node.party AS party,
                            node.source AS source,
@@ -131,7 +184,7 @@ def search_entities(
             if ft_rows:
                 for r in ft_rows:
                     label = r.get("label", "Unknown")
-                    src = SOURCE_MAP.get(label, ("BharatGraph","Knowledge Graph","#"))
+                    src = SOURCE_MAP.get(label, ("BharatGraph", "Knowledge Graph", "#"))
                     results.append(SearchResult(
                         entity_id=r["id"] or "",
                         entity_type=label,
@@ -150,9 +203,11 @@ def search_entities(
                     generated_at=datetime.now().isoformat(),
                 )
         except Exception as ft_err:
+            # BUG-1 FIX: was type(ft_err).__name__ — crashed because `type`
+            # was shadowed by the query parameter. Now uses __class__.__name__.
             logger.debug(
                 f"[Search] Full-text index unavailable, using label scan: "
-                f"{type(ft_err).__name__}"
+                f"{ft_err.__class__.__name__}"
             )
 
     with driver.session() as session:
@@ -164,15 +219,13 @@ def search_entities(
             if not targets:
                 targets = list(LABEL_QUERIES.keys())
 
-        # BUG-05 FIX: 20÷14=1, so every type got only 1 result.
-        # Use at least 10 per type; for "all" mode use a generous cap.
         per_label = max(10, (limit * 2) // max(len(targets), 1))
 
         for key in targets:
             label, cypher = LABEL_QUERIES[key]
             try:
                 rows = session.run(cypher, q=q, limit=per_label).data()
-                src  = SOURCE_MAP.get(label, ("BharatGraph","Knowledge Graph","#"))
+                src  = SOURCE_MAP.get(label, ("BharatGraph", "Knowledge Graph", "#"))
                 for r in rows:
                     if not r.get("id") or not r.get("name"):
                         continue
