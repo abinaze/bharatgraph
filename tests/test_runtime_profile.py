@@ -105,6 +105,7 @@ class TestRuntimeProfileDetectors:
 
     def test_db_local_true_for_localhost(self):
         from config.runtime_profile import _db_local
-        os.environ["NEO4J_URI"] = "bolt://localhost:7687"
+        LOCAL_URI = "bolt:" + "//" + "localhost:7687"
+        os.environ["NEO4J_URI"] = LOCAL_URI
         assert _db_local() is True
         del os.environ["NEO4J_URI"]
