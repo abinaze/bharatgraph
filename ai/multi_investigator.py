@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from loguru import logger
+from config.runtime_profile import PROFILE as _RUNTIME_PROFILE
 from ai.explainer import validate_language
 from ai.investigators import ALL_INVESTIGATORS
 
@@ -108,7 +109,7 @@ class MultiInvestigator:
         entity_name = entity_name or entity_id
         results     = []
 
-        with ThreadPoolExecutor(max_workers=6) as executor:
+        with ThreadPoolExecutor(max_workers=_RUNTIME_PROFILE["max_workers"]) as executor:
             futures = {
                 executor.submit(
                     run_investigator, inv_class, entity_id, entity_name, self.driver
