@@ -11,8 +11,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from api.dependencies import get_driver, close_driver
-from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate
+from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate, runtime
 from api.models import HealthResponse, StatsResponse
+from config.runtime_profile import PROFILE as _RUNTIME_PROFILE
 
 
 @asynccontextmanager
@@ -35,7 +36,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.30.0",
+    version="0.31.0",
     lifespan=lifespan,
 )
 
@@ -81,6 +82,7 @@ app.include_router(linguistic.router,    tags=["Linguistic"])
 app.include_router(policy.router,        tags=["Policy"])
 app.include_router(adversarial.router,   tags=["Adversarial"])
 app.include_router(debate.router,        tags=["Debate"])
+app.include_router(runtime.router,       tags=["Runtime"])
 
 
 @app.get("/")
@@ -92,6 +94,7 @@ def root():
         "docs":        "/docs",
         "health":      "/health",
         "description": "Public transparency intelligence platform for India.",
+        "profile":     _RUNTIME_PROFILE.name,
     }
 
 
@@ -107,7 +110,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.30.0",
+        version="0.31.0",
         generated_at=datetime.now().isoformat(),
     )
 
