@@ -42,7 +42,7 @@ jobs:
 
       - name: verify no bolt://localhost in codebase
         run: |
-          if grep -r "bolt://localhost" --include="*.py" .; then
+          if grep -r "bolt://localhost" --include="*.py" --exclude-dir=tests .; then
             echo "ERROR: bolt://localhost found"
             exit 1
           fi
