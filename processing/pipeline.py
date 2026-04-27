@@ -15,14 +15,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from loguru import logger
 from processing.cleaner import NameCleaner
-from processing.entity_resolver import EntityResolver
+from processing.entity_resolver_v2 import EntityResolverV2 as EntityResolver
 
 
 class BharatGraphPipeline:
 
     def __init__(self):
         self.cleaner   = NameCleaner()
-        self.resolver  = EntityResolver(threshold=0.65)
+        self.resolver  = EntityResolver(threshold=0.72)
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         os.makedirs("data/processed", exist_ok=True)
         os.makedirs("data/samples",   exist_ok=True)
