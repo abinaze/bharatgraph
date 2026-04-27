@@ -36,7 +36,7 @@ class GraphLoader:
             "errors":        0,
         }
         if dry_run:
-            logger.info("[Loader] DRY RUN mode — no data written to Neo4j")
+            logger.info("[Loader] DRY RUN mode -- no data written to Neo4j")
         elif driver is None:
             self._connect()
 
@@ -104,8 +104,8 @@ class GraphLoader:
         """
         Execute a single Cypher query.
         BUG-17 FIX: now accepts both calling styles:
-          - old style: self._run(query, {"key": val})   ← positional dict
-          - new style: self._run(query, key=val, ...)   ← keyword args
+          - old style: self._run(query, {"key": val})   <- positional dict
+          - new style: self._run(query, key=val, ...)   <- keyword args
         Both are merged so existing callers and the 8 new loaders both work.
         """
         if self.dry_run:
@@ -121,7 +121,7 @@ class GraphLoader:
             self.stats["errors"] += 1
             return None
 
-    # ── Node loaders ──────────────────────────────────────
+    # ?? Node loaders ??????????????????????????????????????
 
     def load_politicians(self, records: list) -> int:
         count = 0
@@ -399,7 +399,7 @@ class GraphLoader:
                 count += 1
                 self.stats["rels_created"] += 1
             except Exception as e:
-                logger.warning(f"[Loader] DIRECTOR_OF link {pol_name}→{co_name} failed: {e}")
+                logger.warning(f"[Loader] DIRECTOR_OF link {pol_name}->{co_name} failed: {e}")
 
         logger.info(f"[Loader] DIRECTOR_OF links created/updated: {count}")
         return count
@@ -430,7 +430,7 @@ class GraphLoader:
         if raw.get("cppp"):         results["tenders"]             = self.load_tenders(raw["cppp"])
         if raw.get("loksabha"):     results["parliament_questions"]= self.load_parliament_questions(raw["loksabha"])
         if raw.get("cvc"):          results["vigilance_circulars"] = self.load_vigilance_circulars(raw["cvc"])
-        # BUG-2 FIX: 7 previously missing loaders — these datasets were scraped but
+        # BUG-2 FIX: 7 previously missing loaders -- these datasets were scraped but
         # silently dropped because load_from_pipeline_output never called them.
         if raw.get("icij"):         results["icij_entities"]       = self.load_icij_entities(raw["icij"])
         if raw.get("opensanctions"):results["sanctioned_entities"] = self.load_sanctioned_entities(raw["opensanctions"])
@@ -443,7 +443,7 @@ class GraphLoader:
         logger.success(f"[Loader] Load complete. Stats: {self.stats}")
         return {**results, "stats": self.stats}
 
-    # ── Phase 28 loaders (8 datasets) ────────────────────────────────────────
+    # ?? Phase 28 loaders (8 datasets) ????????????????????????????????????????
 
     def load_regulatory_orders(self, records: list) -> int:
         count = 0
@@ -739,10 +739,10 @@ class GraphLoader:
         logger.success(f"[Loader] Loaded {count} CVC circulars")
         return count
 
-    # ── BUG-2 FIX: 7 NEW loaders — were scraped but never loaded ─────────────
+    # ?? BUG-2 FIX: 7 NEW loaders -- were scraped but never loaded ?????????????
 
     def load_icij_entities(self, records: list) -> int:
-        """ICIJ Offshore Leaks entities → ICIJEntity nodes."""
+        """ICIJ Offshore Leaks entities -> ICIJEntity nodes."""
         count = 0
         for r in records:
             name = (r.get("name") or r.get("entity_name") or "").strip()
@@ -778,7 +778,7 @@ class GraphLoader:
         return count
 
     def load_sanctioned_entities(self, records: list) -> int:
-        """OpenSanctions → SanctionedEntity nodes."""
+        """OpenSanctions -> SanctionedEntity nodes."""
         count = 0
         for r in records:
             name = (r.get("name") or r.get("caption") or "").strip()
@@ -814,7 +814,7 @@ class GraphLoader:
         return count
 
     def load_court_cases(self, records: list) -> int:
-        """NJDG court pendency stats → CourtCase nodes."""
+        """NJDG court pendency stats -> CourtCase nodes."""
         count = 0
         for r in records:
             court = (r.get("court_name") or r.get("state") or "").strip()
@@ -843,7 +843,7 @@ class GraphLoader:
         return count
 
     def load_local_bodies(self, records: list) -> int:
-        """LGD (Local Government Directory) → LocalBody nodes."""
+        """LGD (Local Government Directory) -> LocalBody nodes."""
         count = 0
         for r in records:
             name = (r.get("name") or r.get("state_name") or "").strip()
@@ -872,7 +872,7 @@ class GraphLoader:
         return count
 
     def load_crime_reports(self, records: list) -> int:
-        """NCRB crime statistics — stored as metadata nodes for context."""
+        """NCRB crime statistics -- stored as metadata nodes for context."""
         count = 0
         for r in records:
             state = (r.get("state") or "").strip()
@@ -902,7 +902,7 @@ class GraphLoader:
 
     def load_wikidata_enrichments(self, records: list) -> int:
         """
-        Wikidata — enriches EXISTING Politician nodes; does NOT create new ones.
+        Wikidata -- enriches EXISTING Politician nodes; does NOT create new ones.
         Uses MATCH not MERGE to avoid phantom nodes.
         """
         count = 0
@@ -938,7 +938,7 @@ class GraphLoader:
         return count
 
     def load_datagov_documents(self, records: list) -> int:
-        """data.gov.in datasets — generic document nodes."""
+        """data.gov.in datasets -- generic document nodes."""
         count = 0
         for r in records:
             title = (r.get("title") or r.get("resource_title") or "").strip()
@@ -1003,5 +1003,5 @@ if __name__ == "__main__":
     print(f"  Relationships:  {s['rels_created']}")
     print(f"  Errors:         {s['errors']}")
     if args.dry_run:
-        print("  (DRY RUN — nothing was written to Neo4j)")
+        print("  (DRY RUN -- nothing was written to Neo4j)")
     print("=" * 55)
