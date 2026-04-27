@@ -28,7 +28,7 @@ class BharatGraphPipeline:
         os.makedirs("data/samples",   exist_ok=True)
         logger.info("[Pipeline] Initialized")
 
-    # ── Scrapers ─────────────────────────────────────────────────────────────
+    # ?? Scrapers ?????????????????????????????????????????????????????????????
 
     def run_datagov(self) -> list:
         try:
@@ -383,7 +383,7 @@ class BharatGraphPipeline:
             "politician_co_links":len(links),
         }
 
-        logger.info(f"[Pipeline] Done in {duration}s — "
+        logger.info(f"[Pipeline] Done in {duration}s -- "
                     f"{summary['total_raw_records']} total records")
 
         results = {
