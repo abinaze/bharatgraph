@@ -1,5 +1,6 @@
 // Evidence Panel — tabbed deep investigation panel
-// Tabs: Overview | Connections | Provenance | Timeline | Investigate
+// Tabs: Overview | Connections | Timeline | Investigate
+// NOTE: Provenance tab was planned but not yet implemented (see Phase 45)
 const EvidencePanel = {
   _visible: false,
   _container: null,
