@@ -216,6 +216,10 @@ def debug_env():
 
 @app.get("/debug/neo4j")
 def debug_neo4j():
+    # BUG-28 FIX: gate behind DEBUG_MODE env var
+    if os.getenv("DEBUG_MODE", "").lower() not in ("1", "true", "yes"):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Not found")
     from neo4j import GraphDatabase
     uri      = os.getenv("NEO4J_URI", "")
     user     = os.getenv("NEO4J_USER", "neo4j")
