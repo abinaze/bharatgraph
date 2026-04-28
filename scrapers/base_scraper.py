@@ -19,7 +19,8 @@ class BaseScraper:
         self.session.headers.update({
             "User-Agent": "BharatGraph Civic Research Tool (public data only)"
         })
-        logger.add(f"logs/{name}.log", rotation="10 MB")
+        os.makedirs("logs", exist_ok=True)  # BUG-29 FIX: ensure logs/ exists
+        logger.add(f"logs/{name}.log", rotation="10 MB", enqueue=True, catch=True)
 
     def get_json(self, url, params=None):
         try:
