@@ -173,7 +173,8 @@
   </script>
   <script>
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    // BUG-5 FIX: use relative path so SW works on GitHub Pages (/bharatgraph/ prefix)
+    navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
   }
  </script>
   <script>
