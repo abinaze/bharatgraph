@@ -21,6 +21,10 @@ class SearchResult(BaseModel):
     state: Optional[str] = None
     party: Optional[str] = None
     risk_score: Optional[int] = None
+    # BUG-12 FIX: risk_level was missing -- frontend Components.ResultCard renders
+    # class="risk-badge risk-badge--${entity.risk_level}" so without this field
+    # every badge was always risk-badge--undefined which rendered as LOW visually.
+    risk_level: Optional[str] = None
     sources: List[SourceDocument] = []
 
 
