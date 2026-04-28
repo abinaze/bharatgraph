@@ -691,7 +691,8 @@ const Views = {
                   <input id="path-target" class="search-bar__input"
                          placeholder="Target entity ID..."
                          style="font-size:12px;padding:8px 12px">
-                  <button onclick="Views._findPath('${sanitize(entityId)}')"
+                  <button onclick="Views._findPath(this.dataset.eid)"
+                          data-eid="${entityId}"
                           class="btn btn--secondary" style="font-size:12px">Find Shortest Path</button>
                 </div>
                 <div id="path-result" style="margin-top:10px"></div>
