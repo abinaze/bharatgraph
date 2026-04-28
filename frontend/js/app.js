@@ -343,7 +343,7 @@ const Views = {
       if (!data.results || data.results.length === 0) {
         container.innerHTML = `
           <div style="text-align:center;padding:var(--space-16);color:var(--text-muted)">
-            No results found for "${query}"
+            No results found for "${sanitize(query)}"
           </div>
         `;
         return;
