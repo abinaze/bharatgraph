@@ -25,7 +25,7 @@ const GraphRenderer = {
     container.innerHTML = "";
 
     if (!window.d3) {
-      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:14px;">D3.js not loaded — graph unavailable</div>`;
+      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:14px;">D3.js not loaded -- graph unavailable</div>`;
       return;
     }
 

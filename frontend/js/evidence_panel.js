@@ -1,4 +1,4 @@
-// Evidence Panel — tabbed deep investigation panel
+// Evidence Panel -- tabbed deep investigation panel
 // Tabs: Overview | Connections | Timeline | Investigate
 // NOTE: Provenance tab was planned but not yet implemented (see Phase 45)
 const EvidencePanel = {
@@ -47,7 +47,7 @@ const EvidencePanel = {
                 style="background:var(--bg-secondary);border:1px solid var(--border-color);
                        color:var(--text-muted);width:32px;height:32px;border-radius:50%;
                        cursor:pointer;font-size:18px;display:flex;align-items:center;
-                       justify-content:center">×</button>
+                       justify-content:center">?</button>
       </div>
 
       <!-- Tab bar -->
@@ -98,7 +98,7 @@ const EvidencePanel = {
     } catch (err) {
       document.getElementById("ep-body").innerHTML = `
         <div style="text-align:center;padding:40px 20px;color:var(--text-muted)">
-          <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+          <div style="font-size:32px;margin-bottom:12px">??</div>
           <div style="font-weight:600;margin-bottom:4px">Evidence unavailable</div>
           <div style="font-size:12px">API may be offline or entity not in database.</div>
         </div>`;
@@ -157,8 +157,8 @@ const EvidencePanel = {
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
         ${[
           ["Connections", edges.length],
-          ["Entity Type", info.entity_type || "—"],
-          ["Source", info.source || "—"]
+          ["Entity Type", info.entity_type || "--"],
+          ["Source", info.source || "--"]
         ].map(([l,v]) => `
           <div style="padding:10px;background:var(--bg-tertiary);border-radius:8px;
                       border:1px solid var(--border-color);text-align:center">
@@ -177,17 +177,17 @@ const EvidencePanel = {
             <span style="font-size:10px;font-weight:700;text-transform:uppercase;
                          color:${e.color||'var(--accent-primary)'};">${sanitize(e.rel_label||"LINKED")}</span>
             <span style="font-size:10px;color:var(--text-muted)">
-              ${e.strength==="strong"?"●●●":e.strength==="medium"?"●●○":"●○○"} ${sanitize(e.strength||"")}
+              ${e.strength==="strong"?"???":e.strength==="medium"?"???":"???"} ${sanitize(e.strength||"")}
             </span>
           </div>
           <div style="font-size:13px;font-weight:600;color:var(--text-primary)">
-            ${sanitize(e.connected_to||e.connected_id||"—")}
+            ${sanitize(e.connected_to||e.connected_id||"--")}
           </div>
           <div style="font-size:11px;color:var(--text-secondary);margin-top:3px">
             ${sanitize(e.why||"")}
           </div>
           <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-            📄 ${sanitize(e.source||"")}
+            ? ${sanitize(e.source||"")}
           </div>
         </div>`).join("") : `
         <div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px">
@@ -197,7 +197,7 @@ const EvidencePanel = {
       ${edges.length > 5 ? `
       <button onclick="EvidencePanel._switchTab('connections')"
               class="btn btn--secondary" style="width:100%;font-size:12px;margin-top:4px">
-        View all ${edges.length} connections →
+        View all ${edges.length} connections ->
       </button>` : ""}
     `;
   },
@@ -233,21 +233,21 @@ const EvidencePanel = {
                   onclick="EvidencePanel.open(this.getAttribute('data-eid'),this.getAttribute('data-ename'))">
               <div style="display:flex;justify-content:space-between">
                 <span style="font-size:13px;font-weight:600;color:var(--text-primary)">
-                  ${sanitize(e.connected_to||e.connected_id||"—")}
+                  ${sanitize(e.connected_to||e.connected_id||"--")}
                 </span>
-                <span style="font-size:10px;color:var(--text-muted)">→</span>
+                <span style="font-size:10px;color:var(--text-muted)">-></span>
               </div>
               <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">
                 ${sanitize(e.why||"")}
               </div>
               <div style="display:flex;gap:8px;margin-top:4px">
-                <span style="font-size:10px;color:var(--text-muted)">📄 ${sanitize(e.source||"")}</span>
-                ${e.date ? `<span style="font-size:10px;color:var(--text-muted)">📅 ${sanitize(e.date)}</span>` : ""}
+                <span style="font-size:10px;color:var(--text-muted)">? ${sanitize(e.source||"")}</span>
+                ${e.date ? `<span style="font-size:10px;color:var(--text-muted)">? ${sanitize(e.date)}</span>` : ""}
               </div>
               ${e.next_leads && e.next_leads.length ? `
               <div style="margin-top:6px">
                 ${e.next_leads.map(l => `
-                  <span style="font-size:10px;color:var(--color-saffron);margin-right:8px">→ ${sanitize(l)}</span>
+                  <span style="font-size:10px;color:var(--color-saffron);margin-right:8px">-> ${sanitize(l)}</span>
                 `).join("")}
               </div>` : ""}
             </div>`).join("")}
@@ -287,7 +287,7 @@ const EvidencePanel = {
                 ${sanitize(ev.description||ev.summary||"")}
               </div>
               <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-                📄 ${sanitize(ev.source||"")}
+                ? ${sanitize(ev.source||"")}
               </div>
             </div>`).join("")}
         </div>`;
@@ -306,8 +306,8 @@ const EvidencePanel = {
           6-Layer Investigation Engine
         </div>
         <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">
-          Runs 6 specialist investigators in parallel: Direct Evidence → Relationship Mapping →
-          Pattern Detection → Timeline Analysis → Network Influence → Evidence Validation
+          Runs 6 specialist investigators in parallel: Direct Evidence -> Relationship Mapping ->
+          Pattern Detection -> Timeline Analysis -> Network Influence -> Evidence Validation
         </div>
         <button onclick="EvidencePanel._runInvestigation('${entityId}')"
                 id="ep-run-btn" class="btn btn--primary" style="width:100%;margin-bottom:8px">
@@ -339,7 +339,7 @@ const EvidencePanel = {
           <div style="padding:14px;background:var(--bg-tertiary);border-radius:10px;
                       border:1px solid var(--color-saffron)">
             <div style="font-size:11px;font-weight:700;color:var(--color-saffron);margin-bottom:10px">
-              INVESTIGATION COMPLETE — ${total} ITEMS
+              INVESTIGATION COMPLETE -- ${total} ITEMS
             </div>
             ${layers.map(l => `
               <div style="display:flex;justify-content:space-between;
@@ -374,7 +374,7 @@ const EvidencePanel = {
           <div style="padding:14px;background:var(--bg-tertiary);border-radius:10px;
                       border:1px solid var(--color-risk-high);margin-top:8px">
             <div style="font-size:11px;font-weight:700;color:var(--color-risk-high);margin-bottom:10px">
-              CONTRADICTION SEARCH — ${items.length} items found
+              CONTRADICTION SEARCH -- ${items.length} items found
             </div>
             ${items.slice(0,5).map(item => `
               <div style="margin-bottom:8px;padding:8px;background:var(--bg-primary);border-radius:6px">

@@ -84,7 +84,7 @@ class ProfileSection(BaseModel):
 
 
 class ProfileResponse(BaseModel):
-    """BUG-22 FIX: added sources field — profile.py was returning it but model lacked it,
+    """BUG-22 FIX: added sources field -- profile.py was returning it but model lacked it,
     causing Pydantic ValidationError silently on some entity types."""
     entity_id: str
     entity_type: str

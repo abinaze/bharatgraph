@@ -76,7 +76,7 @@ const Views = {
               <p class="section-subtitle">
                 Enter any entity. The platform runs 12 specialist investigators
                 in parallel, each analysing from a different angle.
-                Findings are synthesised — where three or more investigators
+                Findings are synthesised -- where three or more investigators
                 agree, confidence is marked as high.
               </p>
               <div style="display:flex;flex-direction:column;gap:var(--space-4)">
@@ -155,7 +155,7 @@ const Views = {
       grid.innerHTML = stats
         .map(([v,l]) => `
           <div class="stat-card">
-            <div class="stat-card__value">${v || "—"}</div>
+            <div class="stat-card__value">${v || "--"}</div>
             <div class="stat-card__label">${l}</div>
           </div>
         `).join("");
@@ -194,7 +194,7 @@ const Views = {
           if (items.length > 0) {
             items.slice(0, 3).forEach(item => {
               container.appendChild(Components.FeedItem({
-                headline:    `[${item.label || "Entity"}] ${item.name || "—"}`,
+                headline:    `[${item.label || "Entity"}] ${item.name || "--"}`,
                 risk_level:  "MODERATE",
                 detected_at: item.scraped_at || data.at,
                 source:      item.source || "BharatGraph",
@@ -216,7 +216,7 @@ const Views = {
       // BUG-6 FIX: reconnect on close
       ws.onclose = () => {
         const container = document.getElementById("home-feed");
-        if (!container) return;          // user navigated away — stop retrying
+        if (!container) return;          // user navigated away -- stop retrying
         const nextDelay = Math.min(delay * 2, 30000);
         setTimeout(() => connect(nextDelay), nextDelay);
       };
@@ -247,28 +247,28 @@ const Views = {
                     background:var(--bg-secondary);color:var(--text-primary);
                     border:1px solid var(--border-color);border-radius:6px;cursor:pointer"
                     onchange="State.language=this.value;applyLanguage(this.value);document.getElementById('navbar-lang-select')&&(document.getElementById('navbar-lang-select').value=this.value);(function(){const q=document.getElementById('search-input')&&document.getElementById('search-input').value.trim()||new URLSearchParams(window.location.hash.split('?')[1]||'').get('q')||'';if(q){const t=new URLSearchParams(window.location.hash.split('?')[1]||'').get('type')||'';Router.navigate('/search?q='+encodeURIComponent(q)+(t?'&type='+encodeURIComponent(t):'')+'&lang='+this.value);}}).call(this)">
-              <option value="en">🇮🇳 English</option>
-              <option value="hi">हिन्दी</option>
-              <option value="ta">தமிழ்</option>
-              <option value="te">తెలుగు</option>
-              <option value="kn">ಕನ್ನಡ</option>
-              <option value="ml">മലയാളം</option>
-              <option value="mr">मराठी</option>
-              <option value="bn">বাংলা</option>
-              <option value="gu">ગુજરાતી</option>
-              <option value="pa">ਪੰਜਾਬੀ</option>
-              <option value="or">ଓଡ଼ିଆ</option>
-              <option value="as">অসমীয়া</option>
-              <option value="ur">اردو</option>
-              <option value="kok">कोंकणी</option>
-              <option value="mai">मैथिली</option>
-              <option value="mni">ꯃꯩꯇꯩꯂꯣꯟ</option>
-              <option value="sat">ᱥᱟᱱᱛᱟᱲᱤ</option>
-              <option value="ks">كٲشُر</option>
-              <option value="ne">नेपाली</option>
-              <option value="doi">डोगरी</option>
-              <option value="sa">संस्कृतम्</option>
-              <option value="sd">سنڌي</option>
+              <option value="en">?? English</option>
+              <option value="hi">??????</option>
+              <option value="ta">?????</option>
+              <option value="te">??????</option>
+              <option value="kn">?????</option>
+              <option value="ml">??????</option>
+              <option value="mr">?????</option>
+              <option value="bn">?????</option>
+              <option value="gu">???????</option>
+              <option value="pa">??????</option>
+              <option value="or">?????</option>
+              <option value="as">???????</option>
+              <option value="ur">????</option>
+              <option value="kok">??????</option>
+              <option value="mai">??????</option>
+              <option value="mni">???????</option>
+              <option value="sat">???????</option>
+              <option value="ks">?????</option>
+              <option value="ne">??????</option>
+              <option value="doi">?????</option>
+              <option value="sa">?????????</option>
+              <option value="sd">????</option>
             </select>
           </div>
 
@@ -373,7 +373,7 @@ const Views = {
       const container = document.getElementById("search-results");
       if (container) container.innerHTML = `
         <div style="text-align:center;padding:var(--space-8);color:var(--color-risk-very-high)">
-          Search failed. The API may be starting up — please retry in a moment.
+          Search failed. The API may be starting up -- please retry in a moment.
         </div>
       `;
     });
@@ -670,7 +670,7 @@ const Views = {
                 </span>
                 <div style="display:flex;gap:6px">
                   <span style="font-size:10px;color:var(--text-muted)">
-                    ● Strong  ◐ Medium  ○ Weak
+                    ? Strong  ? Medium  ? Weak
                   </span>
                 </div>
               </div>
@@ -725,13 +725,13 @@ const Views = {
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;
                       color:var(--color-saffron);margin-bottom:2px">${sanitize(e.rel_label||"")}</div>
           <div style="font-size:12px;font-weight:600;color:var(--text-primary)">
-            ${sanitize(e.connected_to||e.connected_id||"—")}
+            ${sanitize(e.connected_to||e.connected_id||"--")}
           </div>
           <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">
             ${sanitize(e.why||"")}
           </div>
           <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-            📄 ${sanitize(e.source||"")}
+            ? ${sanitize(e.source||"")}
           </div>
         </div>`).join("") : `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px">
           No connections in current dataset</div>`;
@@ -761,8 +761,8 @@ const Views = {
             </div>
             ${(Array.isArray(path[0]) ? path[0] : path).map(n =>
               `<span style="color:var(--text-primary)">${sanitize(n)}</span>
-               <span style="color:var(--text-muted);margin:0 4px">→</span>`
-            ).join("").replace(/<span[^>]*>→<\/span>$/, "")}
+               <span style="color:var(--text-muted);margin:0 4px">-></span>`
+            ).join("").replace(/<span[^>]*>-><\/span>$/, "")}
           </div>` : `
           <div style="color:var(--text-muted);font-size:12px">No path found</div>`;
       }).catch(() => {
@@ -866,7 +866,7 @@ function toggleTheme() {
 }
 
 
-// ── Language Application ──────────────────────────────────────────────────────
+// ?? Language Application ??????????????????????????????????????????????????????
 // BUG-10 FIX: full DOM translation via data-i18n attributes
 async function applyLanguage(lang) {
   const badge = document.getElementById("lang-badge");
@@ -915,8 +915,8 @@ function initApp() {
   Router.register("/live-feed", Views.liveFeed);
   Router.register("/about",    Views.about);
 
-  // BUG-02 FIX: was single immediate check — failed permanently on HF cold start.
-  // BUG-25 FIX: message said "Start: uvicorn" — wrong for HuggingFace users.
+  // BUG-02 FIX: was single immediate check -- failed permanently on HF cold start.
+  // BUG-25 FIX: message said "Start: uvicorn" -- wrong for HuggingFace users.
   // Fix: retry up to 5 times with exponential backoff (2s, 4s, 8s, 16s, 30s).
   (function checkHealth(attempt) {
     Api.health()

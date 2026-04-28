@@ -25,7 +25,7 @@ def get_connections(
     _edge_seen = set()   # BUG-10 FIX: dedup (src, tgt, type) triples
 
     with driver.session() as session:
-        # Always load anchor node first — guarantees non-empty response
+        # Always load anchor node first -- guarantees non-empty response
         anchor = session.run(
             "MATCH (n {id:$id}) RETURN n", id=entity_id
         ).single()
