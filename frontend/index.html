@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BharatGraph — AI-powered public transparency and institutional intelligence platform for India.">
+  <meta name="description" content="BharatGraph -- AI-powered public transparency and institutional intelligence platform for India.">
   <meta name="theme-color" content="#0A0F2E">
-  <title>BharatGraph — Public Transparency Intelligence</title>
+  <title>BharatGraph -- Public Transparency Intelligence</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,26 +49,26 @@
                   style="background:var(--bg-tertiary);border:1px solid var(--border-color);
                          border-radius:var(--radius-md);padding:var(--space-1) var(--space-2);
                          color:var(--text-secondary);font-size:var(--font-size-xs);cursor:pointer"
-                  onchange="State.language=this.value">
-            <option value="en">EN — English</option>
-            <option value="hi">HI — हिन्दी</option>
-            <option value="ta">TA — தமிழ்</option>
-            <option value="te">TE — తెలుగు</option>
-            <option value="kn">KN — ಕನ್ನಡ</option>
-            <option value="ml">ML — മലയാളം</option>
-            <option value="mr">MR — मराठी</option>
-            <option value="bn">BN — বাংলা</option>
-            <option value="gu">GU — ગુજરાતી</option>
-            <option value="pa">PA — ਪੰਜਾਬੀ</option>
-            <option value="or">OR — ଓଡ଼ିଆ</option>
-            <option value="as">AS — অসমীয়া</option>
-            <option value="ur">UR — اردو</option>
-            <option value="sd">SD — سنڌي</option>
-            <option value="kok">KOK — कोंकणी</option>
-            <option value="mai">MAI — मैथिली</option>
-            <option value="ne">NE — नेपाली</option>
-            <option value="doi">DOI — डोगरी</option>
-            <option value="sa">SA — संस्कृतम्</option>
+                  onchange="State.language=this.value; if(window.applyLanguage) applyLanguage(this.value);">
+            <option value="en">EN -- English</option>
+            <option value="hi">HI -- ??????</option>
+            <option value="ta">TA -- ?????</option>
+            <option value="te">TE -- ??????</option>
+            <option value="kn">KN -- ?????</option>
+            <option value="ml">ML -- ??????</option>
+            <option value="mr">MR -- ?????</option>
+            <option value="bn">BN -- ?????</option>
+            <option value="gu">GU -- ???????</option>
+            <option value="pa">PA -- ??????</option>
+            <option value="or">OR -- ?????</option>
+            <option value="as">AS -- ???????</option>
+            <option value="ur">UR -- ????</option>
+            <option value="sd">SD -- ????</option>
+            <option value="kok">KOK -- ??????</option>
+            <option value="mai">MAI -- ??????</option>
+            <option value="ne">NE -- ??????</option>
+            <option value="doi">DOI -- ?????</option>
+            <option value="sa">SA -- ?????????</option>
           </select>
           <button class="btn btn--ghost btn--sm" id="theme-btn"
                   onclick="toggleTheme()" aria-label="Toggle theme">
@@ -103,7 +103,7 @@
                     text-align:right;line-height:var(--line-height-relaxed)">
           All data from official government sources.<br>
           Outputs are analytical indicators, not legal findings.<br>
-          MIT License — Open Source
+          MIT License -- Open Source
         </div>
       </div>
       <div style="margin-top:var(--space-4);padding-top:var(--space-4);
@@ -147,33 +147,9 @@
   <script src="js/evidence_panel.js"></script>
   <script src="js/app.js"></script>
   <script>
-    // Retry health check up to 3 times (HF Space cold-starts can take 10-15s)
-    (function checkHealth(attempt) {
-      Api.health().then(data => {
-        var dot  = document.getElementById("api-status-dot");
-        var text = document.getElementById("api-status-text");
-        if (dot && text) {
-          dot.style.background  = "var(--color-risk-low)";
-          text.textContent      = data.neo4j_connected ? "Connected" : "API Only";
-          text.title            = "v" + (data.version || "?") + " | Neo4j: " + data.neo4j_connected;
-        }
-      }).catch(function() {
-        if (attempt < 3) {
-          setTimeout(function() { checkHealth(attempt + 1); }, 5000);
-        } else {
-          var dot  = document.getElementById("api-status-dot");
-          var text = document.getElementById("api-status-text");
-          if (dot && text) {
-            dot.style.background = "var(--color-risk-very-high)";
-            text.textContent     = "Offline";
-          }
-        }
-      });
-    })(1);
-  </script>
-  <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    // Health check handled by app.js initApp() with exponential backoff
+    
+    navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
   }
  </script>
   <script>

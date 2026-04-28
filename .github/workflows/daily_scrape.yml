@@ -11,7 +11,7 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -33,8 +33,11 @@ jobs:
           NEO4J_PASSWORD:        ${{ secrets.NEO4J_PASSWORD }}
           OPENSANCTIONS_API_KEY: ${{ secrets.OPENSANCTIONS_API_KEY }}
         run: |
+          # BUG-11 FIX: was only running 10 of 20 scrapers. Added all 20.
+          # Scrapers missing before: datagov,cvc,electoral_bond,icij,
+          # opensanctions,ibbi,ngo_darpan,cppp,ncrb,lgd
           python3 -m processing.pipeline \
-            --scrapers cag,gem,pib,myneta,mca,loksabha,ed,wikidata,sebi,njdg
+            --scrapers cag,gem,pib,myneta,mca,loksabha,ed,wikidata,sebi,njdg,datagov,cvc,electoral_bond,icij,opensanctions,ibbi,ngo_darpan,cppp,ncrb,lgd
 
       - name: keep neo4j alive
         env:
@@ -58,6 +61,13 @@ jobs:
                   print(f'Neo4j alive: {r[\"c\"]} nodes')
               d.close()
           "
+
+      - name: notify on failure
+        if: failure()
+        run: |
+          echo "::error::Daily scrape pipeline FAILED at $(date -u +%Y-%m-%dT%H:%MZ)"
+          echo "Check pipeline status at /admin/pipeline/status"
+          exit 0
 
       - name: commit updated data artifacts
         run: |

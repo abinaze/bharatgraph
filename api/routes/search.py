@@ -21,7 +21,7 @@ SOURCE_MAP = {
     "Ministry":          ("Government of India",                   "Ministry Directory",            "https://india.gov.in"),
     "Party":             ("Election Commission of India",          "Party Registration",            "https://eci.gov.in"),
     "Scheme":            ("NITI Aayog / Ministries",               "Scheme Database",              "https://myscheme.gov.in"),
-    # BUG-18 FIX: key was "pressrelease" but scraper produces "pib" — normalised
+    # BUG-18 FIX: key was "pressrelease" but scraper produces "pib" -- normalised
     "PressRelease":      ("Press Information Bureau",              "PIB Press Release",             "https://pib.gov.in"),
     "NGO":               ("NGO Darpan / NITI Aayog",              "NGO Registration Record",       "https://ngodarpan.gov.in"),
     "ElectoralBond":     ("Election Commission of India",          "Electoral Bond Transaction",    "https://eci.gov.in"),
@@ -38,7 +38,7 @@ SOURCE_MAP = {
 }
 
 # BUG-4 FIX: added ParliamentQuestion, VigilanceCircular, ICIJEntity,
-# SanctionedEntity, CourtCase, LocalBody — previously these node types were
+# SanctionedEntity, CourtCase, LocalBody -- previously these node types were
 # loaded into Neo4j but had no LABEL_QUERIES entry, making them unsearchable
 # via the label-scan fallback path.
 LABEL_QUERIES = {
@@ -203,7 +203,7 @@ def search_entities(
                     generated_at=datetime.now().isoformat(),
                 )
         except Exception as ft_err:
-            # BUG-1 FIX: was type(ft_err).__name__ — crashed because `type`
+            # BUG-1 FIX: was type(ft_err).__name__ -- crashed because `type`
             # was shadowed by the query parameter. Now uses __class__.__name__.
             logger.debug(
                 f"[Search] Full-text index unavailable, using label scan: "
@@ -214,8 +214,17 @@ def search_entities(
         if filter_type in ("all", ""):
             targets = list(LABEL_QUERIES.keys())
         else:
-            normalized = filter_type.rstrip("s")
-            targets = [k for k in LABEL_QUERIES if k.startswith(normalized)]
+            # BUG-17 FIX: rstrip("s") was fragile -- "press" -> "pre" (wrong).
+            # Now try exact match first, then prefix, then strip trailing s once.
+            if filter_type in LABEL_QUERIES:
+                targets = [filter_type]
+            else:
+                # Try prefix match (e.g. "audit" matches "audit" key)
+                targets = [k for k in LABEL_QUERIES if k.startswith(filter_type)]
+                if not targets and filter_type.endswith("s"):
+                    # Only strip a single trailing s as last resort
+                    stripped = filter_type[:-1]
+                    targets = [k for k in LABEL_QUERIES if k.startswith(stripped)]
             if not targets:
                 targets = list(LABEL_QUERIES.keys())
 

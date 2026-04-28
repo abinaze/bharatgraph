@@ -25,14 +25,14 @@ const GraphRenderer = {
     container.innerHTML = "";
 
     if (!window.d3) {
-      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:14px;">D3.js not loaded — graph unavailable</div>`;
+      container.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:14px;">D3.js not loaded -- graph unavailable</div>`;
       return;
     }
 
     const d3 = window.d3;
-    const rect = container.getBoundingClientRect();
-    const width = rect.width || 800;
-    const height = rect.height || 500;
+    // BUG-18 FIX: use offsetWidth/offsetHeight which work even before paint
+    const width = container.offsetWidth || container.clientWidth || 800;
+    const height = container.offsetHeight || container.clientHeight || 500;
 
     const svg = d3.select(`#${containerId}`)
       .append("svg")

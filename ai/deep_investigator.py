@@ -16,7 +16,7 @@ LAYER_NAMES = [
 
 LAYER_DESCRIPTIONS = {
     "direct_evidence": "All relationships directly connected to this entity in the graph.",
-    "relationship_expansion": "One-hop neighbours — entities connected through this entity.",
+    "relationship_expansion": "One-hop neighbours -- entities connected through this entity.",
     "pattern_investigation": "Structural patterns: circular ownership, shell indicators, procurement anomalies.",
     "timeline_investigation": "Temporal patterns: contract awards near elections, entity formation dates.",
     "network_influence": "Centrality and bridge-node analysis within the local subgraph.",
@@ -37,9 +37,15 @@ class DeepInvestigator:
 
         layers = []
         # BUG-15 FIX: each layer now gets its own session.
-        # Previously all 6 layers shared ONE session — if any layer timed out or
+        # Previously all 6 layers shared ONE session -- if any layer timed out or
         # threw, the entire session (and all remaining layers) was killed.
         # Resolve name/label in its own short session first.
+        # BUG-1 + BUG-7 FIX: default before try so entity_label is always bound
+        # even if Neo4j times out or throws on name/label lookup.
+        entity_label = "Unknown"
+        # BUG-1 + BUG-7 FIX: default before try so entity_label is always bound
+        # even if Neo4j times out or throws on name/label lookup.
+        entity_label = "Unknown"
         try:
             with self.driver.session() as session:
                 if not entity_name:
@@ -56,8 +62,10 @@ class DeepInvestigator:
                     entity_label = (row["label"] if row else "Unknown") or "Unknown"
         except Exception as e:
             logger.warning(f"[DeepInvestigator] Name lookup failed: {e}")
+            # entity_label stays "Unknown" from the default above
+            # entity_label stays "Unknown" from the default above
 
-        # Each layer uses its own session — isolated, independently failable
+        # Each layer uses its own session -- isolated, independently failable
         LAYER_METHODS = [
             (1, "direct_evidence",        lambda _id=entity_id: self._run_layer(self._layer_1_direct, _id)),
             (2, "relationship_expansion", lambda _id=entity_id: self._run_layer(self._layer_2_expansion, _id)),
@@ -182,7 +190,7 @@ class DeepInvestigator:
             if key in seen: continue
             seen.add(key)
             items.append({
-                "path": f"{row.get('via_name')} ({row.get('rel2')}) →",
+                "path": f"{row.get('via_name')} ({row.get('rel2')}) ->",
                 "connected_entity": row.get("name"),
                 "connected_id": row.get("oid"),
                 "entity_type": row.get("node_type"),
@@ -213,7 +221,7 @@ class DeepInvestigator:
         for row in rows:
             findings.append({
                 "pattern": "DIRECTOR_CONTRACT_LINK",
-                "description": f"Director of {row.get('company')} which won {row.get('contract_count')} contract(s) worth ₹{row.get('total_value',0):.1f} Cr",
+                "description": f"Director of {row.get('company')} which won {row.get('contract_count')} contract(s) worth ?{row.get('total_value',0):.1f} Cr",
                 "severity": "HIGH" if row.get("total_value",0) > 10 else "MODERATE",
             })
 
@@ -241,7 +249,7 @@ class DeepInvestigator:
         for row in rows:
             findings.append({
                 "pattern": "ELECTORAL_BOND_PROXIMITY",
-                "description": f"Electoral bond donor proximity: {row.get('donor','')} → {row.get('party','')} ₹{row.get('amount',0)} Cr",
+                "description": f"Electoral bond donor proximity: {row.get('donor','')} -> {row.get('party','')} ?{row.get('amount',0)} Cr",
                 "severity": "MODERATE",
             })
 
