@@ -214,8 +214,17 @@ def search_entities(
         if filter_type in ("all", ""):
             targets = list(LABEL_QUERIES.keys())
         else:
-            normalized = filter_type.rstrip("s")
-            targets = [k for k in LABEL_QUERIES if k.startswith(normalized)]
+            # BUG-17 FIX: rstrip("s") was fragile -- "press" -> "pre" (wrong).
+            # Now try exact match first, then prefix, then strip trailing s once.
+            if filter_type in LABEL_QUERIES:
+                targets = [filter_type]
+            else:
+                # Try prefix match (e.g. "audit" matches "audit" key)
+                targets = [k for k in LABEL_QUERIES if k.startswith(filter_type)]
+                if not targets and filter_type.endswith("s"):
+                    # Only strip a single trailing s as last resort
+                    stripped = filter_type[:-1]
+                    targets = [k for k in LABEL_QUERIES if k.startswith(stripped)]
             if not targets:
                 targets = list(LABEL_QUERIES.keys())
 
