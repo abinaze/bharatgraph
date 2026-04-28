@@ -566,38 +566,73 @@ const Views = {
     `;
 
     const feedItems = [];
-    try {
-      const ws = Api.createFeedSocket();
+
+    // BUG-3+4+20 FIX: reconnect with exponential backoff, render data.items,
+    // show meaningful onerror message instead of swallowing silently.
+    function connectFeed(delay) {
+      delay = delay || 2000;
+      let ws;
+      try {
+        ws = Api.createFeedSocket();
+      } catch (_) {
+        const s = document.getElementById("feed-status");
+        if (s) s.textContent = "WebSocket unavailable";
+        return;
+      }
+
       ws.onopen = () => {
-        const status = document.getElementById("feed-status");
-        if (status) status.textContent = "Connected";
+        const s = document.getElementById("feed-status");
+        if (s) s.textContent = "Connected";
       };
+
       ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        feedItems.unshift({
-          headline: data.message || "Feed update received",
-          risk_level: "MODERATE",
-          detected_at: data.at || new Date().toISOString(),
-          source: "BharatGraph API",
-        });
-        if (feedItems.length > 50) feedItems.pop();
-        const container = document.getElementById("feed-container");
-        if (!container) { ws.close(); return; }
-        container.innerHTML = "";
-        feedItems.forEach(item => container.appendChild(Components.FeedItem(item)));
+        try {
+          const data = JSON.parse(event.data);
+          // BUG-4 FIX: render real Neo4j records from data.items when available
+          const items = data.items || [];
+          if (items.length > 0) {
+            items.forEach(item => {
+              feedItems.unshift({
+                headline: "[" + (item.label || "Entity") + "] " + sanitize(item.name || "-"),
+                risk_level: "MODERATE",
+                detected_at: item.scraped_at || data.at || new Date().toISOString(),
+                source: sanitize(item.source || "BharatGraph"),
+              });
+            });
+          } else {
+            feedItems.unshift({
+              headline: sanitize(data.message || "Feed update received"),
+              risk_level: "MODERATE",
+              detected_at: data.at || new Date().toISOString(),
+              source: "BharatGraph API",
+            });
+          }
+          if (feedItems.length > 50) feedItems.pop();
+          const container = document.getElementById("feed-container");
+          if (!container) { ws.close(); return; }
+          container.innerHTML = "";
+          feedItems.forEach(item => container.appendChild(Components.FeedItem(item)));
+        } catch (_) {}
       };
-      ws.onerror = () => {
-        const status = document.getElementById("feed-status");
-        if (status) status.textContent = "API not reachable";
+
+      // BUG-20 FIX: show meaningful error instead of swallowing silently
+      ws.onerror = (err) => {
+        const s = document.getElementById("feed-status");
+        if (s) s.textContent = "Connection error -- retrying...";
       };
+
+      // BUG-3 FIX: reconnect with exponential backoff (mirrors _connectFeedToHome)
       ws.onclose = () => {
-        const status = document.getElementById("feed-status");
-        if (status) status.textContent = "Disconnected";
+        const container = document.getElementById("feed-container");
+        if (!container) return;   // user navigated away -- stop retrying
+        const s = document.getElementById("feed-status");
+        if (s) s.textContent = "Reconnecting...";
+        const nextDelay = Math.min(delay * 2, 30000);
+        setTimeout(() => connectFeed(nextDelay), nextDelay);
       };
-    } catch (_) {
-      const status = document.getElementById("feed-status");
-      if (status) status.textContent = "WebSocket unavailable";
     }
+
+    connectFeed(2000);
   },
 
 
