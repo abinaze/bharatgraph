@@ -22,6 +22,7 @@ def get_connections(
     nodes = {}
     edges = []
     _edge_seen = set()   # BUG-10 FIX: dedup (src, tgt, type) triples
+    _edge_seen = set()   # BUG-10 FIX: dedup (src, tgt, type) triples
 
     with driver.session() as session:
         # Always load anchor node first — guarantees non-empty response
