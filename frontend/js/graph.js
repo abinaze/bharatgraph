@@ -30,9 +30,9 @@ const GraphRenderer = {
     }
 
     const d3 = window.d3;
-    const rect = container.getBoundingClientRect();
-    const width = rect.width || 800;
-    const height = rect.height || 500;
+    // BUG-18 FIX: use offsetWidth/offsetHeight which work even before paint
+    const width = container.offsetWidth || container.clientWidth || 800;
+    const height = container.offsetHeight || container.clientHeight || 500;
 
     const svg = d3.select(`#${containerId}`)
       .append("svg")
