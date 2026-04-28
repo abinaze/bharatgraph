@@ -310,10 +310,17 @@ const Views = {
       return;
     }
 
-    const skeletons = document.createElement("div");
-    skeletons.appendChild(Components.SkeletonGroup(5));
-    document.getElementById("search-results").innerHTML = "";
-    document.getElementById("search-results").appendChild(skeletons);
+    // BUG-19 FIX: skeleton was rendered twice -- once in the innerHTML template
+    // above (when query is present) and once here via explicit appendChild.
+    // The innerHTML="" cleared the first one but caused a double-render flash.
+    // Now only render via innerHTML template; skip this explicit block.
+    // (skeletons variable kept for any legacy references below this block)
+    const _skeletonContainer = document.getElementById("search-results");
+    if (_skeletonContainer && !_skeletonContainer.hasChildNodes()) {
+      const skeletons = document.createElement("div");
+      skeletons.appendChild(Components.SkeletonGroup(5));
+      _skeletonContainer.appendChild(skeletons);
+    }
 
     const lang = (typeof State !== 'undefined' && State.language) ? State.language : 'en';
     const searchPromise = (lang && lang !== 'en')
