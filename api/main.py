@@ -53,6 +53,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# BUG-26 FIX: middleware registered before routes (conventional ordering).
+# In FastAPI/Starlette, middleware wraps the entire ASGI app so the
+# functional behavior is identical regardless of order, but conventional
+# placement before routers is clearer for debugging.
 from fastapi.middleware.gzip import GZipMiddleware
 from api.middleware.rate_limiter import SlidingWindowRateLimiter
 from api.middleware.security_headers import SecurityHeadersMiddleware
