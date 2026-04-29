@@ -210,6 +210,10 @@ async def websocket_feed(websocket: WebSocket):
 
 @app.get("/debug/env")
 def debug_env():
+    # M-04 FIX: gate behind DEBUG_MODE same as /debug/neo4j
+    if os.getenv("DEBUG_MODE", "").lower() not in ("1", "true", "yes"):
+        from fastapi import HTTPException as _HE
+        raise _HE(status_code=404, detail="Not found")
     return {
         "neo4j_uri_set":      bool(os.getenv("NEO4J_URI")),
         "neo4j_user_set":     bool(os.getenv("NEO4J_USER")),

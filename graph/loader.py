@@ -912,7 +912,7 @@ class GraphLoader:
             try:
                 result = self._run("""
                     MATCH (p:Politician)
-                    WHERE toLower(p.name) = toLower($name)
+                    WHERE toLower(p.name) CONTAINS toLower($name) OR toLower($name) CONTAINS toLower(p.name)
                        OR any(a IN coalesce(p.aliases,[]) WHERE toLower(a) = toLower($name))
                     SET p.wikidata_id    = coalesce($wikidata_id, p.wikidata_id),
                         p.birth_year     = coalesce($birth_year,  p.birth_year),

@@ -420,8 +420,10 @@ class BharatGraphPipeline:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="BharatGraph Full Pipeline (20 scrapers)")
     parser.add_argument("--scrapers",   type=str, default=None)
-    parser.add_argument("--parallel",   action="store_true", default=True)
-    parser.add_argument("--sequential", action="store_true", default=False)
+    # M-08 FIX: --parallel was action=store_true,default=True making it always True
+    # --sequential now sets parallel=False, and --parallel is removed
+    parser.add_argument("--sequential", action="store_true", default=False,
+                        help="Run scrapers sequentially (default: parallel)")
     args     = parser.parse_args()
     scrapers = args.scrapers.split(",") if args.scrapers else None
     parallel = not args.sequential
