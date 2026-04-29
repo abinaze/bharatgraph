@@ -275,7 +275,7 @@ const Views = {
           <div style="display:flex;align-items:center;gap:var(--space-2);
                       margin-bottom:var(--space-6);flex-wrap:wrap">
             <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Filter:</span>
-            ${["All","politician","company","audit","contract","ministry","tender","electoralbond","regulatory","enforcement","insolvency","ngo"].map(t => `
+            ${["All","politician","company","audit","contract","ministry","party","scheme","tender","electoralbond","regulatory","enforcement","insolvency","ngo","parliamentquestion","vigilancecircular","icijentity","sanctionedentity","courtcase","localbody"].map(t => `
               <button class="btn btn--sm ${type === t || (!type && t==="All") ? "btn--primary" : "btn--secondary"}"
                       onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!=="All"?"&type="+t.toLowerCase():""}')">
                 ${t.charAt(0).toUpperCase()+t.slice(1)}
@@ -473,7 +473,16 @@ const Views = {
             <div id="tab-content-graph" style="display:none">
               <div class="graph-container" id="entity-graph">
                 <div class="graph-controls">
-                  <button class="btn btn--sm btn--secondary" onclick="document.getElementById('entity-graph').querySelector('svg') && window.d3.select('#entity-graph svg').call(window.d3.zoom().transform, window.d3.zoomIdentity)">Reset</button>
+                  <button class="btn btn--sm btn--secondary" onclick="document.getElementById('entity-graph').querySelector('svg') && // H-02 FIX: d3.zoom() creates a NEW behavior object -- use the
+          // stored reference from GraphRenderer to reset the actual zoom
+          const svg = window.d3.select('#entity-graph svg');
+          const zoomBehavior = window.GraphRenderer && window.GraphRenderer._zoomBehavior;
+          if (zoomBehavior) {
+            svg.transition().duration(300)
+               .call(zoomBehavior.transform, window.d3.zoomIdentity);
+          } else {
+            svg.call(window.d3.zoom().transform, window.d3.zoomIdentity);
+          }">Reset</button>
                 </div>
                 <div class="graph-legend" id="graph-legend"></div>
               </div>
@@ -597,13 +606,16 @@ const Views = {
           const data = JSON.parse(event.data);
           // BUG-4 FIX: render real Neo4j records from data.items when available
           const items = data.items || [];
-          if (items.length > 0) {
-            items.forEach(item => {
+          const seenIds = new Set(feedItems.map(i => i._id).filter(Boolean));
+          const newItems = items.filter(i => i.id && !seenIds.has(i.id));
+          if (newItems.length > 0) {
+            newItems.forEach(item => {
               feedItems.unshift({
                 headline: "[" + (item.label || "Entity") + "] " + sanitize(item.name || "-"),
-                risk_level: "MODERATE",
+                risk_level: ({"EnforcementAction":"VERY_HIGH","RegulatoryOrder":"HIGH","AuditReport":"HIGH","ElectoralBond":"MODERATE","Contract":"MODERATE","VigilanceCircular":"MODERATE","PressRelease":"LOW"})[item.label] || "MODERATE",
                 detected_at: item.scraped_at || data.at || new Date().toISOString(),
                 source: sanitize(item.source || "BharatGraph"),
+              _id: item.id,
               });
             });
           } else {
@@ -840,7 +852,7 @@ const Views = {
               ["Data Sources",
                "21 official Indian government data sources plus international datasets from OpenSanctions (sanctions and PEP screening), ICIJ Offshore Leaks (Panama, Pandora, Paradise Papers), and Wikidata (entity enrichment)."],
               ["Methodology",
-               "The BharatGraph Multi-Investigator Engine runs 12 specialist AI investigators in parallel. Each queries the knowledge graph independently. Findings confirmed by three or more investigators are marked as high-confidence. All language output is validated against a forbidden-words list that prohibits accusatory terminology."],
+               "The BharatGraph Multi-Investigator Engine runs 12 specialist AI investigators in parallel. Each queries the knowledge graph independently. Findings confirmed by two or more investigators are marked as high-confidence (MODERATE when 2, HIGH when 3+). All language output is validated against a forbidden-words list that prohibits accusatory terminology."],
             ].map(([title, body]) => `
               <div class="card">
                 <div class="card__header"><div class="card__title">${title}</div></div>
