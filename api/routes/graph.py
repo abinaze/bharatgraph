@@ -21,8 +21,7 @@ def get_connections(
 
     nodes = {}
     edges = []
-    _edge_seen = set()   # BUG-10 FIX: dedup (src, tgt, type) triples
-    _edge_seen = set()   # BUG-10 FIX: dedup (src, tgt, type) triples
+    _edge_seen = set()   # dedup (src, tgt, type) triples
 
     with driver.session() as session:
         # Always load anchor node first -- guarantees non-empty response
@@ -85,8 +84,10 @@ def get_connections(
                 src   = rel_step.get("src", "")
                 tgt   = rel_step.get("tgt", "")
                 rtype = rel_step.get("type", "RELATED_TO")
-                if src and tgt:
-                    # BUG-10 FIX: skip duplicate edges -- depth>1 paths share edges
+                # M-09 FIX: startNode/endNode may return null .id if node
+                # was created without an id property -- filter those out
+                if src and tgt and isinstance(src, str) and isinstance(tgt, str):
+                    # skip duplicate edges -- depth>1 paths share edges
                     edge_key = (src, tgt, rtype)
                     if edge_key not in _edge_seen:
                         _edge_seen.add(edge_key)
@@ -97,7 +98,7 @@ def get_connections(
 
     return GraphResponse(
         entity_id=entity_id,
-        depth=depth,
+        depth=depth_safe,  # use sanitized value
         nodes=list(nodes.values()),
         edges=edges,
         generated_at=datetime.now().isoformat(),

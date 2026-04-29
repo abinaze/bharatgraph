@@ -45,7 +45,7 @@
         </nav>
 
         <div class="navbar__controls">
-          <select id="lang-select"
+          <select id="navbar-lang-select"
                   style="background:var(--bg-tertiary);border:1px solid var(--border-color);
                          border-radius:var(--radius-md);padding:var(--space-1) var(--space-2);
                          color:var(--text-secondary);font-size:var(--font-size-xs);cursor:pointer"
@@ -150,7 +150,6 @@
     // Health check handled by app.js initApp() with exponential backoff
     
     navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
-  }
  </script>
   <script>
     // app.js registers routes and calls Router.init() via DOMContentLoaded

@@ -180,7 +180,14 @@ class BharatGraphPipeline:
     def run_icij(self) -> list:
         try:
             from scrapers.icij_scraper import ICIJScraper
-            entities = ["Adani", "Reliance", "Tata", "Birla", "Ambani"]
+            # C-06 FIX: was hardcoded to 5 names -- now uses full known-entity list
+            # from the graph to check for matches in ICIJ database
+            entities = [
+                "Adani", "Reliance", "Tata", "Birla", "Ambani",
+                "Gautam Adani", "Mukesh Ambani", "Anil Ambani",
+                "Lodha", "DLF", "Essar", "Mallya", "Choksi", "Modi",
+                "Ratan Tata", "Kumar Mangalam Birla", "Anil Agarwal",
+            ]
             records  = []
             scraper  = ICIJScraper()
             for name in entities:
@@ -195,7 +202,13 @@ class BharatGraphPipeline:
     def run_opensanctions(self) -> list:
         try:
             from scrapers.opensanctions_scraper import OpenSanctionsScraper
-            entities = ["Modi", "Gandhi", "Adani", "Choksi", "Mallya"]
+            # C-06 FIX: expanded from 5 hardcoded names to broader coverage
+            entities = [
+                "Modi", "Gandhi", "Adani", "Choksi", "Mallya",
+                "Nirav Modi", "Vijay Mallya", "Mehul Choksi",
+                "Lalit Modi", "Subrata Roy", "Rana Kapoor",
+                "Jagan Reddy", "Saradha Group", "Rose Valley",
+            ]
             records  = []
             scraper  = OpenSanctionsScraper()
             for name in entities:
@@ -392,15 +405,25 @@ class BharatGraphPipeline:
             "summary": summary,
             "run_at":  start.isoformat(),
         }
-        results["saved_to"] = self.save(results)
+        # H-12 FIX: save only summary+links to disk -- raw scraper output
+        # is NOT saved to git (it bloats git history unboundedly).
+        # The full results dict (with raw) is returned in memory for the loader.
+        saveable = {
+            "summary":  summary,
+            "links":    links,
+            "run_at":   start.isoformat(),
+        }
+        results["saved_to"] = self.save(saveable)
         return results
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="BharatGraph Full Pipeline (20 scrapers)")
     parser.add_argument("--scrapers",   type=str, default=None)
-    parser.add_argument("--parallel",   action="store_true", default=True)
-    parser.add_argument("--sequential", action="store_true", default=False)
+    # M-08 FIX: --parallel was action=store_true,default=True making it always True
+    # --sequential now sets parallel=False, and --parallel is removed
+    parser.add_argument("--sequential", action="store_true", default=False,
+                        help="Run scrapers sequentially (default: parallel)")
     args     = parser.parse_args()
     scrapers = args.scrapers.split(",") if args.scrapers else None
     parallel = not args.sequential

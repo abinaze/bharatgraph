@@ -93,7 +93,7 @@ app.include_router(runtime.router,       tags=["Runtime"])
 def root():
     return {
         "name":        "BharatGraph API",
-        "version":     "0.30.0",
+        "version":     "0.31.0",
         "status":      "running",
         "docs":        "/docs",
         "health":      "/health",
@@ -162,6 +162,7 @@ async def websocket_feed(websocket: WebSocket):
     import asyncio
     await websocket.accept()
     logger.info("[WS] Feed client connected")
+    last_scraped_at = None   # WS cursor: only push when data changes
     try:
         while True:
             driver = get_driver()
@@ -178,6 +179,12 @@ async def websocket_feed(websocket: WebSocket):
                             "ORDER BY n.scraped_at DESC LIMIT 8",
                             labels=_FEED_LABELS
                         ).data()
+                        current_at = feed_rows[0].get("scraped_at") if feed_rows else None
+                        # LOGIC FIX: skip push if data has not changed since last send
+                        if current_at and current_at == last_scraped_at and feed_rows:
+                            await asyncio.sleep(15)
+                            continue
+                        last_scraped_at = current_at
                         if feed_rows:
                             payload["items"]   = feed_rows
                             payload["message"] = (
@@ -210,6 +217,10 @@ async def websocket_feed(websocket: WebSocket):
 
 @app.get("/debug/env")
 def debug_env():
+    # M-04 FIX: gate behind DEBUG_MODE same as /debug/neo4j
+    if os.getenv("DEBUG_MODE", "").lower() not in ("1", "true", "yes"):
+        from fastapi import HTTPException as _HE
+        raise _HE(status_code=404, detail="Not found")
     return {
         "neo4j_uri_set":      bool(os.getenv("NEO4J_URI")),
         "neo4j_user_set":     bool(os.getenv("NEO4J_USER")),

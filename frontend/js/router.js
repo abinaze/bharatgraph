@@ -38,6 +38,10 @@ const Router = {
       const match = path.match(regex);
       if (match) return { handler, params: match.groups || {} };
     }
+    // LOGIC FIX: catch-all route -- render 404 view instead of frozen spinner
+    if (Router._routes["*"]) {
+      return { handler: Router._routes["*"], params: { path } };
+    }
     return null;
   },
 

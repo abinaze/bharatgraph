@@ -54,7 +54,9 @@ def get_risk(entity_id: str, driver=Depends(get_db)):
         ).single()
 
         contract_count = contract_rows["contract_count"] if contract_rows else 0
-        total_crore    = contract_rows["total_crore"]    if contract_rows else 0
+        # C-02 FIX: SUM() returns None (Python None) when no rows match.
+        # None cannot be formatted with :.1f -- guard with "or 0"
+        total_crore = (contract_rows["total_crore"] if contract_rows else 0) or 0
 
         if contract_count and contract_count > 0:
             raw = min(contract_count * 10, 35)

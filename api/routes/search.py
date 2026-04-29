@@ -35,6 +35,10 @@ SOURCE_MAP = {
     "SanctionedEntity":  ("OpenSanctions",                        "Sanctions / PEP Record",         "https://www.opensanctions.org"),
     "CourtCase":         ("National Judicial Data Grid",           "Court Pendency Record",         "https://njdg.ecourts.gov.in"),
     "LocalBody":         ("Local Government Directory",            "LGD Entity Record",             "https://lgdirectory.gov.in"),
+    # C-05 FIX: DataGovDocument and CrimeReport existed in Neo4j but had no
+    # LABEL_QUERIES entry or SOURCE_MAP so they were permanently unsearchable
+    "DataGovDocument":   ("data.gov.in",                             "Open Government Dataset",         "https://data.gov.in"),
+    "CrimeReport":       ("National Crime Records Bureau",           "NCRB Crime Statistics",            "https://ncrb.gov.in"),
 }
 
 # BUG-4 FIX: added ParliamentQuestion, VigilanceCircular, ICIJEntity,
@@ -142,6 +146,14 @@ LABEL_QUERIES = {
         "WHERE toLower(coalesce(n.name,'')) CONTAINS toLower($q) "
         "   OR toLower(coalesce(n.district,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.name AS name, n.state AS state, null AS party LIMIT $limit"),
+    # C-05 FIX: added DataGovDocument and CrimeReport search
+    "datagov": ("DataGovDocument",
+        "MATCH (n:DataGovDocument) WHERE toLower(coalesce(n.title,\'\')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, n.title AS name, null AS state, null AS party LIMIT $limit"),
+    "crimereport": ("CrimeReport",
+        "MATCH (n:CrimeReport) WHERE toLower(coalesce(n.state,\'\')) CONTAINS toLower($q) "
+        "OR toLower(coalesce(n.crime_head,\'\')) CONTAINS toLower($q) "
+        "RETURN n.id AS id, coalesce(n.state, n.crime_head) AS name, n.state AS state, null AS party LIMIT $limit"),
 }
 
 

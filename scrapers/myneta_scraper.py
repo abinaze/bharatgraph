@@ -29,9 +29,21 @@ class MyNetaScraper(BaseScraper):
 
     # State election pages (update with current elections)
     STATE_PAGES = {
-        "lok_sabha_2024": "https://myneta.info/LokSabha2024/",
-        "delhi_2020":     "https://myneta.info/delhi2020/",
-        "tamil_nadu_2021":"https://myneta.info/TamilNadu2021/",
+        # H-03 FIX: was only 3 stale elections -- added major 2022-2024 elections
+        "lok_sabha_2024":        "https://myneta.info/LokSabha2024/",
+        "delhi_2025":            "https://myneta.info/delhi2025/",
+        "delhi_2020":            "https://myneta.info/delhi2020/",
+        "up_2022":               "https://myneta.info/up2022/",
+        "gujarat_2022":          "https://myneta.info/gujarat2022/",
+        "himachal_2022":         "https://myneta.info/himachal2022/",
+        "karnataka_2023":        "https://myneta.info/karnataka2023/",
+        "rajasthan_2023":        "https://myneta.info/rajasthan2023/",
+        "mp_2023":               "https://myneta.info/mp2023/",
+        "telangana_2023":        "https://myneta.info/telangana2023/",
+        "tamil_nadu_2021":       "https://myneta.info/tamilnadu2021/",
+        "west_bengal_2021":      "https://myneta.info/wb2021/",
+        "maharashtra_2024":      "https://myneta.info/maharashtra2024/",
+        "jharkhand_2024":        "https://myneta.info/jharkhand2024/",
     }
 
     def __init__(self):
@@ -138,7 +150,7 @@ class MyNetaScraper(BaseScraper):
         return flagged
 
 
-# ── Run directly to test ──────────────────────────────────────────────────────
+# ?? Run directly to test ??????????????????????????????????????????????????????
 if __name__ == "__main__":
     print("=" * 60)
     print("BharatGraph - MyNeta Scraper Test")
