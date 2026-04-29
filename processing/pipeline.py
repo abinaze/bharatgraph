@@ -405,7 +405,15 @@ class BharatGraphPipeline:
             "summary": summary,
             "run_at":  start.isoformat(),
         }
-        results["saved_to"] = self.save(results)
+        # H-12 FIX: save only summary+links to disk -- raw scraper output
+        # is NOT saved to git (it bloats git history unboundedly).
+        # The full results dict (with raw) is returned in memory for the loader.
+        saveable = {
+            "summary":  summary,
+            "links":    links,
+            "run_at":   start.isoformat(),
+        }
+        results["saved_to"] = self.save(saveable)
         return results
 
 
