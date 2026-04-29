@@ -10,6 +10,12 @@ from ai.investigators.media_investigator        import MediaInvestigator
 from ai.investigators.historical_investigator   import HistoricalInvestigator
 from ai.investigators.public_interest_investigator import PublicInterestInvestigator
 from ai.investigators.doubt_investigator        import DoubtInvestigator
+# C-06-INV FIX: three investigators existed as files but were excluded from
+# ALL_INVESTIGATORS because they used a module-function pattern instead of
+# the class pattern. Added class wrappers so MultiInvestigator can run them.
+from ai.investigators.affidavit_investigator    import AffidavitInvestigator
+from ai.investigators.benami_investigator       import BenamiInvestigator
+from ai.investigators.math_investigator         import MathInvestigator
 
 ALL_INVESTIGATORS = [
     FinancialInvestigator,
@@ -24,4 +30,7 @@ ALL_INVESTIGATORS = [
     HistoricalInvestigator,
     PublicInterestInvestigator,
     DoubtInvestigator,
+    AffidavitInvestigator,
+    BenamiInvestigator,
+    MathInvestigator,
 ]
