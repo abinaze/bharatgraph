@@ -162,6 +162,7 @@ async def websocket_feed(websocket: WebSocket):
     import asyncio
     await websocket.accept()
     logger.info("[WS] Feed client connected")
+    last_scraped_at = None   # WS cursor: only push when data changes
     try:
         while True:
             driver = get_driver()
@@ -178,6 +179,12 @@ async def websocket_feed(websocket: WebSocket):
                             "ORDER BY n.scraped_at DESC LIMIT 8",
                             labels=_FEED_LABELS
                         ).data()
+                        current_at = feed_rows[0].get("scraped_at") if feed_rows else None
+                        # LOGIC FIX: skip push if data has not changed since last send
+                        if current_at and current_at == last_scraped_at and feed_rows:
+                            await asyncio.sleep(15)
+                            continue
+                        last_scraped_at = current_at
                         if feed_rows:
                             payload["items"]   = feed_rows
                             payload["message"] = (
