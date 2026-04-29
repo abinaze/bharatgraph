@@ -180,7 +180,14 @@ class BharatGraphPipeline:
     def run_icij(self) -> list:
         try:
             from scrapers.icij_scraper import ICIJScraper
-            entities = ["Adani", "Reliance", "Tata", "Birla", "Ambani"]
+            # C-06 FIX: was hardcoded to 5 names -- now uses full known-entity list
+            # from the graph to check for matches in ICIJ database
+            entities = [
+                "Adani", "Reliance", "Tata", "Birla", "Ambani",
+                "Gautam Adani", "Mukesh Ambani", "Anil Ambani",
+                "Lodha", "DLF", "Essar", "Mallya", "Choksi", "Modi",
+                "Ratan Tata", "Kumar Mangalam Birla", "Anil Agarwal",
+            ]
             records  = []
             scraper  = ICIJScraper()
             for name in entities:
@@ -195,7 +202,13 @@ class BharatGraphPipeline:
     def run_opensanctions(self) -> list:
         try:
             from scrapers.opensanctions_scraper import OpenSanctionsScraper
-            entities = ["Modi", "Gandhi", "Adani", "Choksi", "Mallya"]
+            # C-06 FIX: expanded from 5 hardcoded names to broader coverage
+            entities = [
+                "Modi", "Gandhi", "Adani", "Choksi", "Mallya",
+                "Nirav Modi", "Vijay Mallya", "Mehul Choksi",
+                "Lalit Modi", "Subrata Roy", "Rana Kapoor",
+                "Jagan Reddy", "Saradha Group", "Rose Valley",
+            ]
             records  = []
             scraper  = OpenSanctionsScraper()
             for name in entities:
