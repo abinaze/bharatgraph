@@ -7,6 +7,7 @@ from loguru import logger
 
 from api.dependencies import get_db
 from ai.deep_investigator import DeepInvestigator
+from ai.multi_investigator import MultiInvestigator
 from ai.connection_mapper import ConnectionMapper
 
 router = APIRouter()
