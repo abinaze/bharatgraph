@@ -150,7 +150,6 @@
     // Health check handled by app.js initApp() with exponential backoff
     
     navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
-  }
  </script>
   <script>
     // app.js registers routes and calls Router.init() via DOMContentLoaded
