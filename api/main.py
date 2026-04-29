@@ -93,7 +93,7 @@ app.include_router(runtime.router,       tags=["Runtime"])
 def root():
     return {
         "name":        "BharatGraph API",
-        "version":     "0.30.0",
+        "version":     "0.31.0",
         "status":      "running",
         "docs":        "/docs",
         "health":      "/health",

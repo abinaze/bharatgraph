@@ -21,8 +21,7 @@ def get_connections(
 
     nodes = {}
     edges = []
-    _edge_seen = set()   # BUG-10 FIX: dedup (src, tgt, type) triples
-    _edge_seen = set()   # BUG-10 FIX: dedup (src, tgt, type) triples
+    _edge_seen = set()   # dedup (src, tgt, type) triples
 
     with driver.session() as session:
         # Always load anchor node first -- guarantees non-empty response
@@ -97,7 +96,7 @@ def get_connections(
 
     return GraphResponse(
         entity_id=entity_id,
-        depth=depth,
+        depth=depth_safe,  # use sanitized value
         nodes=list(nodes.values()),
         edges=edges,
         generated_at=datetime.now().isoformat(),

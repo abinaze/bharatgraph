@@ -40,11 +40,7 @@ class DeepInvestigator:
         # Previously all 6 layers shared ONE session -- if any layer timed out or
         # threw, the entire session (and all remaining layers) was killed.
         # Resolve name/label in its own short session first.
-        # BUG-1 + BUG-7 FIX: default before try so entity_label is always bound
-        # even if Neo4j times out or throws on name/label lookup.
-        entity_label = "Unknown"
-        # BUG-1 + BUG-7 FIX: default before try so entity_label is always bound
-        # even if Neo4j times out or throws on name/label lookup.
+        # entity_label default: always set before try so it is never unbound
         entity_label = "Unknown"
         try:
             with self.driver.session() as session:
