@@ -36,15 +36,18 @@ self.addEventListener("activate", e => {
 });
 
 self.addEventListener("fetch", e => {
-  const url = e.request.url;
+  const reqUrl = new URL(e.request.url);
+  const host = reqUrl.hostname;
+  const path = reqUrl.pathname;
   // API calls: always network-first, never cached
-  // L-01 FIX: check for API host specifically, not just any URL containing /search
-  const isApi = url.includes("hf.space") ||
-                url.includes("/api/") ||
-                url.includes("/health") ||
-                url.includes("/stats") ||
-                url.includes("/investigate") ||
-                (url.includes("/search") && !url.includes("github.io"));
+  // L-01 FIX: check for API host/path specifically, not raw URL substrings
+  const isGithubIoHost = host === "github.io" || host.endsWith(".github.io");
+  const isApi = host === "hf.space" ||
+                path.includes("/api/") ||
+                path.includes("/health") ||
+                path.includes("/stats") ||
+                path.includes("/investigate") ||
+                (path.includes("/search") && !isGithubIoHost);
   if (isApi) {
     e.respondWith(
       fetch(e.request).catch(() =>
