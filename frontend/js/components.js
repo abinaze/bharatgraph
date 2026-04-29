@@ -1,4 +1,4 @@
-// BUG-05 FIX: sanitize() removed from components.js — defined once in app.js.
+// BUG-05 FIX: sanitize() removed from components.js -- defined once in app.js.
 // Both files previously defined it; second definition silently overwrote the first.
 // app.js loads last, so its sanitize() was always the active one, but this was fragile.
 
@@ -102,7 +102,7 @@ const Components = {
       .slice(0, 3)
       .map(e => `<span class="evidence-chip">${e.substring(0, 60)}</span>`)
       .join("");
-    // BUG-20 FIX: finding.description was put directly in innerHTML — XSS risk
+    // BUG-20 FIX: finding.description was put directly in innerHTML -- XSS risk
     el.innerHTML = `
       <div class="finding-item__severity" style="color:${
         finding.severity === "HIGH" ? "var(--color-risk-high)"

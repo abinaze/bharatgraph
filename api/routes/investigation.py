@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.get("/investigate/{entity_id}")
 def deep_investigate(entity_id: str, driver=Depends(get_db)):
-    """BUG-04 FIX: was no try/except — any exception became a raw 500."""
+    """BUG-04 FIX: was no try/except -- any exception became a raw 500."""
     logger.info(f"[Investigation] Deep investigate: {entity_id}")
     try:
         investigator = DeepInvestigator(driver=driver)
@@ -39,7 +39,7 @@ def deep_investigate(entity_id: str, driver=Depends(get_db)):
             "entity_id":   entity_id,
             "entity_name": entity_id,
             "status":      "error",
-            "error":       "Investigation failed — please retry",
+            "error":       "Investigation failed -- please retry",
             "total_items": 0,
             "layers":      [],
             "confidence":  0,
@@ -62,7 +62,7 @@ def connection_map(
         raise
     except Exception as e:
         logger.error(f"[Investigation] Connection map error: {e}")
-        raise HTTPException(status_code=500, detail="Connection map failed — please retry")
+        raise HTTPException(status_code=500, detail="Connection map failed -- please retry")
 
 
 @router.get("/node-evidence/{entity_id}")
@@ -80,4 +80,4 @@ def node_evidence(entity_id: str, driver=Depends(get_db)):
         raise
     except Exception as e:
         logger.error(f"[Investigation] Node evidence error for {entity_id}: {e}")
-        raise HTTPException(status_code=500, detail="Evidence fetch failed — please retry")
+        raise HTTPException(status_code=500, detail="Evidence fetch failed -- please retry")

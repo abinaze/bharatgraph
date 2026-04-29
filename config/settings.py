@@ -11,7 +11,7 @@ DESCRIPTION = "AI-powered public transparency platform for India"
 # Database
 NEO4J_URI      = os.getenv("NEO4J_URI", "")
 NEO4J_USER     = os.getenv("NEO4J_USER", "neo4j")
-# BUG-14 FIX: was defaulting to literal "password" — changed to empty string
+# BUG-14 FIX: was defaulting to literal "password" -- changed to empty string
 # so a missing secret fails loudly instead of silently using wrong credentials.
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
 
