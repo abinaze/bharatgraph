@@ -10,6 +10,7 @@ pinned: false
 
 # BharatGraph
 
+
 **India's open-source investigation intelligence platform**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
