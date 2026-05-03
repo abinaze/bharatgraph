@@ -25,40 +25,40 @@ SCRIPT_TO_LANG = {
 FIELD_TEMPLATES = {
     "risk_explanation": {
         "hi": (
-            "{entity_name} के लिए संरचनात्मक जोखिम स्कोर {score}/100 है। "
-            "जोखिम स्तर: {level}। यह एक विश्लेषणात्मक संकेतक है, "
-            "कोई कानूनी निर्णय नहीं।"
+            "{entity_name} \u0915\u0947 \u0932\u093f\u090f \u0938\u0902\u0930\u091a\u0928\u093e\u0924\u094d\u092e\u0915 \u091c\u094b\u0916\u093f\u092e \u0938\u094d\u0915\u094b\u0930 {score}/100 \u0939\u0948\u0964 "
+            "\u091c\u094b\u0916\u093f\u092e \u0938\u094d\u0924\u0930: {level}\u0964 \u092f\u0939 \u090f\u0915 \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923\u093e\u0924\u094d\u092e\u0915 \u0938\u0902\u0915\u0947\u0924\u0915 \u0939\u0948, "
+            "\u0915\u094b\u0908 \u0915\u093e\u0928\u0942\u0928\u0940 \u0928\u093f\u0930\u094d\u0923\u092f \u0928\u0939\u0940\u0902\u0964"
         ),
         "ta": (
-            "{entity_name}-க்கான கட்டமைப்பு அபாய மதிப்பெண் {score}/100 ஆகும். "
-            "அபாய நிலை: {level}। இது ஒரு பகுப்பாய்வு குறிகாட்டி, "
-            "சட்டரீதியான தீர்ப்பு அல்ல।"
+            "{entity_name}-\u0b95\u0bcd\u0b95\u0bbe\u0ba9 \u0b95\u0b9f\u0bcd\u0b9f\u0bae\u0bc8\u0baa\u0bcd\u0baa\u0bc1 \u0b85\u0baa\u0bbe\u0baf \u0bae\u0ba4\u0bbf\u0baa\u0bcd\u0baa\u0bc6\u0ba3\u0bcd {score}/100 \u0b86\u0b95\u0bc1\u0bae\u0bcd. "
+            "\u0b85\u0baa\u0bbe\u0baf \u0ba8\u0bbf\u0bb2\u0bc8: {level}\u0964 \u0b87\u0ba4\u0bc1 \u0b92\u0bb0\u0bc1 \u0baa\u0b95\u0bc1\u0baa\u0bcd\u0baa\u0bbe\u0baf\u0bcd\u0bb5\u0bc1 \u0b95\u0bc1\u0bb1\u0bbf\u0b95\u0bbe\u0b9f\u0bcd\u0b9f\u0bbf, "
+            "\u0b9a\u0b9f\u0bcd\u0b9f\u0bb0\u0bc0\u0ba4\u0bbf\u0baf\u0bbe\u0ba9 \u0ba4\u0bc0\u0bb0\u0bcd\u0baa\u0bcd\u0baa\u0bc1 \u0b85\u0bb2\u0bcd\u0bb2\u0964"
         ),
         "te": (
-            "{entity_name} కోసం నిర్మాణాత్మక ప్రమాద స్కోర్ {score}/100. "
-            "ప్రమాద స్థాయి: {level}। ఇది విశ్లేషణ సూచిక, "
-            "చట్టపరమైన నిర్ణయం కాదు।"
+            "{entity_name} \u0c15\u0c4b\u0c38\u0c02 \u0c28\u0c3f\u0c30\u0c4d\u0c2e\u0c3e\u0c23\u0c3e\u0c24\u0c4d\u0c2e\u0c15 \u0c2a\u0c4d\u0c30\u0c2e\u0c3e\u0c26 \u0c38\u0c4d\u0c15\u0c4b\u0c30\u0c4d {score}/100. "
+            "\u0c2a\u0c4d\u0c30\u0c2e\u0c3e\u0c26 \u0c38\u0c4d\u0c25\u0c3e\u0c2f\u0c3f: {level}\u0964 \u0c07\u0c26\u0c3f \u0c35\u0c3f\u0c36\u0c4d\u0c32\u0c47\u0c37\u0c23 \u0c38\u0c42\u0c1a\u0c3f\u0c15, "
+            "\u0c1a\u0c1f\u0c4d\u0c1f\u0c2a\u0c30\u0c2e\u0c48\u0c28 \u0c28\u0c3f\u0c30\u0c4d\u0c23\u0c2f\u0c02 \u0c15\u0c3e\u0c26\u0c41\u0964"
         ),
         "kn": (
-            "{entity_name} ಗಾಗಿ ರಚನಾತ್ಮಕ ಅಪಾಯ ಸ್ಕೋರ್ {score}/100 ಆಗಿದೆ. "
-            "ಅಪಾಯ ಮಟ್ಟ: {level}। ಇದು ಒಂದು ವಿಶ್ಲೇಷಣಾ ಸೂಚಕ, "
-            "ಕಾನೂನು ನಿರ್ಣಯ ಅಲ್ಲ।"
+            "{entity_name} \u0c97\u0cbe\u0c97\u0cbf \u0cb0\u0c9a\u0ca8\u0cbe\u0ca4\u0ccd\u0cae\u0c95 \u0c85\u0caa\u0cbe\u0caf \u0cb8\u0ccd\u0c95\u0ccb\u0cb0\u0ccd {score}/100 \u0c86\u0c97\u0cbf\u0ca6\u0cc6. "
+            "\u0c85\u0caa\u0cbe\u0caf \u0cae\u0c9f\u0ccd\u0c9f: {level}\u0964 \u0c87\u0ca6\u0cc1 \u0c92\u0c82\u0ca6\u0cc1 \u0cb5\u0cbf\u0cb6\u0ccd\u0cb2\u0cc7\u0cb7\u0ca3\u0cbe \u0cb8\u0cc2\u0c9a\u0c95, "
+            "\u0c95\u0cbe\u0ca8\u0cc2\u0ca8\u0cc1 \u0ca8\u0cbf\u0cb0\u0ccd\u0ca3\u0caf \u0c85\u0cb2\u0ccd\u0cb2\u0964"
         ),
         "ml": (
-            "{entity_name}-നായുള്ള ഘടനാപരമായ അപകട സ്കോർ {score}/100 ആണ്. "
-            "അപകട നില: {level}। ഇത് ഒരു വിശകലന സൂചകമാണ്, "
-            "നിയമ നിർണ്ണയം അല്ല।"
+            "{entity_name}-\u0d28\u0d3e\u0d2f\u0d41\u0d33\u0d4d\u0d33 \u0d18\u0d1f\u0d28\u0d3e\u0d2a\u0d30\u0d2e\u0d3e\u0d2f \u0d05\u0d2a\u0d15\u0d1f \u0d38\u0d4d\u0d15\u0d4b\u0d7c {score}/100 \u0d06\u0d23\u0d4d. "
+            "\u0d05\u0d2a\u0d15\u0d1f \u0d28\u0d3f\u0d32: {level}\u0964 \u0d07\u0d24\u0d4d \u0d12\u0d30\u0d41 \u0d35\u0d3f\u0d36\u0d15\u0d32\u0d28 \u0d38\u0d42\u0d1a\u0d15\u0d2e\u0d3e\u0d23\u0d4d, "
+            "\u0d28\u0d3f\u0d2f\u0d2e \u0d28\u0d3f\u0d7c\u0d23\u0d4d\u0d23\u0d2f\u0d02 \u0d05\u0d32\u0d4d\u0d32\u0964"
         ),
     },
     "no_data": {
-        "hi":  "इस इकाई के लिए वर्तमान में कोई डेटा उपलब्ध नहीं है।",
-        "ta":  "இந்த நிறுவனத்திற்கு தற்போது தரவு கிடைக்கவில்லை.",
-        "te":  "ఈ సంస్థకు ప్రస్తుతం డేటా అందుబాటులో లేదు.",
-        "kn":  "ಈ ಘಟಕಕ್ಕೆ ಪ್ರಸ್ತುತ ಯಾವುದೇ ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ.",
-        "ml":  "ഈ സ്ഥാപനത്തിനായി ഇപ്പോൾ ഡാറ്റ ലഭ്യമല്ല.",
-        "mr":  "या घटकासाठी सध्या कोणताही डेटा उपलब्ध नाही.",
-        "bn":  "এই সত্তার জন্য বর্তমানে কোনো তথ্য পাওয়া যাচ্ছে না।",
-        "gu":  "આ સંસ્થા માટે હાલમાં ડેટા ઉપલબ્ધ નથી.",
+        "hi":  "\u0907\u0938 \u0907\u0915\u093e\u0908 \u0915\u0947 \u0932\u093f\u090f \u0935\u0930\u094d\u0924\u092e\u093e\u0928 \u092e\u0947\u0902 \u0915\u094b\u0908 \u0921\u0947\u091f\u093e \u0909\u092a\u0932\u092c\u094d\u0927 \u0928\u0939\u0940\u0902 \u0939\u0948\u0964",
+        "ta":  "\u0b87\u0ba8\u0bcd\u0ba4 \u0ba8\u0bbf\u0bb1\u0bc1\u0bb5\u0ba9\u0ba4\u0bcd\u0ba4\u0bbf\u0bb1\u0bcd\u0b95\u0bc1 \u0ba4\u0bb1\u0bcd\u0baa\u0bcb\u0ba4\u0bc1 \u0ba4\u0bb0\u0bb5\u0bc1 \u0b95\u0bbf\u0b9f\u0bc8\u0b95\u0bcd\u0b95\u0bb5\u0bbf\u0bb2\u0bcd\u0bb2\u0bc8.",
+        "te":  "\u0c08 \u0c38\u0c02\u0c38\u0c4d\u0c25\u0c15\u0c41 \u0c2a\u0c4d\u0c30\u0c38\u0c4d\u0c24\u0c41\u0c24\u0c02 \u0c21\u0c47\u0c1f\u0c3e \u0c05\u0c02\u0c26\u0c41\u0c2c\u0c3e\u0c1f\u0c41\u0c32\u0c4b \u0c32\u0c47\u0c26\u0c41.",
+        "kn":  "\u0c88 \u0c98\u0c9f\u0c95\u0c95\u0ccd\u0c95\u0cc6 \u0caa\u0ccd\u0cb0\u0cb8\u0ccd\u0ca4\u0cc1\u0ca4 \u0caf\u0cbe\u0cb5\u0cc1\u0ca6\u0cc7 \u0ca1\u0cc7\u0c9f\u0cbe \u0cb2\u0cad\u0ccd\u0caf\u0cb5\u0cbf\u0cb2\u0ccd\u0cb2.",
+        "ml":  "\u0d08 \u0d38\u0d4d\u0d25\u0d3e\u0d2a\u0d28\u0d24\u0d4d\u0d24\u0d3f\u0d28\u0d3e\u0d2f\u0d3f \u0d07\u0d2a\u0d4d\u0d2a\u0d4b\u0d7e \u0d21\u0d3e\u0d31\u0d4d\u0d31 \u0d32\u0d2d\u0d4d\u0d2f\u0d2e\u0d32\u0d4d\u0d32.",
+        "mr":  "\u092f\u093e \u0918\u091f\u0915\u093e\u0938\u093e\u0920\u0940 \u0938\u0927\u094d\u092f\u093e \u0915\u094b\u0923\u0924\u093e\u0939\u0940 \u0921\u0947\u091f\u093e \u0909\u092a\u0932\u092c\u094d\u0927 \u0928\u093e\u0939\u0940.",
+        "bn":  "\u098f\u0987 \u09b8\u09a4\u09cd\u09a4\u09be\u09b0 \u099c\u09a8\u09cd\u09af \u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8\u09c7 \u0995\u09cb\u09a8\u09cb \u09a4\u09a5\u09cd\u09af \u09aa\u09be\u0993\u09af\u09bc\u09be \u09af\u09be\u099a\u09cd\u099b\u09c7 \u09a8\u09be\u0964",
+        "gu":  "\u0a86 \u0ab8\u0a82\u0ab8\u0acd\u0aa5\u0abe \u0aae\u0abe\u0a9f\u0ac7 \u0ab9\u0abe\u0ab2\u0aae\u0abe\u0a82 \u0aa1\u0ac7\u0a9f\u0abe \u0a89\u0aaa\u0ab2\u0aac\u0acd\u0aa7 \u0aa8\u0aa5\u0ac0.",
         "en":  "No data currently available for this entity.",
     },
 }
@@ -147,7 +147,7 @@ class Translator:
             return template.format(entity_name=entity_name,
                                    score=score, level=level)
         return (
-            f"{entity_name} — Structural risk score: {score}/100. "
+            f"{entity_name} \u2014 Structural risk score: {score}/100. "
             f"Risk level: {level}. "
             "This is an analytical indicator, not a legal finding."
         )
@@ -165,9 +165,9 @@ if __name__ == "__main__":
     translator = Translator()
 
     test_texts = [
-        ("मंत्री राजेश कुमार की जांच की जाए",  "auto"),
+        ("\u092e\u0902\u0924\u094d\u0930\u0940 \u0930\u093e\u091c\u0947\u0936 \u0915\u0941\u092e\u093e\u0930 \u0915\u0940 \u091c\u093e\u0902\u091a \u0915\u0940 \u091c\u093e\u090f",  "auto"),
         ("Minister Rajesh Kumar should be investigated", "en"),
-        ("ராஜேஷ் குமார் அமைச்சர்",              "auto"),
+        ("\u0bb0\u0bbe\u0b9c\u0bc7\u0bb7\u0bcd \u0b95\u0bc1\u0bae\u0bbe\u0bb0\u0bcd \u0b85\u0bae\u0bc8\u0b9a\u0bcd\u0b9a\u0bb0\u0bcd",              "auto"),
     ]
 
     print("\n  Language Detection:")
