@@ -859,6 +859,28 @@ const Views = {
       </div>
     `;
   },
+  notFound: (params) => {
+    // BUG-11 FIX: render a proper 404 page instead of leaving frozen spinner
+    const main = document.getElementById("app-main");
+    if (!main) return;
+    const badPath = sanitize((params && params.path) || window.location.hash || "/");
+    main.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;
+                  justify-content:center;min-height:60vh;text-align:center;
+                  padding:40px 20px;color:var(--text-muted)">
+        <div style="font-size:64px;margin-bottom:16px;opacity:0.3">404</div>
+        <div style="font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:8px">
+          Page not found
+        </div>
+        <div style="font-size:14px;margin-bottom:24px">
+          The path <code style="background:var(--bg-tertiary);padding:2px 8px;border-radius:4px">
+          ${badPath}
+          </code> is not registered.
+        </div>
+        <button class="btn btn--primary" onclick="Router.navigate('/')">Go Home</button>
+      </div>`;
+  },
+
 };
 
 function toggleTheme() {
@@ -918,6 +940,9 @@ function initApp() {
   Router.register("/connection-map", Views["connection-map"]);
   Router.register("/live-feed", Views.liveFeed);
   Router.register("/about",    Views.about);
+  // BUG-11 FIX: register wildcard so unknown URLs show 404 page
+  // instead of frozen spinner (router.js supports "*" but it was never called)
+  Router.register("*", Views.notFound);
 
   // BUG-02 FIX: was single immediate check -- failed permanently on HF cold start.
   // BUG-25 FIX: message said "Start: uvicorn" -- wrong for HuggingFace users.
