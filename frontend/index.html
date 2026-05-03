@@ -49,7 +49,7 @@
                   style="background:var(--bg-tertiary);border:1px solid var(--border-color);
                          border-radius:var(--radius-md);padding:var(--space-1) var(--space-2);
                          color:var(--text-secondary);font-size:var(--font-size-xs);cursor:pointer"
-                  onchange="State.language=this.value; if(window.applyLanguage) applyLanguage(this.value);">
+                  onchange="State.language=this.value; if(window.applyLanguage) applyLanguage(this.value); var _ls=document.getElementById('lang-select'); if(_ls) _ls.value=this.value;">
             <option value="en">EN -- English</option>
             <option value="hi">HI -- हिन्दी</option>
             <option value="ta">TA -- தமிழ்</option>
