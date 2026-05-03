@@ -21,10 +21,9 @@ def get_connections(
 
     nodes = {}
     edges = []
-    _edge_seen = set()   # dedup (src, tgt, type) triples
+    _edge_seen = set()
 
     with driver.session() as session:
-        # Always load anchor node first -- guarantees non-empty response
         anchor = session.run(
             "MATCH (n {id:$id}) RETURN n", id=entity_id
         ).single()
@@ -42,30 +41,32 @@ def get_connections(
                             if k not in ("id", "name", "title")},
             )
 
-        # BUG-09 FIX: Use explicit node/rel return instead of path object (avoids
-        # Neo4j Python driver path API inconsistencies). Depth via param not f-string.
+        # BUG-1 FIX: Neo4j does NOT allow query parameters inside
+        # variable-length path patterns [r*1..$depth] -- the depth MUST be
+        # baked into the Cypher string as a literal integer using f-string/str().
+        # Passing depth as a parameter causes CypherSyntaxError on every call.
         depth_safe = min(max(int(depth), 1), 3)
-        rows = session.run(
-            """
-            MATCH (start {id: $id})-[r*1..$depth]-(end)
-            RETURN DISTINCT
-                start.id AS src_id,
-                labels(start)[0] AS src_label,
-                coalesce(start.name, start.title, start.id) AS src_name,
-                properties(start) AS src_props,
-                [rel IN r | {
-                    src: startNode(rel).id,
-                    tgt: endNode(rel).id,
-                    type: type(rel)
-                }] AS rels,
-                end.id AS end_id,
-                labels(end)[0] AS end_label,
-                coalesce(end.name, end.title, end.id) AS end_name,
-                properties(end) AS end_props
-            LIMIT 200
-            """,
-            id=entity_id, depth=depth_safe
-        ).data()
+        cypher = (
+            "MATCH (start {id: $id})-[r*1.."
+            + str(depth_safe)
+            + "]-(end) "
+            "RETURN DISTINCT "
+            "start.id AS src_id, "
+            "labels(start)[0] AS src_label, "
+            "coalesce(start.name, start.title, start.id) AS src_name, "
+            "properties(start) AS src_props, "
+            "[rel IN r | { "
+            "    src: startNode(rel).id, "
+            "    tgt: endNode(rel).id, "
+            "    type: type(rel) "
+            "}] AS rels, "
+            "end.id AS end_id, "
+            "labels(end)[0] AS end_label, "
+            "coalesce(end.name, end.title, end.id) AS end_name, "
+            "properties(end) AS end_props "
+            "LIMIT 200"
+        )
+        rows = session.run(cypher, id=entity_id).data()
 
         for row in rows:
             for nid, nlabel, nname, nprops in [
@@ -84,10 +85,7 @@ def get_connections(
                 src   = rel_step.get("src", "")
                 tgt   = rel_step.get("tgt", "")
                 rtype = rel_step.get("type", "RELATED_TO")
-                # M-09 FIX: startNode/endNode may return null .id if node
-                # was created without an id property -- filter those out
                 if src and tgt and isinstance(src, str) and isinstance(tgt, str):
-                    # skip duplicate edges -- depth>1 paths share edges
                     edge_key = (src, tgt, rtype)
                     if edge_key not in _edge_seen:
                         _edge_seen.add(edge_key)
@@ -98,7 +96,7 @@ def get_connections(
 
     return GraphResponse(
         entity_id=entity_id,
-        depth=depth_safe,  # use sanitized value
+        depth=depth_safe,
         nodes=list(nodes.values()),
         edges=edges,
         generated_at=datetime.now().isoformat(),
@@ -122,6 +120,6 @@ def politician_contracts_pattern(
             """,
             limit=limit
         ).data()
-    return {"pattern":"politician -> company -> contract",
-            "total":len(rows),"results":rows,
-            "generated_at":datetime.now().isoformat()}
+    return {"pattern": "politician -> company -> contract",
+            "total": len(rows), "results": rows,
+            "generated_at": datetime.now().isoformat()}
