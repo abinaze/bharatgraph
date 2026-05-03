@@ -12,9 +12,9 @@ ROTATION_THRESHOLD    = 0.6
 class CartelDetector:
     """
     Vendor cartel detection via:
-    1. Award rotation — vendors take turns winning contracts
-    2. Price coordination — bids within tight band
-    3. Co-bidding network — same vendors appear together repeatedly
+    1. Award rotation -- vendors take turns winning contracts
+    2. Price coordination -- bids within tight band
+    3. Co-bidding network -- same vendors appear together repeatedly
     """
 
     def analyze(self, ministry: str, driver=None) -> dict:
@@ -39,7 +39,7 @@ class CartelDetector:
                 "description": (
                     f"Vendor rotation pattern detected in {ministry}. "
                     f"{rotation['score']*100:.0f}% of contracts show vendors "
-                    f"taking turns winning in a regular sequence — a classic "
+                    f"taking turns winning in a regular sequence -- a classic "
                     f"cartel coordination pattern."
                 ),
                 "evidence": rotation.get("evidence", []),
@@ -143,7 +143,7 @@ class CartelDetector:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Cartel Detector Test")
+    print("BharatGraph -- Cartel Detector Test")
     print("=" * 55)
     c = CartelDetector()
     r = c.analyze("Ministry of Road Transport", driver=None)

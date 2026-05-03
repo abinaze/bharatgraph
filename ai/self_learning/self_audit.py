@@ -41,7 +41,7 @@ class SelfAudit:
                     "status":  result["status"],
                 })
                 logger.warning(
-                    f"[SelfAudit] ALERT: {scraper_name} — {result['issue']}"
+                    f"[SelfAudit] ALERT: {scraper_name} -- {result['issue']}"
                 )
 
         summary = {

@@ -213,7 +213,7 @@ class AffidavitAnalyzer:
                 if prev > 0 and curr > prev * 1.5:
                     pct = (curr / prev - 1) * 100
                     surges.append(
-                        f"Movable: Rs {prev:.2f} Cr → Rs {curr:.2f} Cr "
+                        f"Movable: Rs {prev:.2f} Cr -> Rs {curr:.2f} Cr "
                         f"(+{pct:.0f}%) before {a.get('year')} election"
                     )
         return surges

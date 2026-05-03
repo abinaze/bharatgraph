@@ -37,7 +37,7 @@ class RevolvingDoorDetector:
                     "description": (
                         f"{entity_name} moved from {t.get('from_role','?')} "
                         f"at {t.get('from_org','?')} to {t.get('to_role','?')} "
-                        f"at {t.get('to_org','?')} in {gap_days} days — "
+                        f"at {t.get('to_org','?')} in {gap_days} days -- "
                         f"below the expected {COOLING_OFF_DAYS}-day cooling-off period."
                     ),
                     "evidence": [
@@ -128,7 +128,7 @@ class RevolvingDoorDetector:
                         "evidence": [
                             f"Contracts: {row['n']}",
                             f"Total: Rs {row.get('total',0):.1f} Cr",
-                            f"Window: {transition.get('left_date')} → {transition.get('joined_date')}",
+                            f"Window: {transition.get('left_date')} -> {transition.get('joined_date')}",
                         ],
                     }
         except Exception:
@@ -146,7 +146,7 @@ class RevolvingDoorDetector:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Revolving Door Test")
+    print("BharatGraph -- Revolving Door Test")
     print("=" * 55)
     r = RevolvingDoorDetector()
     result = r.analyze("pol_001", "Test Official", driver=None)

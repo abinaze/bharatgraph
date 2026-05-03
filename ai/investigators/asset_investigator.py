@@ -36,7 +36,7 @@ class AssetInvestigator:
                 if assets_str and any(c.isdigit() for c in assets_str):
                     evidence.append({
                         "institution": "Election Commission of India",
-                        "document":    "Candidate Affidavit — Asset Declaration",
+                        "document":    "Candidate Affidavit -- Asset Declaration",
                         "url":         "https://myneta.info",
                         "date":        "",
                     })

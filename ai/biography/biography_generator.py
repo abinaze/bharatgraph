@@ -102,7 +102,7 @@ class BiographyGenerator:
             "sections":      sections,
             "full_text":     "\n\n".join(full_text),
             "event_count":   event_count,
-            "year_span":     f"{min(by_year.keys()) if by_year else '?'}–{max(by_year.keys()) if by_year else '?'}",
+            "year_span":     f"{min(by_year.keys()) if by_year else '?'}-{max(by_year.keys()) if by_year else '?'}",
             "generated_at":  datetime.now().isoformat(),
         }
 

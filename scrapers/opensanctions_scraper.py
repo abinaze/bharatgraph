@@ -14,7 +14,7 @@ class OpenSanctionsScraper(BaseScraper):
         if self.api_key:
             self.session.headers.update({"Authorization": f"ApiKey {self.api_key}"})
         else:
-            logger.warning("[OpenSanctions] No API key — add OPENSANCTIONS_API_KEY to .env")
+            logger.warning("[OpenSanctions] No API key -- add OPENSANCTIONS_API_KEY to .env")
 
     def search_entity(self, name: str, schema: str = "Person") -> list:
         logger.info(f"[OpenSanctions] Searching: '{name}'")

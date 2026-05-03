@@ -31,7 +31,7 @@ class LokSabhaScraper(BaseScraper):
         logger.info(f"[LokSabha] Fetching questions for: {ministry}")
         html = self.get_html(self.QUESTIONS_URL, params={"ministry": ministry})
         if not html:
-            logger.warning("[LokSabha] Could not fetch page — using sample")
+            logger.warning("[LokSabha] Could not fetch page -- using sample")
             return self._get_sample_questions(ministry)
         questions = self._parse_questions(html, ministry, limit)
         if not questions:

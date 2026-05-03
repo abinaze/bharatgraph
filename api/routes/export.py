@@ -18,7 +18,7 @@ _hasher = None
 
 def get_generator() -> DossierGenerator:
     """BUG-08 FIX: was caching generator with stale driver.
-    Now creates a fresh generator per request — driver is always fresh."""
+    Now creates a fresh generator per request -- driver is always fresh."""
     return DossierGenerator(driver=get_driver())
 
 

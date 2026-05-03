@@ -307,7 +307,7 @@ class PolicyBenefitAnalyzer:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Policy Benefit Analyzer Test")
+    print("BharatGraph -- Policy Benefit Analyzer Test")
     print("=" * 55)
     a = PolicyBenefitAnalyzer()
     r = a.analyze("pol_001", "Test Entity", driver=None)

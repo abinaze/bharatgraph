@@ -19,7 +19,7 @@ class ElectoralBondScraper(BaseScraper):
         if html:
             bonds = self._parse_bond_page(html)
         if not bonds:
-            logger.warning("[ElectoralBond] Live page returned no data — using sample")
+            logger.warning("[ElectoralBond] Live page returned no data -- using sample")
             bonds = self._get_sample_bonds()
         if save and bonds:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

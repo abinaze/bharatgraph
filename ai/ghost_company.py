@@ -117,7 +117,7 @@ class GhostCompanyDetector:
             score += GHOST_FLAGS["no_contract_history"]
             flags.append({
                 "flag": "no_contract_history",
-                "detail": "Only one contract on record — no prior procurement history",
+                "detail": "Only one contract on record -- no prior procurement history",
                 "score": GHOST_FLAGS["no_contract_history"],
             })
 
@@ -138,7 +138,7 @@ class GhostCompanyDetector:
                 "created specifically for a government procurement event. "
                 "This is an analytical indicator, not a legal finding."
                 if is_ghost else
-                f"Score {score}/100 — below ghost company threshold of {GHOST_THRESHOLD}."
+                f"Score {score}/100 -- below ghost company threshold of {GHOST_THRESHOLD}."
             ),
             "analyzed_at": datetime.now().isoformat(),
         }

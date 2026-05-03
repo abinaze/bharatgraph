@@ -194,7 +194,7 @@ class AdversarialEngine:
                     ).single()
                     if row and row.get("repeat_buyers",0) == 0:
                         evidence.append(
-                            "No repeat buyers found — contracts came from "
+                            "No repeat buyers found -- contracts came from "
                             "different ministries, suggesting open competition."
                         )
 
@@ -207,7 +207,7 @@ class AdversarialEngine:
                     ).single()
                     if row:
                         evidence.append(
-                            f"Entity is a member of {row['party']} — budget "
+                            f"Entity is a member of {row['party']} -- budget "
                             "allocations are party-level, not individual decisions."
                         )
         except Exception as e:
@@ -280,7 +280,7 @@ class AdversarialEngine:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Adversarial Engine Test")
+    print("BharatGraph -- Adversarial Engine Test")
     print("=" * 55)
     engine = AdversarialEngine()
     sample_findings = [

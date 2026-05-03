@@ -27,7 +27,7 @@ class IBBIScraper(BaseScraper):
         if html:
             orders = self._parse_orders(html, limit)
         if not orders:
-            logger.warning("[IBBI] Could not fetch live data — using sample")
+            logger.warning("[IBBI] Could not fetch live data -- using sample")
             orders = self._get_sample_orders()
         if save and orders:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")

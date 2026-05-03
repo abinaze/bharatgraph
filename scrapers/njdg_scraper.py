@@ -26,7 +26,7 @@ class NJDGScraper(BaseScraper):
         if html:
             stats = self._parse_stats(html)
         if not stats:
-            logger.warning("[NJDG] Could not fetch live data — using sample")
+            logger.warning("[NJDG] Could not fetch live data -- using sample")
             stats = self._get_sample_stats()
         if save and stats:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")

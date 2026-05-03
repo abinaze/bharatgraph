@@ -86,7 +86,7 @@ class DoubtInvestigator:
         except Exception as e:
             logger.warning(f"[Doubt] Neo4j query failed: {e}")
             doubts.append({
-                "hypothesis": "Graph database query failed — manual review recommended.",
+                "hypothesis": "Graph database query failed -- manual review recommended.",
                 "gap":        "Technical gap in analysis",
                 "action":     "Retry with live Neo4j connection",
             })

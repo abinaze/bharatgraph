@@ -90,7 +90,7 @@ class DebateEngine:
     (similarity > 0.85), the skeptic and contrarian are prompted
     to find new objections.
 
-    Dissent is preserved in the final output — minority positions
+    Dissent is preserved in the final output -- minority positions
     are never erased.
     """
 
@@ -132,7 +132,7 @@ class DebateEngine:
             if drift > SIMILARITY_DRIFT_MAX and round_num < DEBATE_ROUNDS:
                 logger.info(
                     f"[DebateEngine] Round {round_num}: drift={drift:.2f} "
-                    "— injecting counter-pressure"
+                    "-- injecting counter-pressure"
                 )
                 positions = self._inject_counter_pressure(positions)
 
@@ -347,7 +347,7 @@ class DebateEngine:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Debate Engine Test")
+    print("BharatGraph -- Debate Engine Test")
     print("=" * 55)
     engine = DebateEngine()
     findings = [

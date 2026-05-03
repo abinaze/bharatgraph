@@ -29,7 +29,7 @@ class NGODarpanScraper(BaseScraper):
         if data and isinstance(data, dict):
             ngos = self._parse_response(data)
         if not ngos:
-            logger.warning("[NGODarpan] Could not fetch live data — using sample")
+            logger.warning("[NGODarpan] Could not fetch live data -- using sample")
             ngos = self._get_sample_ngos(state)
         if save and ngos:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")

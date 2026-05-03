@@ -8,52 +8,52 @@ from loguru import logger
 RELATIONSHIP_META = {
     "DIRECTOR_OF":        {"label": "director",        "strength": "strong",  "color": "#FF9933",
                            "why": "Registered as director in official MCA21 company filings.",
-                           "source": "Ministry of Corporate Affairs — MCA21"},
+                           "source": "Ministry of Corporate Affairs -- MCA21"},
     "WON_CONTRACT":       {"label": "contract",        "strength": "strong",  "color": "#138808",
                            "why": "Won a government procurement contract on the GeM portal.",
-                           "source": "Government e-Marketplace — gem.gov.in"},
+                           "source": "Government e-Marketplace -- gem.gov.in"},
     "AWARDED_BY":         {"label": "awarded by",      "strength": "strong",  "color": "#000080",
                            "why": "Contract was awarded by this ministry or government department.",
-                           "source": "Government e-Marketplace — gem.gov.in"},
+                           "source": "Government e-Marketplace -- gem.gov.in"},
     "FLAGS":              {"label": "audit flag",      "strength": "strong",  "color": "#DC3545",
                            "why": "Flagged in a CAG audit report for financial irregularity.",
-                           "source": "Comptroller and Auditor General — cag.gov.in"},
+                           "source": "Comptroller and Auditor General -- cag.gov.in"},
     "AUDITS":             {"label": "audits",          "strength": "strong",  "color": "#DC3545",
                            "why": "CAG audit report covers the activities of this entity.",
-                           "source": "Comptroller and Auditor General — cag.gov.in"},
+                           "source": "Comptroller and Auditor General -- cag.gov.in"},
     "MEMBER_OF":          {"label": "party member",   "strength": "medium",  "color": "#6F42C1",
                            "why": "Declared party membership in ECI affidavit filings.",
-                           "source": "Election Commission of India — eci.gov.in"},
+                           "source": "Election Commission of India -- eci.gov.in"},
     "MENTIONED_IN":       {"label": "mentioned",       "strength": "weak",    "color": "#6C757D",
                            "why": "Entity name appears in this document or report.",
-                           "source": "Public record — government document"},
+                           "source": "Public record -- government document"},
     "ISSUED_BY":          {"label": "issued by",       "strength": "medium",  "color": "#17A2B8",
                            "why": "Official press release issued by this ministry.",
-                           "source": "Press Information Bureau — pib.gov.in"},
+                           "source": "Press Information Bureau -- pib.gov.in"},
     "CONTESTED_IN":       {"label": "contested in",   "strength": "medium",  "color": "#FFC107",
                            "why": "Contested an election in this constituency.",
-                           "source": "Election Commission of India — eci.gov.in"},
+                           "source": "Election Commission of India -- eci.gov.in"},
     "ASSOCIATED_WITH":    {"label": "associated",      "strength": "weak",    "color": "#6C757D",
                            "why": "Structural association detected across multiple data sources.",
                            "source": "Cross-source entity resolution"},
 }
 
 SOURCE_LABELS = {
-    "Company":           "Ministry of Corporate Affairs — MCA21",
-    "Politician":        "Election Commission of India — MyNeta",
-    "Contract":          "Government e-Marketplace — gem.gov.in",
-    "AuditReport":       "Comptroller and Auditor General — cag.gov.in",
+    "Company":           "Ministry of Corporate Affairs -- MCA21",
+    "Politician":        "Election Commission of India -- MyNeta",
+    "Contract":          "Government e-Marketplace -- gem.gov.in",
+    "AuditReport":       "Comptroller and Auditor General -- cag.gov.in",
     "Ministry":          "Government of India Directory",
     "Party":             "Election Commission of India",
     "Scheme":            "NITI Aayog / Ministry Portal",
-    "PressRelease":      "Press Information Bureau — pib.gov.in",
+    "PressRelease":      "Press Information Bureau -- pib.gov.in",
     "ElectoralBond":     "ECI Electoral Bond Disclosure",
-    "RegulatoryOrder":   "SEBI — sebi.gov.in",
+    "RegulatoryOrder":   "SEBI -- sebi.gov.in",
     "EnforcementAction": "Enforcement Directorate",
     "ICIJEntity":        "ICIJ Offshore Leaks Database",
     "SanctionedEntity":  "OpenSanctions Database",
-    "CourtCase":         "eCourts — NJDG",
-    "NGO":               "NGO Darpan — NITI Aayog",
+    "CourtCase":         "eCourts -- NJDG",
+    "NGO":               "NGO Darpan -- NITI Aayog",
     "Tender":            "Central Public Procurement Portal",
 }
 
@@ -64,7 +64,7 @@ class ConnectionMapper:
         self.driver = driver
 
     def find_paths(self, entity_a: str, entity_b: str, max_hops: int = 5) -> dict:
-        logger.info(f"[ConnectionMapper] Path: {entity_a} → {entity_b} (max {max_hops} hops)")
+        logger.info(f"[ConnectionMapper] Path: {entity_a} -> {entity_b} (max {max_hops} hops)")
 
         if not self.driver:
             return {"status": "no_database", "paths": [], "path_count": 0}
@@ -269,7 +269,7 @@ class ConnectionMapper:
             return "Direct connection"
         parts = []
         for s in steps:
-            parts.append(f"{s.get('from','')} →[{s.get('rel_label','')}]→")
+            parts.append(f"{s.get('from','')} ->[{s.get('rel_label','')}]->")
         if steps:
             parts.append(steps[-1].get("to",""))
         return " ".join(parts)

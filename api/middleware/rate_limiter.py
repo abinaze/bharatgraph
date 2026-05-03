@@ -24,7 +24,7 @@ class SlidingWindowRateLimiter(BaseHTTPMiddleware):
 
     def __init__(self, app):
         super().__init__(app)
-        # BUG-14 NOTE: in-memory state — each worker starts fresh on restart.
+        # BUG-14 NOTE: in-memory state -- each worker starts fresh on restart.
         # Rate limits are per-worker, not cross-worker. Acceptable for single-process HF Spaces.
         # For multi-worker: replace with Redis-backed sliding window.
         self._windows: dict[str, list[float]] = defaultdict(list)

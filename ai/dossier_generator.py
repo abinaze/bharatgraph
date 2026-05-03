@@ -96,7 +96,7 @@ class DossierGenerator:
         if self.driver and not self.hasher.store_hash(
             report_hash, entity_id, generated_at, self.driver
         ):
-            logger.info("[Dossier] Hash storage skipped — no live driver")
+            logger.info("[Dossier] Hash storage skipped -- no live driver")
 
         risk_score = int(overview.get("risk_score") or 0)
         risk_level = overview.get("risk_level") or "UNKNOWN"
@@ -121,7 +121,7 @@ class DossierGenerator:
 
     def render_html(self, dossier_data: dict) -> str:
         if not self._jinja:
-            logger.error("[Dossier] Jinja2 not available — cannot render HTML")
+            logger.error("[Dossier] Jinja2 not available -- cannot render HTML")
             return ""
 
         if not os.path.exists(TEMPLATE_PATH):
@@ -144,7 +144,7 @@ class DossierGenerator:
     def render_pdf(self, html: str, output_path: str) -> bool:
         if not self._weasy:
             logger.warning(
-                "[Dossier] WeasyPrint not available — "
+                "[Dossier] WeasyPrint not available -- "
                 "saving HTML instead of PDF"
             )
             html_path = output_path.replace(".pdf", ".html")

@@ -47,7 +47,7 @@ class NetworkInvestigator:
                 elif bc > 0:
                     positive.append(
                         f"Betweenness centrality ({bc:.4f}) is within "
-                        "normal range — entity is not a network gatekeeper."
+                        "normal range -- entity is not a network gatekeeper."
                     )
 
             neighbour_rows = session.run(

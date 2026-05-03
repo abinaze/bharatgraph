@@ -23,7 +23,7 @@ class SEBIScraper(BaseScraper):
         logger.info("[SEBI] Fetching enforcement orders...")
         html = self.get_html(self.ORDERS_URL)
         if not html:
-            logger.warning("[SEBI] Could not fetch page — using sample")
+            logger.warning("[SEBI] Could not fetch page -- using sample")
             return self._get_sample_orders()
         orders = self._parse_orders(html, limit)
         if not orders:

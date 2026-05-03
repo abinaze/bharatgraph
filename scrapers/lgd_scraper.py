@@ -26,7 +26,7 @@ class LGDScraper(BaseScraper):
         if data and isinstance(data, dict):
             records = self._parse_api_response(data)
         if not records:
-            logger.warning("[LGD] Could not fetch live data — using sample")
+            logger.warning("[LGD] Could not fetch live data -- using sample")
             records = self._get_sample_codes()
         if save and records:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -84,6 +84,6 @@ if __name__ == "__main__":
     codes   = scraper.fetch_state_codes(save=True)
     print(f"\n  Records: {len(codes)}")
     if codes:
-        print(f"  Example: {codes[0].get('state_name')} — "
+        print(f"  Example: {codes[0].get('state_name')} -- "
               f"District: {codes[0].get('district_name')}")
     print("\nDone!")

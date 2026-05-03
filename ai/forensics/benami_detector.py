@@ -318,7 +318,7 @@ class BenamiDetector:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Benami Detector Test (offline)")
+    print("BharatGraph -- Benami Detector Test (offline)")
     print("=" * 55)
     d = BenamiDetector()
     r = d.analyze("pol_001", "Narendra Modi", driver=None)

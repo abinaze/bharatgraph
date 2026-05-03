@@ -191,7 +191,7 @@ def translate_text(
     }
 
 
-# BUG-32 FIX: duplicate @router.get("/ui-labels") definition — Python
+# BUG-32 FIX: duplicate @router.get("/ui-labels") definition -- Python
 # silently registers only the SECOND one, so the first implementation
 # (using get_ui_label) was always shadowed. Merged into one handler using
 # the more complete get_all_labels_for_lang implementation.

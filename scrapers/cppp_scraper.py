@@ -33,7 +33,7 @@ class CPPPScraper(BaseScraper):
         if data and isinstance(data, dict):
             tenders = self._parse_response(data)
         if not tenders:
-            logger.warning("[CPPP] Could not fetch live data — using sample")
+            logger.warning("[CPPP] Could not fetch live data -- using sample")
             tenders = self._get_sample_tenders()
         if save and tenders:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
