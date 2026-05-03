@@ -9,7 +9,7 @@ from loguru import logger
 AUDIT_LOG = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))), "logs", "audit.jsonl")
 
-# BUG-13 FIX: _previous_hash was global in-memory — breaks with multiple Uvicorn workers.
+# BUG-13 FIX: _previous_hash was global in-memory -- breaks with multiple Uvicorn workers.
 # Each worker resets to "0"*64 on restart, silently breaking the audit chain.
 # Fix: store the previous hash in a per-process temp file so each worker is consistent.
 # (True cross-worker chaining requires Redis/DB which is out of scope for free tier.)

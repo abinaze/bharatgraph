@@ -27,7 +27,7 @@ class CVCScraper(BaseScraper):
         if html:
             circulars = self._parse_links(html, "circular", limit)
         if not circulars:
-            logger.warning("[CVC] Could not fetch live data — using sample")
+            logger.warning("[CVC] Could not fetch live data -- using sample")
             circulars = self._get_sample_circulars()
         if save and circulars:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -63,7 +63,7 @@ class CVCScraper(BaseScraper):
         return [
             {
                 "title": (
-                    "Guidelines on Integrity Pact for Public Procurement — "
+                    "Guidelines on Integrity Pact for Public Procurement -- "
                     "Revised Instructions"
                 ),
                 "circular_number": "03/2024",

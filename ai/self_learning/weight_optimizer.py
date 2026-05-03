@@ -148,5 +148,5 @@ if __name__ == "__main__":
     print(f"  Confirmed cases: {result['confirmed_cases']}")
     if result.get("changes"):
         for k, v in result["changes"].items():
-            print(f"  {k}: {v['old']} → {v['new']} ({v['delta']:+.4f})")
+            print(f"  {k}: {v['old']} -> {v['new']} ({v['delta']:+.4f})")
     print("\nDone!")

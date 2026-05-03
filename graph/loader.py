@@ -16,7 +16,7 @@ from graph.schema import SETUP_QUERIES, NODE_SCHEMAS
 def make_id(*parts) -> str:
     """Create a stable SHA-256 derived ID from multiple string parts."""
     combined = "|".join(str(p).lower().strip() for p in parts)
-    return hashlib.sha256(combined.encode()).hexdigest()[:20]
+    return hashlib.sha256(combined.encode()).hexdigest()[:32]
 
 
 class GraphLoader:

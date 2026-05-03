@@ -109,7 +109,7 @@ class GraphAnalytics:
             f"[GraphAnalytics] Betweenness computed for {len(centrality)} nodes. "
             f"Top: {results[0]['name']} ({results[0]['betweenness_centrality']:.4f})"
             if results else
-            "[GraphAnalytics] Betweenness computed — no results"
+            "[GraphAnalytics] Betweenness computed -- no results"
         )
         return results
 
@@ -168,10 +168,10 @@ class GraphAnalytics:
                 "size":            len(community),
                 "members":         members,
                 "interpretation": (
-                    "Large community detected — may indicate a procurement "
+                    "Large community detected -- may indicate a procurement "
                     "cluster or shared-director network warranting review"
                     if len(community) >= 5 else
-                    "Small community — limited network cluster"
+                    "Small community -- limited network cluster"
                 ),
             })
 

@@ -20,7 +20,7 @@ class NCRBScraper(BaseScraper):
         if data:
             stats = self._parse_opencity(data)
         if not stats:
-            logger.warning("[NCRB] Could not fetch live data — using sample")
+            logger.warning("[NCRB] Could not fetch live data -- using sample")
             stats = self._get_sample_stats()
         if save and stats:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -78,6 +78,6 @@ if __name__ == "__main__":
     stats   = scraper.fetch_crime_statistics(save=True)
     print(f"\n  Records: {len(stats)}")
     if stats:
-        print(f"  Example: {stats[0].get('state')} — "
+        print(f"  Example: {stats[0].get('state')} -- "
               f"{stats[0].get('ipc_crimes_total')} IPC crimes")
     print("\nDone!")

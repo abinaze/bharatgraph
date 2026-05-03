@@ -160,15 +160,15 @@ LABEL_QUERIES = {
 @router.get("/search", response_model=SearchResponse)
 def search_entities(
     q:                str           = Query(..., min_length=2),
-    entity_type:      Optional[str] = Query(None),
-    # BUG-1 FIX: renamed from `type` (which shadowed Python's built-in type())
-    # to entity_type_param with alias="type" so the API contract is unchanged.
+    # BUG-15 FIX: removed bare entity_type param -- keep only entity_type_param
+    # with alias="type" so the API contract is unchanged. The old bare param
+    # appeared in Swagger docs causing confusion and was never used by frontend.
     entity_type_param:Optional[str] = Query(None, alias="type"),
     limit:            int           = Query(20, le=100),
     lang:             Optional[str] = Query("en"),
     driver=Depends(get_db),
 ):
-    filter_type = (entity_type or entity_type_param or "all").lower().strip()
+    filter_type = (entity_type_param or "all").lower().strip()
     logger.info(f"[Search] q='{q}' filter={filter_type} lang={lang} limit={limit}")
 
     results = []

@@ -22,8 +22,8 @@ SUPPORTED_LANGUAGES = {
 INDICNER_MODEL = "Davlan/bert-base-multilingual-cased-ner-hrl"
 
 HINDI_TITLE_WORDS = [
-    "मंत्री", "सचिव", "मुख्यमंत्री", "राज्यपाल", "सांसद", "विधायक",
-    "अधिकारी", "निदेशक", "आयुक्त", "कलेक्टर",
+    "\u092e\u0902\u0924\u094d\u0930\u0940", "\u0938\u091a\u093f\u0935", "\u092e\u0941\u0916\u094d\u092f\u092e\u0902\u0924\u094d\u0930\u0940", "\u0930\u093e\u091c\u094d\u092f\u092a\u093e\u0932", "\u0938\u093e\u0902\u0938\u0926", "\u0935\u093f\u0927\u093e\u092f\u0915",
+    "\u0905\u0927\u093f\u0915\u093e\u0930\u0940", "\u0928\u093f\u0926\u0947\u0936\u0915", "\u0906\u092f\u0941\u0915\u094d\u0924", "\u0915\u0932\u0947\u0915\u094d\u091f\u0930",
 ]
 
 
@@ -100,7 +100,7 @@ class MultilingualNER:
         if language == "hi":
             for title in HINDI_TITLE_WORDS:
                 pattern = re.compile(
-                    title + r"\s+([^\s।\n]{2,20}(?:\s+[^\s।\n]{2,20})?)"
+                    title + r"\s+([^\s\u0964\n]{2,20}(?:\s+[^\s\u0964\n]{2,20})?)"
                 )
                 for match in pattern.finditer(text):
                     entities.append({
@@ -113,7 +113,7 @@ class MultilingualNER:
                     })
 
             amount_pattern = re.compile(
-                r"([\d,]+(?:\.\d+)?\s*(?:करोड़|लाख|हजार))"
+                r"([\d,]+(?:\.\d+)?\s*(?:\u0915\u0930\u094b\u0921\u093c|\u0932\u093e\u0916|\u0939\u091c\u093e\u0930))"
             )
             for match in amount_pattern.finditer(text):
                 entities.append({
@@ -146,8 +146,8 @@ if __name__ == "__main__":
 
     samples = [
         ("Hindi", "hi",
-         "मंत्री राजेश कुमार और सचिव प्रिया शर्मा ने 45 करोड़ रुपये की "
-         "अनियमितता की जांच का आदेश दिया।"),
+         "\u092e\u0902\u0924\u094d\u0930\u0940 \u0930\u093e\u091c\u0947\u0936 \u0915\u0941\u092e\u093e\u0930 \u0914\u0930 \u0938\u091a\u093f\u0935 \u092a\u094d\u0930\u093f\u092f\u093e \u0936\u0930\u094d\u092e\u093e \u0928\u0947 45 \u0915\u0930\u094b\u0921\u093c \u0930\u0941\u092a\u092f\u0947 \u0915\u0940 "
+         "\u0905\u0928\u093f\u092f\u092e\u093f\u0924\u0924\u093e \u0915\u0940 \u091c\u093e\u0902\u091a \u0915\u093e \u0906\u0926\u0947\u0936 \u0926\u093f\u092f\u093e\u0964"),
         ("English", "en",
          "Minister Rajesh Kumar approved a contract worth Rs 45 crore "
          "for ABC Infrastructure Private Limited."),

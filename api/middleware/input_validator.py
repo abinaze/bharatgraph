@@ -7,12 +7,12 @@ from loguru import logger
 
 MAX_QUERY_LEN = 200
 
-# BUG-09 FIX: was re.IGNORECASE — blocked "Union Bank", "Match Point", "Call Centre" etc.
+# BUG-09 FIX: was re.IGNORECASE -- blocked "Union Bank", "Match Point", "Call Centre" etc.
 # Fix: require UPPERCASE keywords followed by space, which is how real Cypher injection looks.
 # A user searching "union bank" or "call centre" never types uppercase Cypher keywords.
 CYPHER_INJECTION = re.compile(
     r'\b(MATCH|CREATE|DELETE|MERGE|SET|REMOVE|DROP|DETACH|UNION|CALL)\s',
-    # NO re.IGNORECASE — intentional: real injection is uppercase, real searches are lowercase
+    # NO re.IGNORECASE -- intentional: real injection is uppercase, real searches are lowercase
 )
 
 # Allowed: letters (all scripts), digits, spaces, common punctuation, all Indian scripts

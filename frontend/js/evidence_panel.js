@@ -1,6 +1,6 @@
 // Evidence Panel -- tabbed deep investigation panel
 // Tabs: Overview | Connections | Timeline | Investigate
-// NOTE: Provenance tab was planned but not yet implemented (see Phase 45)
+// NOTE: Provenance tab planned in Phase 45
 const EvidencePanel = {
   _visible: false,
   _container: null,
@@ -31,6 +31,12 @@ const EvidencePanel = {
     EvidencePanel._currentId   = entityId;
     EvidencePanel._currentName = entityName;
 
+    // BUG-8 FIX: do NOT interpolate entityId directly into onclick strings.
+    // An entityId containing a single-quote breaks out of the JS string and
+    // executes arbitrary code. Use data-* attributes for ALL buttons.
+    const safeId   = sanitize(entityId);
+    const safeName = sanitize(entityName || entityId);
+
     EvidencePanel._container.innerHTML = `
       <div style="padding:16px 20px;border-bottom:1px solid var(--border-color);
                   display:flex;justify-content:space-between;align-items:center;
@@ -39,15 +45,15 @@ const EvidencePanel = {
           <div style="font-size:10px;font-weight:700;letter-spacing:.12em;
                       text-transform:uppercase;color:var(--color-saffron)">Evidence Panel</div>
           <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-top:2px">
-            ${sanitize(entityName || entityId)}
+            ${safeName}
           </div>
-          <div style="font-size:10px;color:var(--text-muted)">ID: ${sanitize(entityId)}</div>
+          <div style="font-size:10px;color:var(--text-muted)">ID: ${safeId}</div>
         </div>
         <button onclick="EvidencePanel.close()"
                 style="background:var(--bg-secondary);border:1px solid var(--border-color);
                        color:var(--text-muted);width:32px;height:32px;border-radius:50%;
                        cursor:pointer;font-size:18px;display:flex;align-items:center;
-                       justify-content:center">?</button>
+                       justify-content:center">&times;</button>
       </div>
 
       <!-- Tab bar -->
@@ -72,16 +78,18 @@ const EvidencePanel = {
         <div class="spinner" style="margin:60px auto"></div>
       </div>
 
-      <!-- Bottom action bar -->
+      <!-- Bottom action bar: BUG-8 FIX -- use data-* attributes, not inline entityId -->
       <div style="padding:12px 20px;border-top:1px solid var(--border-color);
                   background:var(--bg-tertiary);flex-shrink:0;display:flex;gap:8px">
-        <button onclick="Router.navigate('/entity/${entityId}');EvidencePanel.close();"
+        <button data-eid="${safeId}"
+                onclick="Router.navigate('/entity/'+this.getAttribute('data-eid'));EvidencePanel.close();"
                 class="btn btn--primary" style="flex:1;font-size:12px">Full Dossier</button>
-        <button onclick="EvidencePanel._investigate('${entityId}')"
+        <button data-eid="${safeId}"
+                onclick="EvidencePanel._investigate(this.getAttribute('data-eid'))"
                 id="ep-investigate-btn"
                 class="btn btn--secondary" style="flex:1;font-size:12px">Investigate (6 Layers)</button>
-        <button data-eid="${sanitize(entityId)}" data-ename="${sanitize(entityName||entityId)}"
-          onclick="EvidencePanel._openConnectionMap(this.getAttribute('data-eid'),this.getAttribute('data-ename'))"
+        <button data-eid="${safeId}" data-ename="${safeName}"
+                onclick="EvidencePanel._openConnectionMap(this.getAttribute('data-eid'),this.getAttribute('data-ename'))"
                 class="btn btn--secondary" style="flex:1;font-size:12px">Map Links</button>
       </div>
     `;
@@ -90,7 +98,6 @@ const EvidencePanel = {
     document.getElementById("evidence-overlay").style.display = "block";
     EvidencePanel._visible = true;
 
-    // Load overview tab by default
     try {
       const data = await Api.nodeEvidence(entityId);
       EvidencePanel._data = data;
@@ -98,7 +105,7 @@ const EvidencePanel = {
     } catch (err) {
       document.getElementById("ep-body").innerHTML = `
         <div style="text-align:center;padding:40px 20px;color:var(--text-muted)">
-          <div style="font-size:32px;margin-bottom:12px">??</div>
+          <div style="font-size:32px;margin-bottom:12px">&#x26A0;</div>
           <div style="font-weight:600;margin-bottom:4px">Evidence unavailable</div>
           <div style="font-size:12px">API may be offline or entity not in database.</div>
         </div>`;
@@ -113,16 +120,16 @@ const EvidencePanel = {
         btn.style.color        = t===tab ? "var(--accent-primary)" : "var(--text-muted)";
       }
     });
-    const d = EvidencePanel._data;
+    const d  = EvidencePanel._data;
     const id = EvidencePanel._currentId;
-    if      (tab==="overview")     d ? EvidencePanel._renderOverview(d,id)    : null;
-    else if (tab==="connections")  d ? EvidencePanel._renderConnections(d,id) : null;
-    else if (tab==="timeline")     EvidencePanel._renderTimeline(id);
-    else if (tab==="investigate")  EvidencePanel._renderInvestigateTab(id);
+    if      (tab==="overview")    d ? EvidencePanel._renderOverview(d,id)    : null;
+    else if (tab==="connections") d ? EvidencePanel._renderConnections(d,id) : null;
+    else if (tab==="timeline")    EvidencePanel._renderTimeline(id);
+    else if (tab==="investigate") EvidencePanel._renderInvestigateTab(id);
   },
 
   _renderOverview: (data, entityId) => {
-    const info = data.entity_info || {};
+    const info  = data.entity_info || {};
     const edges = data.edges || [];
     const rc = {"LOW":"var(--color-risk-low)","MODERATE":"#d4a017",
                 "HIGH":"var(--color-risk-high)","VERY_HIGH":"var(--color-risk-very-high)"}[info.risk_level] || "var(--text-muted)";
@@ -153,7 +160,6 @@ const EvidencePanel = {
         </div>` : ""}
       </div>` : ""}
 
-      <!-- Summary stats -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
         ${[
           ["Connections", edges.length],
@@ -167,7 +173,6 @@ const EvidencePanel = {
           </div>`).join("")}
       </div>
 
-      <!-- Top connections preview -->
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
                   color:var(--text-muted);margin-bottom:10px">Key Connections</div>
       ${edges.length ? edges.slice(0,5).map(e => `
@@ -177,7 +182,7 @@ const EvidencePanel = {
             <span style="font-size:10px;font-weight:700;text-transform:uppercase;
                          color:${e.color||'var(--accent-primary)'};">${sanitize(e.rel_label||"LINKED")}</span>
             <span style="font-size:10px;color:var(--text-muted)">
-              ${e.strength==="strong"?"???":e.strength==="medium"?"???":"???"} ${sanitize(e.strength||"")}
+              ${e.strength==="strong"?"&#9733;&#9733;&#9733;":e.strength==="medium"?"&#9733;&#9733;":"&#9733;"} ${sanitize(e.strength||"")}
             </span>
           </div>
           <div style="font-size:13px;font-weight:600;color:var(--text-primary)">
@@ -187,7 +192,7 @@ const EvidencePanel = {
             ${sanitize(e.why||"")}
           </div>
           <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-            ? ${sanitize(e.source||"")}
+            &#128196; ${sanitize(e.source||"")}
           </div>
         </div>`).join("") : `
         <div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px">
@@ -197,17 +202,16 @@ const EvidencePanel = {
       ${edges.length > 5 ? `
       <button onclick="EvidencePanel._switchTab('connections')"
               class="btn btn--secondary" style="width:100%;font-size:12px;margin-top:4px">
-        View all ${edges.length} connections ->
+        View all ${edges.length} connections &rarr;
       </button>` : ""}
     `;
   },
 
   _renderConnections: (data, entityId) => {
     const edges = data.edges || [];
-    const el = document.getElementById("ep-body");
+    const el    = document.getElementById("ep-body");
     if (!el) return;
 
-    // Group by relationship type
     const groups = {};
     edges.forEach(e => {
       const k = e.rel_label || "OTHER";
@@ -230,26 +234,20 @@ const EvidencePanel = {
             <div style="padding:10px 12px;margin-bottom:6px;background:var(--bg-tertiary);
                         border-radius:8px;cursor:pointer"
                  data-eid="${sanitize(e.connected_id||"")}" data-ename="${sanitize(e.connected_to||"")}"
-                  onclick="EvidencePanel.open(this.getAttribute('data-eid'),this.getAttribute('data-ename'))">
+                 onclick="EvidencePanel.open(this.getAttribute('data-eid'),this.getAttribute('data-ename'))">
               <div style="display:flex;justify-content:space-between">
                 <span style="font-size:13px;font-weight:600;color:var(--text-primary)">
                   ${sanitize(e.connected_to||e.connected_id||"--")}
                 </span>
-                <span style="font-size:10px;color:var(--text-muted)">-></span>
+                <span style="font-size:10px;color:var(--text-muted)">&rarr;</span>
               </div>
               <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">
                 ${sanitize(e.why||"")}
               </div>
               <div style="display:flex;gap:8px;margin-top:4px">
-                <span style="font-size:10px;color:var(--text-muted)">? ${sanitize(e.source||"")}</span>
-                ${e.date ? `<span style="font-size:10px;color:var(--text-muted)">? ${sanitize(e.date)}</span>` : ""}
+                <span style="font-size:10px;color:var(--text-muted)">&#128196; ${sanitize(e.source||"")}</span>
+                ${e.date ? `<span style="font-size:10px;color:var(--text-muted)">&#128197; ${sanitize(e.date)}</span>` : ""}
               </div>
-              ${e.next_leads && e.next_leads.length ? `
-              <div style="margin-top:6px">
-                ${e.next_leads.map(l => `
-                  <span style="font-size:10px;color:var(--color-saffron);margin-right:8px">-> ${sanitize(l)}</span>
-                `).join("")}
-              </div>` : ""}
             </div>`).join("")}
         </div>`).join("") || `
         <div style="text-align:center;padding:30px;color:var(--text-muted)">
@@ -258,13 +256,18 @@ const EvidencePanel = {
     `;
   },
 
+  // BUG-18 FIX: was calling /profile/{id} which returns a ProfileResponse
+  // with no timeline fields. /biography/{id} returns timeline.events and
+  // timeline.by_year which is what this render function expects.
   _renderTimeline: async (entityId) => {
     const el = document.getElementById("ep-body");
     if (!el) return;
     el.innerHTML = `<div class="spinner" style="margin:60px auto"></div>`;
     try {
-      const data = await Api._request(`/profile/${entityId}`);
-      const events = (data.timeline || data.timeline_events || []).sort((a,b) => (a.date||"").localeCompare(b.date||""));
+      const data   = await Api._request(`/biography/${entityId}`);
+      const tl     = data.timeline || {};
+      const events = (tl.events || data.timeline_events || [])
+                       .sort((a,b) => (a.date||"").localeCompare(b.date||""));
       if (!events.length) {
         el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);font-size:12px">
           No timeline events indexed for this entity</div>`;
@@ -287,7 +290,7 @@ const EvidencePanel = {
                 ${sanitize(ev.description||ev.summary||"")}
               </div>
               <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-                ? ${sanitize(ev.source||"")}
+                &#128196; ${sanitize(ev.source||"")}
               </div>
             </div>`).join("")}
         </div>`;
@@ -297,27 +300,34 @@ const EvidencePanel = {
     }
   },
 
+  // NEW-A9 FIX: lines 312, 316, 320 also had raw entityId in onclick strings.
+  // All three buttons now use data-* attributes.
   _renderInvestigateTab: async (entityId) => {
     const el = document.getElementById("ep-body");
     if (!el) return;
+    const safeId   = sanitize(entityId);
+    const safeName = sanitize(EvidencePanel._currentName || entityId);
     el.innerHTML = `
       <div style="margin-bottom:16px">
         <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px">
           6-Layer Investigation Engine
         </div>
         <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">
-          Runs 6 specialist investigators in parallel: Direct Evidence -> Relationship Mapping ->
-          Pattern Detection -> Timeline Analysis -> Network Influence -> Evidence Validation
+          Runs 6 specialist investigators in parallel: Direct Evidence &rarr; Relationship Mapping &rarr;
+          Pattern Detection &rarr; Timeline Analysis &rarr; Network Influence &rarr; Evidence Validation
         </div>
-        <button onclick="EvidencePanel._runInvestigation('${entityId}')"
+        <button data-eid="${safeId}"
+                onclick="EvidencePanel._runInvestigation(this.getAttribute('data-eid'))"
                 id="ep-run-btn" class="btn btn--primary" style="width:100%;margin-bottom:8px">
           Run Full Investigation
         </button>
-        <button onclick="EvidencePanel._runContradiction('${entityId}')"
+        <button data-eid="${safeId}"
+                onclick="EvidencePanel._runContradiction(this.getAttribute('data-eid'))"
                 id="ep-contra-btn" class="btn btn--secondary" style="width:100%;margin-bottom:8px">
           Contradiction Search
         </button>
-        <button onclick="EvidencePanel._openConnectionMap('${entityId}','${sanitize(EvidencePanel._currentName||entityId)}')"
+        <button data-eid="${safeId}" data-ename="${safeName}"
+                onclick="EvidencePanel._openConnectionMap(this.getAttribute('data-eid'),this.getAttribute('data-ename'))"
                 class="btn btn--secondary" style="width:100%">
           Connection Map
         </button>
@@ -331,15 +341,15 @@ const EvidencePanel = {
     const res = document.getElementById("ep-investigation-results");
     if (btn) { btn.textContent = "Investigating..."; btn.disabled = true; }
     try {
-      const data = await Api._request(`/investigate/${entityId}`);
+      const data   = await Api._request(`/investigate/${entityId}`);
       if (res) {
-        const total = data.total_items || 0;
+        const total  = data.total_items || 0;
         const layers = data.layers || [];
         res.innerHTML = `
           <div style="padding:14px;background:var(--bg-tertiary);border-radius:10px;
                       border:1px solid var(--color-saffron)">
             <div style="font-size:11px;font-weight:700;color:var(--color-saffron);margin-bottom:10px">
-              INVESTIGATION COMPLETE -- ${total} ITEMS
+              INVESTIGATION COMPLETE &mdash; ${total} ITEMS
             </div>
             ${layers.map(l => `
               <div style="display:flex;justify-content:space-between;
@@ -367,14 +377,14 @@ const EvidencePanel = {
     const res = document.getElementById("ep-investigation-results");
     if (btn) { btn.textContent = "Searching contradictions..."; btn.disabled = true; }
     try {
-      const data = await Api._request(`/adversarial/${entityId}`);
+      const data  = await Api._request(`/adversarial/${entityId}`);
       if (res) {
         const items = data.counterevidence || data.items || [];
         res.innerHTML = `
           <div style="padding:14px;background:var(--bg-tertiary);border-radius:10px;
                       border:1px solid var(--color-risk-high);margin-top:8px">
             <div style="font-size:11px;font-weight:700;color:var(--color-risk-high);margin-bottom:10px">
-              CONTRADICTION SEARCH -- ${items.length} items found
+              CONTRADICTION SEARCH &mdash; ${items.length} items found
             </div>
             ${items.slice(0,5).map(item => `
               <div style="margin-bottom:8px;padding:8px;background:var(--bg-primary);border-radius:6px">

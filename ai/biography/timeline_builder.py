@@ -100,8 +100,8 @@ class TimelineBuilder:
                     "date":     r.get("date",""),
                     "type":     "contract",
                     "category": "financial",
-                    "title":    f"Company won contract — Rs {r.get('amount',0):.1f} Cr",
-                    "detail":   f"{r.get('company','?')} → {r.get('buyer','?')}",
+                    "title":    f"Company won contract -- Rs {r.get('amount',0):.1f} Cr",
+                    "detail":   f"{r.get('company','?')} -> {r.get('buyer','?')}",
                     "source":   "GeM",
                     "priority": SOURCE_PRIORITY["GeM"],
                     "amount":   r.get("amount"),
@@ -120,7 +120,7 @@ class TimelineBuilder:
                     RETURN a.year AS year, a.title AS title,
                            a.irregularity_amount_crore AS amount
                     LIMIT 10
-                    """, name=entity_name  # BUG-18 FIX: was entity_id — audit events search by name not ID
+                    """, name=entity_name  # BUG-18 FIX: was entity_id -- audit events search by name not ID
                 ).data()
                 return [{
                     "date":     str(r.get("year","")) + "-01-01",
@@ -150,7 +150,7 @@ class TimelineBuilder:
                     "date":     r.get("date",""),
                     "type":     "court",
                     "category": "legal",
-                    "title":    f"Court case — {r.get('ctype','?')}",
+                    "title":    f"Court case -- {r.get('ctype','?')}",
                     "detail":   f"{r.get('court','?')} | Status: {r.get('status','?')}",
                     "source":   "NJDG",
                     "priority": 3,
@@ -167,7 +167,7 @@ class TimelineBuilder:
                     WHERE toLower(pr.title) CONTAINS toLower($name)
                     RETURN pr.date AS date, pr.title AS title
                     ORDER BY pr.date DESC LIMIT 10
-                    """, name=entity_name  # BUG-18 FIX: was entity_id — audit events search by name not ID
+                    """, name=entity_name  # BUG-18 FIX: was entity_id -- audit events search by name not ID
                 ).data()
                 return [{
                     "date":     r.get("date",""),

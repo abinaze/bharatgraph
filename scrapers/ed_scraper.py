@@ -28,7 +28,7 @@ class EDScraper(BaseScraper):
         if html:
             releases = self._parse_press_releases(html, limit)
         if not releases:
-            logger.warning("[ED] Could not fetch live data — using sample")
+            logger.warning("[ED] Could not fetch live data -- using sample")
             releases = self._get_sample_releases()
         if save and releases:
             ts       = datetime.now().strftime("%Y%m%d_%H%M%S")

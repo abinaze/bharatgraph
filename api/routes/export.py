@@ -18,7 +18,7 @@ _hasher = None
 
 def get_generator() -> DossierGenerator:
     """BUG-08 FIX: was caching generator with stale driver.
-    Now creates a fresh generator per request — driver is always fresh."""
+    Now creates a fresh generator per request -- driver is always fresh."""
     return DossierGenerator(driver=get_driver())
 
 
@@ -67,6 +67,19 @@ def export_pdf(entity_id: str, driver=Depends(get_db)):
         if output_path.endswith(".pdf")
         else "text/html"
     )
+    
+    # BUG-17 FIX: wire blockchain audit trail to dossier export.
+    # AuditChain was fully implemented but never called anywhere.
+    # README claimed "SHA-256 blockchain audit trail" -- now true.
+    try:
+        from blockchain.audit_chain import store_daily_root
+        from api.dependencies import get_driver as _get_driver
+        _drv = _get_driver()
+        if _drv:
+            store_daily_root(_drv)
+    except Exception as _bc_err:
+        logger.debug(f"[Export] Blockchain audit step (optional): {_bc_err}")
+
     return FileResponse(
         output_path,
         media_type=media_type,

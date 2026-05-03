@@ -200,6 +200,16 @@ const Views = {
                 source:      item.source || "BharatGraph",
               }));
             });
+          } else if (data.message && data.message.includes("pipeline")) {
+            // BUG-12 FIX: "run /admin/pipeline" is a backend message that
+            // was never shown to users -- show a friendly callout instead
+            if (!document.getElementById("feed-empty-callout")) {
+              const callout = document.createElement("div");
+              callout.id = "feed-empty-callout";
+              callout.style.cssText = "padding:16px;background:rgba(255,153,51,0.08);border:1px solid rgba(255,153,51,0.25);border-radius:8px;font-size:12px;color:var(--color-saffron);text-align:center;margin:8px";
+              callout.textContent = "Database is being populated. Intelligence data will appear here after the pipeline completes.";
+              container.appendChild(callout);
+            }
           } else {
             container.appendChild(Components.FeedItem({
               headline:    data.message || "New intelligence available",
@@ -473,16 +483,8 @@ const Views = {
             <div id="tab-content-graph" style="display:none">
               <div class="graph-container" id="entity-graph">
                 <div class="graph-controls">
-                  <button class="btn btn--sm btn--secondary" onclick="document.getElementById('entity-graph').querySelector('svg') && // H-02 FIX: d3.zoom() creates a NEW behavior object -- use the
-          // stored reference from GraphRenderer to reset the actual zoom
-          const svg = window.d3.select('#entity-graph svg');
-          const zoomBehavior = window.GraphRenderer && window.GraphRenderer._zoomBehavior;
-          if (zoomBehavior) {
-            svg.transition().duration(300)
-               .call(zoomBehavior.transform, window.d3.zoomIdentity);
-          } else {
-            svg.call(window.d3.zoom().transform, window.d3.zoomIdentity);
-          }">Reset</button>
+                  <button class="btn btn--sm btn--secondary"
+                          onclick="GraphRenderer.resetZoom('entity-graph')">Reset</button>
                 </div>
                 <div class="graph-legend" id="graph-legend"></div>
               </div>
@@ -496,7 +498,7 @@ const Views = {
                   <div style="font-size:var(--font-size-sm);font-weight:600">${s.institution}</div>
                   <div style="font-size:var(--font-size-xs);color:var(--text-muted)">
                     ${s.document_title}
-                    ${s.url ? `| <a href="${s.url}" target="_blank">${s.url}</a>` : ""}
+                    ${s.url && (s.url.startsWith('https://') || s.url.startsWith('http://')) ? `| <a href="${sanitize(s.url)}" target="_blank" rel="noopener noreferrer">${sanitize(s.url)}</a>` : ""}
                   </div>
                 </div>
               `).join("") || `<p style="color:var(--text-muted)">No evidence sources in current dataset.</p>`}
@@ -867,6 +869,28 @@ const Views = {
       </div>
     `;
   },
+  notFound: (params) => {
+    // BUG-11 FIX: render a proper 404 page instead of leaving frozen spinner
+    const main = document.getElementById("app-main");
+    if (!main) return;
+    const badPath = sanitize((params && params.path) || window.location.hash || "/");
+    main.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;
+                  justify-content:center;min-height:60vh;text-align:center;
+                  padding:40px 20px;color:var(--text-muted)">
+        <div style="font-size:64px;margin-bottom:16px;opacity:0.3">404</div>
+        <div style="font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:8px">
+          Page not found
+        </div>
+        <div style="font-size:14px;margin-bottom:24px">
+          The path <code style="background:var(--bg-tertiary);padding:2px 8px;border-radius:4px">
+          ${badPath}
+          </code> is not registered.
+        </div>
+        <button class="btn btn--primary" onclick="Router.navigate('/')">Go Home</button>
+      </div>`;
+  },
+
 };
 
 function toggleTheme() {
@@ -926,6 +950,9 @@ function initApp() {
   Router.register("/connection-map", Views["connection-map"]);
   Router.register("/live-feed", Views.liveFeed);
   Router.register("/about",    Views.about);
+  // BUG-11 FIX: register wildcard so unknown URLs show 404 page
+  // instead of frozen spinner (router.js supports "*" but it was never called)
+  Router.register("*", Views.notFound);
 
   // BUG-02 FIX: was single immediate check -- failed permanently on HF cold start.
   // BUG-25 FIX: message said "Start: uvicorn" -- wrong for HuggingFace users.

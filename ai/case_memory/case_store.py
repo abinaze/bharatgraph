@@ -111,7 +111,7 @@ if __name__ == "__main__":
     ]
     cid = store.save_case(
         "test_001", "Test Politician", sample_findings,
-        "confirmed", ["contract_concentration → ghost_company → HIGH risk"]
+        "confirmed", ["contract_concentration -> ghost_company -> HIGH risk"]
     )
     print(f"\n  Case saved: {cid}")
     print(f"  Total cases: {store.get_case_count()}")

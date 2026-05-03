@@ -70,7 +70,7 @@ class SchemaLearner:
         with open(PENDING_FILE, "w", encoding="utf-8") as f:
             json.dump(existing, f, indent=2, ensure_ascii=False)
         logger.success(
-            f"[SchemaLearner] Pending additions written → "
+            f"[SchemaLearner] Pending additions written -> "
             f"data/processed/pending_schema_additions.json"
         )
 

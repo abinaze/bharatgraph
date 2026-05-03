@@ -79,7 +79,7 @@ class TBMLDetector:
             ),
             "evidence": [
                 f"Contract Rs {float(c.get('amount_crore',0)):.1f} Cr "
-                f"vs mean Rs {mean:.1f} Cr (z={abs(float(c.get('amount_crore',0))-mean)/stdev:.1f}σ)"
+                f"vs mean Rs {mean:.1f} Cr (z={abs(float(c.get('amount_crore',0))-mean)/stdev:.1f}sigma)"
                 for c in outliers[:3]
             ],
         }]
@@ -104,7 +104,7 @@ class TBMLDetector:
                         "severity": "HIGH",
                         "description": (
                             f"Circular subcontracting detected: "
-                            f"{' → '.join((rows[0].get('loop_nodes') or [])[:4])}. "
+                            f"{' -> '.join((rows[0].get('loop_nodes') or [])[:4])}. "
                             f"Contract re-award loops are a structural indicator "
                             f"of artificial transaction chains."
                         ),
@@ -181,7 +181,7 @@ class TBMLDetector:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — TBML Detector Test")
+    print("BharatGraph -- TBML Detector Test")
     print("=" * 55)
     t = TBMLDetector()
     r = t.analyze("pol_001", driver=None)

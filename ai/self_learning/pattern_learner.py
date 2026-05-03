@@ -13,13 +13,13 @@ PATTERN_FILE = os.path.join(
 KNOWN_PATTERNS = [
     {
         "id":          "politician_company_contract",
-        "description": "Politician → directs Company → wins Contract",
+        "description": "Politician -> directs Company -> wins Contract",
         "cypher":      "MATCH (p:Politician)-[:DIRECTOR_OF]->(c:Company)-[:WON_CONTRACT]->(ct:Contract) RETURN count(*) AS n",
         "threshold":   3,
     },
     {
         "id":          "audit_flagged_ministry_contract",
-        "description": "Ministry with CAG flag → Company contract",
+        "description": "Ministry with CAG flag -> Company contract",
         "cypher":      "MATCH (a:AuditReport)-[:AUDITS]->(m:Ministry)<-[:AWARDED_BY]-(ct:Contract) RETURN count(*) AS n",
         "threshold":   2,
     },
@@ -71,7 +71,7 @@ class PatternLearner:
             with open(PATTERN_FILE, "w", encoding="utf-8") as f:
                 json.dump(result, f, indent=2, ensure_ascii=False)
             logger.success(
-                f"[PatternLearner] {len(found)} candidates → "
+                f"[PatternLearner] {len(found)} candidates -> "
                 f"{os.path.basename(PATTERN_FILE)}"
             )
 

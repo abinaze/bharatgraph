@@ -33,10 +33,10 @@ class ReportHasher:
             "computed_hash": computed,
             "verified_at":   datetime.now().isoformat(),
             "status": (
-                "VERIFIED — Report integrity confirmed. "
+                "VERIFIED -- Report integrity confirmed. "
                 "Hash matches original generation."
                 if is_valid else
-                "INVALID — Hash mismatch. Report may have been modified."
+                "INVALID -- Hash mismatch. Report may have been modified."
             ),
         }
 
