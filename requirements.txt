@@ -20,6 +20,7 @@ uvicorn[standard]>=0.27.0
 python-dotenv>=1.0.0
 jinja2>=3.1.0
 
+
 # NLP and AI
 spacy>=3.7.0
 sentence-transformers>=2.6.0
