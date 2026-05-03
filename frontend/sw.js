@@ -1,7 +1,9 @@
-// BharatGraph Service Worker v4
+// BharatGraph Service Worker v5
+// BUG-28 FIX: API responses were cached indefinitely
+// NEW-A5 FIX: host === "hf.space" never matches -- HF uses *.hf.space subdomains
 // SW-01 FIX: use relative paths so caching works on GitHub Pages
-// (site is at /bharatgraph/ prefix, not /)
-const CACHE = "bharatgraph-v4";
+
+const CACHE = "bharatgraph-v5";
 const STATIC = [
   "./",
   "./index.html",
@@ -37,18 +39,33 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   const reqUrl = new URL(e.request.url);
-  const host = reqUrl.hostname;
-  const path = reqUrl.pathname;
-  // API calls: always network-first, never cached
-  // L-01 FIX: check for API host/path specifically, not raw URL substrings
-  const isGithubIoHost = host === "github.io" || host.endsWith(".github.io");
-  const isApi = host === "hf.space" ||
-                path.includes("/api/") ||
-                path.includes("/health") ||
-                path.includes("/stats") ||
-                path.includes("/investigate") ||
-                (path.includes("/search") && !isGithubIoHost);
+  const host   = reqUrl.hostname;
+  const path   = reqUrl.pathname;
+
+  // NEW-A5 FIX: HuggingFace Spaces run on *.hf.space subdomains.
+  // The previous check `host === "hf.space"` never matched because the actual
+  // hostname is e.g. "abinazebinoly-bharatgraph.hf.space" -- use endsWith().
+  // BUG-28 FIX: all API paths must be network-first, never cached.
+  const isHfSpace    = host.endsWith(".hf.space") || host === "hf.space";
+  const isApiPath    = path.startsWith("/search") ||
+                       path.startsWith("/profile") ||
+                       path.startsWith("/risk") ||
+                       path.startsWith("/graph") ||
+                       path.startsWith("/biography") ||
+                       path.startsWith("/investigate") ||
+                       path.startsWith("/admin") ||
+                       path.startsWith("/stats") ||
+                       path.startsWith("/health") ||
+                       path.startsWith("/ws/") ||
+                       path.startsWith("/runtime") ||
+                       path.startsWith("/multilingual") ||
+                       path.startsWith("/export");
+  const isLocalApi   = host === "localhost" || host === "127.0.0.1";
+
+  const isApi = isHfSpace || (isLocalApi && isApiPath);
+
   if (isApi) {
+    // Network-first: always go to network, fall back to error JSON
     e.respondWith(
       fetch(e.request).catch(() =>
         new Response(
@@ -57,10 +74,21 @@ self.addEventListener("fetch", e => {
         )
       )
     );
-  } else {
-    // Static assets: cache-first
-    e.respondWith(
-      caches.match(e.request).then(r => r || fetch(e.request))
-    );
+    return;
   }
+
+  // Static assets: cache-first
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(response => {
+        if (!response || response.status !== 200 || response.type !== "basic") {
+          return response;
+        }
+        const clone = response.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return response;
+      });
+    })
+  );
 });
