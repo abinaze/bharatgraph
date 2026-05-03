@@ -44,6 +44,14 @@ class MyNetaScraper(BaseScraper):
         "west_bengal_2021":      "https://myneta.info/wb2021/",
         "maharashtra_2024":      "https://myneta.info/maharashtra2024/",
         "jharkhand_2024":        "https://myneta.info/jharkhand2024/",
+        # BUG-29 FIX: added missing 2024-25 elections
+        "haryana_2024":          "https://myneta.info/haryana2024/",
+        "jammu_kashmir_2024":    "https://myneta.info/jk2024/",
+        "odisha_2024":           "https://myneta.info/odisha2024/",
+        "andhra_pradesh_2024":   "https://myneta.info/ap2024/",
+        "sikkim_2024":           "https://myneta.info/sikkim2024/",
+        "arunachal_2024":        "https://myneta.info/arunachal2024/",
+        "bihar_2025":            "https://myneta.info/bihar2025/",
     }
 
     def __init__(self):
