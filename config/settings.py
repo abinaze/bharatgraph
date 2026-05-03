@@ -1,23 +1,21 @@
 import os
+import warnings
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Project Info
 PROJECT_NAME = "BharatGraph"
-VERSION = "0.31.0"  # M-01 FIX: canonical version
-DESCRIPTION = "AI-powered public transparency platform for India"
+VERSION      = "0.31.3"   # NEW-A7 FIX: bumped from 0.31.0 after 3 bug sprints
+DESCRIPTION  = "AI-powered public transparency platform for India"
 
 # Database
 NEO4J_URI      = os.getenv("NEO4J_URI", "")
 NEO4J_USER     = os.getenv("NEO4J_USER", "neo4j")
-# BUG-14 FIX: was defaulting to literal "password" -- changed to empty string
-# so a missing secret fails loudly instead of silently using wrong credentials.
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
 
-# API Keys (free ones)
-NEWSAPI_KEY    = os.getenv("NEWSAPI_KEY", "")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+# BUG-16 FIX: removed OPENAI_API_KEY -- no code in the repo uses it.
+# It was dead config that misled contributors into adding an unused secret.
 
 # Scraper settings
 DEFAULT_DELAY   = 2.0
@@ -32,7 +30,17 @@ LOGS_PATH           = "logs/"
 
 # Data Sources URLs
 DATAGOV_BASE_URL = "https://api.data.gov.in/resource/"
+# BUG-27 FIX: warn at import time if DATAGOV_API_KEY is missing so the silent
+# HTTP 403 errors from datagov_scraper.py are visible in startup logs
 DATAGOV_API_KEY  = os.getenv("DATAGOV_API_KEY", "")
+if not DATAGOV_API_KEY:
+    warnings.warn(
+        "DATAGOV_API_KEY is not set -- datagov_scraper will fail with HTTP 403. "
+        "Add it to .env or GitHub Secrets.",
+        stacklevel=1,
+    )
+
+NEWSAPI_KEY      = os.getenv("NEWSAPI_KEY", "")
 PIB_RSS_URL      = "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3"
 MYNETA_BASE_URL  = "https://myneta.info"
 MCA_BASE_URL     = "https://www.mca.gov.in"
