@@ -200,6 +200,16 @@ const Views = {
                 source:      item.source || "BharatGraph",
               }));
             });
+          } else if (data.message && data.message.includes("pipeline")) {
+            // BUG-12 FIX: "run /admin/pipeline" is a backend message that
+            // was never shown to users -- show a friendly callout instead
+            if (!document.getElementById("feed-empty-callout")) {
+              const callout = document.createElement("div");
+              callout.id = "feed-empty-callout";
+              callout.style.cssText = "padding:16px;background:rgba(255,153,51,0.08);border:1px solid rgba(255,153,51,0.25);border-radius:8px;font-size:12px;color:var(--color-saffron);text-align:center;margin:8px";
+              callout.textContent = "Database is being populated. Intelligence data will appear here after the pipeline completes.";
+              container.appendChild(callout);
+            }
           } else {
             container.appendChild(Components.FeedItem({
               headline:    data.message || "New intelligence available",
