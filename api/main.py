@@ -36,7 +36,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.31.0",
+    version="0.31.3",
     lifespan=lifespan,
 )
 
@@ -93,7 +93,7 @@ app.include_router(runtime.router,       tags=["Runtime"])
 def root():
     return {
         "name":        "BharatGraph API",
-        "version":     "0.31.0",
+        "version":     "0.31.3",
         "status":      "running",
         "docs":        "/docs",
         "health":      "/health",
@@ -114,7 +114,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.31.0",
+        version="0.31.3",
         generated_at=datetime.now().isoformat(),
     )
 
@@ -215,39 +215,39 @@ async def websocket_feed(websocket: WebSocket):
             pass
 
 
-@app.get("/debug/env")
-def debug_env():
-    # M-04 FIX: gate behind DEBUG_MODE same as /debug/neo4j
-    if os.getenv("DEBUG_MODE", "").lower() not in ("1", "true", "yes"):
-        from fastapi import HTTPException as _HE
-        raise _HE(status_code=404, detail="Not found")
-    return {
-        "neo4j_uri_set":      bool(os.getenv("NEO4J_URI")),
-        "neo4j_user_set":     bool(os.getenv("NEO4J_USER")),
-        "neo4j_password_set": bool(os.getenv("NEO4J_PASSWORD")),
-        "neo4j_uri_prefix":   (os.getenv("NEO4J_URI", "")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
-    }
+# BUG-7 FIX: only register debug routes when DEBUG_MODE is explicitly true.
+# Routes registered unconditionally (even returning 404) reveal their existence
+# to attackers via path enumeration. Move into a conditional block entirely.
+if os.getenv("DEBUG_MODE", "").lower() in ("1", "true", "yes"):
+    from fastapi import APIRouter as _DebugRouter
+    _debug_router = _DebugRouter(prefix="/debug", tags=["Debug"])
 
-
-@app.get("/debug/neo4j")
-def debug_neo4j():
-    # BUG-28 FIX: gate behind DEBUG_MODE env var
-    if os.getenv("DEBUG_MODE", "").lower() not in ("1", "true", "yes"):
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="Not found")
-    from neo4j import GraphDatabase
-    uri      = os.getenv("NEO4J_URI", "")
-    user     = os.getenv("NEO4J_USER", "neo4j")
-    password = os.getenv("NEO4J_PASSWORD", "")
-    try:
-        driver = GraphDatabase.driver(uri, auth=(user, password))
-        driver.verify_connectivity()
-        driver.close()
-        return {"status": "connected", "uri_prefix": uri[:20]}
-    except Exception as e:
-        logger.warning(f"[Debug] Neo4j connection test failed: {e.__class__.__name__}")
+    @_debug_router.get("/env")
+    def debug_env():
         return {
-            "status":     "failed",
-            "error":      "Connection failed -- check environment secrets",
-            "uri_prefix": uri[:20] if uri else "NOT SET",
+            "neo4j_uri_set":      bool(os.getenv("NEO4J_URI")),
+            "neo4j_user_set":     bool(os.getenv("NEO4J_USER")),
+            "neo4j_password_set": bool(os.getenv("NEO4J_PASSWORD")),
+            "neo4j_uri_prefix":   (os.getenv("NEO4J_URI", "")[:15] + "...") if os.getenv("NEO4J_URI") else "NOT SET",
         }
+
+    @_debug_router.get("/neo4j")
+    def debug_neo4j():
+        from neo4j import GraphDatabase
+        uri      = os.getenv("NEO4J_URI", "")
+        user     = os.getenv("NEO4J_USER", "neo4j")
+        password = os.getenv("NEO4J_PASSWORD", "")
+        try:
+            driver = GraphDatabase.driver(uri, auth=(user, password))
+            driver.verify_connectivity()
+            driver.close()
+            return {"status": "connected", "uri_prefix": uri[:20]}
+        except Exception as e:
+            logger.warning(f"[Debug] Neo4j test failed: {e.__class__.__name__}")
+            return {
+                "status":     "failed",
+                "error":      "Connection failed -- check environment secrets",
+                "uri_prefix": uri[:20] if uri else "NOT SET",
+            }
+
+    app.include_router(_debug_router)
