@@ -473,16 +473,8 @@ const Views = {
             <div id="tab-content-graph" style="display:none">
               <div class="graph-container" id="entity-graph">
                 <div class="graph-controls">
-                  <button class="btn btn--sm btn--secondary" onclick="document.getElementById('entity-graph').querySelector('svg') && // H-02 FIX: d3.zoom() creates a NEW behavior object -- use the
-          // stored reference from GraphRenderer to reset the actual zoom
-          const svg = window.d3.select('#entity-graph svg');
-          const zoomBehavior = window.GraphRenderer && window.GraphRenderer._zoomBehavior;
-          if (zoomBehavior) {
-            svg.transition().duration(300)
-               .call(zoomBehavior.transform, window.d3.zoomIdentity);
-          } else {
-            svg.call(window.d3.zoom().transform, window.d3.zoomIdentity);
-          }">Reset</button>
+                  <button class="btn btn--sm btn--secondary"
+                          onclick="GraphRenderer.resetZoom('entity-graph')">Reset</button>
                 </div>
                 <div class="graph-legend" id="graph-legend"></div>
               </div>
