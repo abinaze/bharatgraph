@@ -488,7 +488,7 @@ const Views = {
                   <div style="font-size:var(--font-size-sm);font-weight:600">${s.institution}</div>
                   <div style="font-size:var(--font-size-xs);color:var(--text-muted)">
                     ${s.document_title}
-                    ${s.url ? `| <a href="${s.url}" target="_blank">${s.url}</a>` : ""}
+                    ${s.url && (s.url.startsWith('https://') || s.url.startsWith('http://')) ? `| <a href="${sanitize(s.url)}" target="_blank" rel="noopener noreferrer">${sanitize(s.url)}</a>` : ""}
                   </div>
                 </div>
               `).join("") || `<p style="color:var(--text-muted)">No evidence sources in current dataset.</p>`}
