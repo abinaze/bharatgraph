@@ -443,7 +443,8 @@ const Views = {
 
       container.innerHTML = `
         <div style="margin-bottom:var(--space-6)">
-          <a href="#/search" onclick="history.back();return false;"
+          <a href="#/search"
+             onclick="var _hp=window.history;if(_hp.length>1&&document.referrer.includes('#/search')){_hp.back();}else{Router.navigate('/search');} return false;"
              style="font-size:var(--font-size-sm);color:var(--text-muted);
                     text-decoration:none">
             &larr; Back to results
