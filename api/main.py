@@ -36,7 +36,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.31.3",
+    version="0.31.4",
     lifespan=lifespan,
 )
 
@@ -93,7 +93,7 @@ app.include_router(runtime.router,       tags=["Runtime"])
 def root():
     return {
         "name":        "BharatGraph API",
-        "version":     "0.31.3",
+        "version":     "0.31.4",
         "status":      "running",
         "docs":        "/docs",
         "health":      "/health",
@@ -114,7 +114,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.31.3",
+        version="0.31.4",
         generated_at=datetime.now().isoformat(),
     )
 
