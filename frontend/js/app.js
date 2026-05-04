@@ -909,6 +909,9 @@ function toggleTheme() {
 
 // ?? Language Application ??????????????????????????????????????????????????????
 // BUG-10 FIX: full DOM translation via data-i18n attributes
+// M-05 FIX: cache language labels to avoid re-fetching on every change
+const _langLabelCache = {};
+
 async function applyLanguage(lang) {
   const badge = document.getElementById("lang-badge");
   if (!lang || lang === "en") {
@@ -923,7 +926,11 @@ async function applyLanguage(lang) {
     return;
   }
   try {
-    const data   = await Api.uiLabels(lang);
+    // Return cached labels if we already fetched this language
+    const data = _langLabelCache[lang] || await Api.uiLabels(lang).then(d => {
+      _langLabelCache[lang] = d;
+      return d;
+    });
     const labels = data.labels || {};
     // Apply every translated label to every matching data-i18n DOM element.
     // Auto-scales: new keys in languages.py are applied automatically.
