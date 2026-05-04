@@ -102,13 +102,21 @@ def get_risk(entity_id: str, driver=Depends(get_db)):
             ))
             total_score += raw
 
+        # H-08 FIX: name substring match causes massive false positives
+        # (e.g. "India" matches every CAG report). Use relationship-based
+        # matching first; fall back to exact-word name match only.
         audit_rows = session.run(
             """
-            MATCH (a:AuditReport)
-            WHERE toLower(a.title) CONTAINS toLower($name)
-            RETURN count(a) AS audit_count
+            OPTIONAL MATCH (n {id: $id})-[:MENTIONED_IN]->(a1:AuditReport)
+            WITH collect(a1) AS direct
+            OPTIONAL MATCH (a2:AuditReport)
+            WHERE size(direct) = 0
+              AND (toLower(a2.title) CONTAINS (' ' + toLower($name) + ' ')
+                   OR toLower(a2.title) STARTS WITH (toLower($name) + ' ')
+                   OR toLower(a2.title) ENDS WITH (' ' + toLower($name)))
+            RETURN count(direct) + count(a2) AS audit_count
             """,
-            name=entity_name
+            id=entity_id, name=entity_name
         ).single()
 
         audit_count = audit_rows["audit_count"] if audit_rows else 0
