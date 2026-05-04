@@ -36,7 +36,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.31.3",
+    version="0.31.4",
     lifespan=lifespan,
 )
 
@@ -93,7 +93,7 @@ app.include_router(runtime.router,       tags=["Runtime"])
 def root():
     return {
         "name":        "BharatGraph API",
-        "version":     "0.31.3",
+        "version":     "0.31.4",
         "status":      "running",
         "docs":        "/docs",
         "health":      "/health",
@@ -114,13 +114,27 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.31.3",
+        version="0.31.4",
         generated_at=datetime.now().isoformat(),
     )
 
 
+# H-07 FIX: cache stats response to avoid full graph scan on every homepage load
+_stats_cache     = None
+_stats_cached_at = 0.0
+_STATS_TTL       = 60.0   # seconds
+
+
 @app.get("/stats", response_model=StatsResponse)
 def get_stats():
+    global _stats_cache, _stats_cached_at
+    import time as _time
+
+    now = _time.monotonic()
+    # Return cached result if fresh
+    if _stats_cache is not None and (now - _stats_cached_at) < _STATS_TTL:
+        return _stats_cache
+
     driver      = get_driver()
     node_counts = {}
     rel_counts  = {}
@@ -143,12 +157,16 @@ def get_stats():
                 last_run = meta["ts"] if meta else None
         except Exception as e:
             logger.debug(f"[Stats] Query error: {e}")
-    return StatsResponse(
+    import time as _time
+    result = StatsResponse(
         nodes=node_counts,
         relationships=rel_counts,
         last_pipeline_run=last_run,
         generated_at=datetime.now().isoformat(),
     )
+    _stats_cache = result
+    _stats_cached_at = _time.monotonic()
+    return result
 
 
 _FEED_LABELS = [
@@ -169,34 +187,49 @@ async def websocket_feed(websocket: WebSocket):
             payload = {"type": "feed", "at": datetime.now().isoformat()}
             if driver:
                 try:
-                    with driver.session() as s:
-                        feed_rows = s.run(
-                            "MATCH (n) WHERE labels(n)[0] IN $labels "
-                            "AND n.scraped_at IS NOT NULL "
-                            "RETURN labels(n)[0] AS label, "
-                            "coalesce(n.name, n.title, n.company_name, n.id) AS name, "
-                            "n.scraped_at AS scraped_at, n.id AS id, n.source AS source "
-                            "ORDER BY n.scraped_at DESC LIMIT 8",
-                            labels=_FEED_LABELS
-                        ).data()
-                        current_at = feed_rows[0].get("scraped_at") if feed_rows else None
-                        # LOGIC FIX: skip push if data has not changed since last send
-                        if current_at and current_at == last_scraped_at and feed_rows:
-                            await asyncio.sleep(15)
-                            continue
-                        last_scraped_at = current_at
-                        if feed_rows:
-                            payload["items"]   = feed_rows
-                            payload["message"] = (
-                                feed_rows[0].get("label", "Entity") + ": " +
-                                feed_rows[0].get("name", "-")
-                            )
-                        else:
+                    loop = asyncio.get_event_loop()
+
+                    def _query_feed():
+                        # C-03 / BUG-C3 FIX: synchronous Neo4j driver MUST run
+                        # in a thread pool -- calling driver.session() directly
+                        # inside async def blocks the entire uvicorn event loop
+                        # while waiting for network I/O to Neo4j AuraDB.
+                        with driver.session() as s:
                             rows = s.run(
-                                "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
+                                "MATCH (n) WHERE labels(n)[0] IN $labels "
+                                "AND n.scraped_at IS NOT NULL "
+                                "RETURN labels(n)[0] AS label, "
+                                "coalesce(n.name, n.title, n.company_name, n.id) AS name, "
+                                "n.scraped_at AS scraped_at, n.id AS id, n.source AS source "
+                                "ORDER BY n.scraped_at DESC LIMIT 8",
+                                labels=_FEED_LABELS
                             ).data()
-                            payload["stats"]   = {r["t"]: r["c"] for r in rows if r["t"]}
-                            payload["message"] = "Feed active -- run /admin/pipeline to ingest data"
+                            if not rows:
+                                stats = s.run(
+                                    "MATCH (n) RETURN labels(n)[0] AS t, count(n) AS c"
+                                ).data()
+                                return {"rows": [], "stats": {r["t"]: r["c"] for r in stats if r["t"]}}
+                            return {"rows": rows, "stats": {}}
+
+                    feed_result = await loop.run_in_executor(None, _query_feed)
+                    feed_rows   = feed_result["rows"]
+
+                    # M-13 FIX: compare full set of IDs, not just first scraped_at
+                    current_ids = frozenset(r.get("id","") for r in feed_rows)
+                    if current_ids and current_ids == last_scraped_at:
+                        await asyncio.sleep(15)
+                        continue
+                    last_scraped_at = current_ids
+
+                    if feed_rows:
+                        payload["items"]   = feed_rows
+                        payload["message"] = (
+                            feed_rows[0].get("label", "Entity") + ": " +
+                            feed_rows[0].get("name", "-")
+                        )
+                    else:
+                        payload["stats"]   = feed_result["stats"]
+                        payload["message"] = "Feed active -- run /admin/pipeline to ingest data"
                 except Exception as db_err:
                     logger.debug(f"[WS] DB query error: {db_err}")
                     payload["message"] = "Feed active -- database query pending"

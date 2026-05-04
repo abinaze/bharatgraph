@@ -95,9 +95,13 @@ const GraphRenderer = {
       .force("center",    d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide(40));
 
+    // M-11 FIX: id="arrowhead" is global in SVG namespace. If GraphRenderer.init()
+    // is called more than once (tab switch), duplicate IDs appear and the browser
+    // uses the first (possibly removed) element. Use container-scoped unique ID.
+    const markerId = "arrowhead-" + containerId;
     const defs = svg.append("defs");
     defs.append("marker")
-      .attr("id",          "arrowhead")
+      .attr("id",          markerId)
       .attr("viewBox",     "-0 -5 10 10")
       .attr("refX",        28)
       .attr("refY",        0)
@@ -114,7 +118,7 @@ const GraphRenderer = {
       .join("line")
       .attr("stroke",       "rgba(255,255,255,0.15)")
       .attr("stroke-width", 1.5)
-      .attr("marker-end",   "url(#arrowhead)");
+      .attr("marker-end",   "url(#" + markerId + ")");
 
     const linkLabel = g.append("g")
       .selectAll("text")
@@ -193,6 +197,9 @@ const GraphRenderer = {
       node.attr("transform", d => `translate(${d.x || 0},${d.y || 0})`);
     });
 
+    // L-06 FIX: store simulation so tab-switch can stop it (prevents
+    // D3 force simulation running in background consuming CPU when graph is hidden)
+    GraphRenderer._currentSimulation = simulation;
     return simulation;
   },
 

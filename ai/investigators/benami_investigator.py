@@ -49,3 +49,15 @@ def investigate(entity_id: str, entity_name: str,
         "evidence":        evidence,
         "investigated_at": datetime.now().isoformat(),
     }
+
+
+# BUG-C1 FIX: class wrapper -- same pattern as affidavit fix
+class BenamiInvestigator:
+    NAME   = NAME
+    FOCUS  = FOCUS
+    WEIGHT = WEIGHT
+
+    def investigate(self, entity_id: str, entity_name: str,
+                    session=None, driver=None) -> dict:
+        return investigate(entity_id, entity_name,
+                           session=session, driver=driver)

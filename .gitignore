@@ -40,4 +40,6 @@ logs/*.log
 neo4j/data/
 
 # Node
-node_modules/
+node_modules/data/processed/*.html
+data/processed/*.pdf
+data/processed/dossier_*

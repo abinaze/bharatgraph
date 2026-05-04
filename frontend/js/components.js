@@ -100,7 +100,7 @@ const Components = {
     el.className = `finding-item finding-item--${finding.severity || "LOW"}`;
     const evidence = (finding.evidence || [])
       .slice(0, 3)
-      .map(e => `<span class="evidence-chip">${e.substring(0, 60)}</span>`)
+      .map(e => `<span class="evidence-chip">${sanitize(e).substring(0, 60)}</span>`)
       .join("");
     // BUG-20 FIX: finding.description was put directly in innerHTML -- XSS risk
     el.innerHTML = `

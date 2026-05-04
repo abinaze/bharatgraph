@@ -21,6 +21,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"               # L-08 FIX: cache pip dependencies -- saves 2-3 min/run
 
       - name: install dependencies
         run: pip install -r requirements.txt
@@ -86,13 +87,6 @@ jobs:
               d.close()
           "
 
-      - name: notify on failure
-        if: failure()
-        run: |
-          echo "::error::Daily scrape pipeline FAILED at $(date -u +%Y-%m-%dT%H:%MZ)"
-          echo "Check pipeline status at /admin/pipeline/status"
-          exit 0
-
       - name: load pipeline output into Neo4j
         env:
           NEO4J_URI:      ${{ secrets.NEO4J_URI }}
@@ -118,3 +112,9 @@ jobs:
           git diff --staged --quiet || \
             git commit -m "chore(data): daily pipeline run $(date -u +%Y-%m-%d)"
           git push origin main || true
+      # BUG-H3 FIX: moved to end so it covers ALL steps including load+commit
+      - name: notify on failure
+        if: failure()
+        run: |
+          echo "::error::Daily scrape pipeline FAILED at $(date -u +%Y-%m-%dT%H:%MZ)"
+          echo "Check /admin/pipeline/status and GitHub Actions logs for details"

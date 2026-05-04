@@ -20,7 +20,11 @@ def run_investigator(investigator_class, entity_id: str,
     try:
         if driver:
             with driver.session() as session:
-                return investigator.investigate(entity_id, entity_name, session)
+                # BUG-M9 FIX: pass driver as kwarg for module-style investigators
+                # (BenamiDetector and SpectralAnalyzer need driver, not session)
+                return investigator.investigate(
+                    entity_id, entity_name, session=session, driver=driver
+                )
         else:
             # BUG-11 FIX: warn explicitly when FakeSession is used -- previously
             # the report looked complete but all findings were empty with no

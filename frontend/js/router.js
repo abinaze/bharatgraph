@@ -48,17 +48,21 @@ const Router = {
   _updateNav: (path) => {
     document.querySelectorAll(".navbar__nav-link").forEach(link => {
       const href = link.getAttribute("data-route");
-      link.classList.toggle("active", href === path || (href !== "/" && path.startsWith(href)));
+      link.classList.toggle("active", href === path || (href !== "/" && (path === href || path.startsWith(href + "/"))));
     });
   },
 
   init: () => {
-    window.addEventListener("popstate", () => {
+    // H-09 FIX: listen to both popstate (browser back/forward) AND
+    // hashchange (direct URL entry, anchor link clicks). Both are needed
+    // for a hash-router. popstate alone misses direct URL navigation.
+    const _handleNav = () => {
       const hash = window.location.hash.slice(1) || "/";
       Router.navigate(hash, false);
-    });
-    const hash = window.location.hash.slice(1) || "/";
-    Router.navigate(hash, false);
+    };
+    window.addEventListener("popstate",   _handleNav);
+    window.addEventListener("hashchange", _handleNav);
+    _handleNav();
   },
 };
 

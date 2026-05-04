@@ -14,7 +14,8 @@ const Api = {
       }
       return response.json();
     } catch (err) {
-      console.error(`[API] ${path}:`, err.message);
+      // CodeQL #22 FIX: avoid template literal with user-controlled path
+      console.error("[API] request failed for path: " + String(path).substring(0, 100) + " -- " + String(err.message).substring(0, 200));
       throw err;
     }
   },
@@ -85,7 +86,9 @@ const Api = {
   uiLabels: (lang = "en") => Api._request(`/ui-labels?lang=${lang}`),
 
   createFeedSocket: () => {
-    const wsUrl = API_BASE.replace(/^http/, "ws") + "/ws/feed";
+    // L-02 FIX: strip trailing slash before appending /ws/feed
+    // to avoid wss://example.com//ws/feed with double slash
+    const wsUrl = API_BASE.replace(/\/$/, "").replace(/^http/, "ws") + "/ws/feed";
     return new WebSocket(wsUrl);
   },
 };

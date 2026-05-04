@@ -11,7 +11,8 @@ from api.dependencies import get_db
 router = APIRouter()
 
 RISK_LEVELS = {
-    (0,  30):  "LOW",
+    (0,   0):  "NONE",      # M-06 FIX: explicit zero-score state (no factors found)
+    (1,  30):  "LOW",
     (31, 60):  "MODERATE",
     (61, 80):  "HIGH",
     (81, 100): "VERY_HIGH",
@@ -19,8 +20,10 @@ RISK_LEVELS = {
 
 
 def score_to_level(score: int) -> str:
+    # M-08 FIX: clamp to 0-100 before lookup -- scores >100 returned "UNKNOWN"
+    clamped = max(0, min(int(score), 100))
     for (lo, hi), level in RISK_LEVELS.items():
-        if lo <= score <= hi:
+        if lo <= clamped <= hi:
             return level
     return "UNKNOWN"
 
@@ -102,13 +105,21 @@ def get_risk(entity_id: str, driver=Depends(get_db)):
             ))
             total_score += raw
 
+        # H-08 FIX: name substring match causes massive false positives
+        # (e.g. "India" matches every CAG report). Use relationship-based
+        # matching first; fall back to exact-word name match only.
         audit_rows = session.run(
             """
-            MATCH (a:AuditReport)
-            WHERE toLower(a.title) CONTAINS toLower($name)
-            RETURN count(a) AS audit_count
+            OPTIONAL MATCH (n {id: $id})-[:MENTIONED_IN]->(a1:AuditReport)
+            WITH collect(a1) AS direct
+            OPTIONAL MATCH (a2:AuditReport)
+            WHERE size(direct) = 0
+              AND (toLower(a2.title) CONTAINS (' ' + toLower($name) + ' ')
+                   OR toLower(a2.title) STARTS WITH (toLower($name) + ' ')
+                   OR toLower(a2.title) ENDS WITH (' ' + toLower($name)))
+            RETURN count(direct) + count(a2) AS audit_count
             """,
-            name=entity_name
+            id=entity_id, name=entity_name
         ).single()
 
         audit_count = audit_rows["audit_count"] if audit_rows else 0
@@ -154,7 +165,7 @@ def get_risk(entity_id: str, driver=Depends(get_db)):
             ))
             total_score += raw
 
-        final_score = min(total_score, 100)
+        final_score = max(0, min(total_score, 100))  # M-08 FIX: clamp both directions
         level = score_to_level(final_score)
 
         if final_score == 0:

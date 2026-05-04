@@ -223,10 +223,19 @@ const Views = {
 
       ws.onerror = () => {};
 
-      // BUG-6 FIX: reconnect on close
+      // BUG-6 FIX + M-07 FIX: reconnect with max retry cap
       ws.onclose = () => {
         const container = document.getElementById("home-feed");
         if (!container) return;          // user navigated away -- stop retrying
+        if ((connect._retries || 0) >= 20) {
+          // M-07 FIX: max 20 retries (~10 min at 30s ceiling) -- stop after that
+          const msg = document.createElement("div");
+          msg.style.cssText = "padding:12px;text-align:center;font-size:12px;color:var(--text-muted)";
+          msg.textContent = "Live feed unavailable. Refresh the page to reconnect.";
+          container.appendChild(msg);
+          return;
+        }
+        connect._retries = (connect._retries || 0) + 1;
         const nextDelay = Math.min(delay * 2, 30000);
         setTimeout(() => connect(nextDelay), nextDelay);
       };
@@ -299,6 +308,11 @@ const Views = {
         </div>
       </div>
     `;
+
+    // C-01 FIX: pre-fill the search input with the current query
+    // so users can see what they searched and edit it
+    const _searchInput = document.getElementById("search-input");
+    if (_searchInput && query) _searchInput.value = query;
 
     document.getElementById("search-btn").addEventListener("click", () => {
       const q = document.getElementById("search-input").value.trim();
@@ -416,7 +430,7 @@ const Views = {
       if (!profile && !risk) {
         container.innerHTML = `
           <div style="text-align:center;padding:var(--space-16);color:var(--text-muted)">
-            Entity not found: ${id}
+            Entity not found: ${sanitize(id)}
           </div>
         `;
         return;
@@ -429,7 +443,8 @@ const Views = {
 
       container.innerHTML = `
         <div style="margin-bottom:var(--space-6)">
-          <a href="#/search" onclick="history.back();return false;"
+          <a href="#/search"
+             onclick="var _hp=window.history;if(_hp.length>1&&document.referrer.includes('#/search')){_hp.back();}else{Router.navigate('/search');} return false;"
              style="font-size:var(--font-size-sm);color:var(--text-muted);
                     text-decoration:none">
             &larr; Back to results
@@ -549,6 +564,9 @@ const Views = {
           if (tabId === "graph" && graph) {
             GraphRenderer.init("entity-graph", graph);
             GraphRenderer.renderLegend("graph-legend");
+          } else if (GraphRenderer._currentSimulation) {
+            // L-06 FIX: stop simulation when switching away from graph tab
+            GraphRenderer._currentSimulation.stop();
           }
         });
       });
@@ -642,10 +660,16 @@ const Views = {
         if (s) s.textContent = "Connection error -- retrying...";
       };
 
-      // BUG-3 FIX: reconnect with exponential backoff (mirrors _connectFeedToHome)
+      // M-07 FIX: reconnect with max 20 retry cap
       ws.onclose = () => {
         const container = document.getElementById("feed-container");
-        if (!container) return;   // user navigated away -- stop retrying
+        if (!container) return;
+        if ((connectFeed._retries || 0) >= 20) {
+          const s = document.getElementById("feed-status");
+          if (s) s.textContent = "Feed unavailable -- refresh to retry";
+          return;
+        }
+        connectFeed._retries = (connectFeed._retries || 0) + 1;
         const s = document.getElementById("feed-status");
         if (s) s.textContent = "Reconnecting...";
         const nextDelay = Math.min(delay * 2, 30000);
@@ -800,7 +824,9 @@ const Views = {
     const links = [];
     const seen = new Set([centerId]);
     edges.slice(0, 20).forEach(e => {
-      const tid = e.connected_id || e.connected_to || Math.random().toString();
+      // M-10 FIX: Math.random() creates different IDs each render -- duplicates accumulate.
+      // Use deterministic fallback based on edge properties.
+      const tid = e.connected_id || e.connected_to || ("unknown-" + btoa(JSON.stringify({l:e.rel_label,w:e.why})).slice(0, 8));
       if (!seen.has(tid)) { seen.add(tid); nodes.push({id:tid, name:e.connected_to||tid, group:e.rel_label||"OTHER"}); }
       links.push({source:centerId, target:tid, label:e.rel_label||"", strength:e.strength||"medium"});
     });
@@ -904,6 +930,9 @@ function toggleTheme() {
 
 // ?? Language Application ??????????????????????????????????????????????????????
 // BUG-10 FIX: full DOM translation via data-i18n attributes
+// M-05 FIX: cache language labels to avoid re-fetching on every change
+const _langLabelCache = {};
+
 async function applyLanguage(lang) {
   const badge = document.getElementById("lang-badge");
   if (!lang || lang === "en") {
@@ -918,7 +947,11 @@ async function applyLanguage(lang) {
     return;
   }
   try {
-    const data   = await Api.uiLabels(lang);
+    // Return cached labels if we already fetched this language
+    const data = _langLabelCache[lang] || await Api.uiLabels(lang).then(d => {
+      _langLabelCache[lang] = d;
+      return d;
+    });
     const labels = data.labels || {};
     // Apply every translated label to every matching data-i18n DOM element.
     // Auto-scales: new keys in languages.py are applied automatically.
