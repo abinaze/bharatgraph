@@ -109,3 +109,16 @@ def investigate(entity_id: str, entity_name: str,
         "evidence":     evidence,
         "investigated_at": datetime.now().isoformat(),
     }
+
+
+# BUG-C1 FIX: class wrapper -- MathematicalInvestigator is the display name
+# but the import expects MathInvestigator to match the __init__.py import
+class MathInvestigator:
+    NAME   = NAME
+    FOCUS  = FOCUS
+    WEIGHT = WEIGHT
+
+    def investigate(self, entity_id: str, entity_name: str,
+                    session=None, driver=None) -> dict:
+        return investigate(entity_id, entity_name,
+                           session=session, driver=driver)
