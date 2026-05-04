@@ -563,6 +563,9 @@ const Views = {
           if (tabId === "graph" && graph) {
             GraphRenderer.init("entity-graph", graph);
             GraphRenderer.renderLegend("graph-legend");
+          } else if (GraphRenderer._currentSimulation) {
+            // L-06 FIX: stop simulation when switching away from graph tab
+            GraphRenderer._currentSimulation.stop();
           }
         });
       });
@@ -820,7 +823,9 @@ const Views = {
     const links = [];
     const seen = new Set([centerId]);
     edges.slice(0, 20).forEach(e => {
-      const tid = e.connected_id || e.connected_to || Math.random().toString();
+      // M-10 FIX: Math.random() creates different IDs each render -- duplicates accumulate.
+      // Use deterministic fallback based on edge properties.
+      const tid = e.connected_id || e.connected_to || ("unknown-" + btoa(JSON.stringify({l:e.rel_label,w:e.why})).slice(0, 8));
       if (!seen.has(tid)) { seen.add(tid); nodes.push({id:tid, name:e.connected_to||tid, group:e.rel_label||"OTHER"}); }
       links.push({source:centerId, target:tid, label:e.rel_label||"", strength:e.strength||"medium"});
     });
