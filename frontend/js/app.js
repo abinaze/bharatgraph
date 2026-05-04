@@ -223,10 +223,19 @@ const Views = {
 
       ws.onerror = () => {};
 
-      // BUG-6 FIX: reconnect on close
+      // BUG-6 FIX + M-07 FIX: reconnect with max retry cap
       ws.onclose = () => {
         const container = document.getElementById("home-feed");
         if (!container) return;          // user navigated away -- stop retrying
+        if ((connect._retries || 0) >= 20) {
+          // M-07 FIX: max 20 retries (~10 min at 30s ceiling) -- stop after that
+          const msg = document.createElement("div");
+          msg.style.cssText = "padding:12px;text-align:center;font-size:12px;color:var(--text-muted)";
+          msg.textContent = "Live feed unavailable. Refresh the page to reconnect.";
+          container.appendChild(msg);
+          return;
+        }
+        connect._retries = (connect._retries || 0) + 1;
         const nextDelay = Math.min(delay * 2, 30000);
         setTimeout(() => connect(nextDelay), nextDelay);
       };
@@ -647,10 +656,16 @@ const Views = {
         if (s) s.textContent = "Connection error -- retrying...";
       };
 
-      // BUG-3 FIX: reconnect with exponential backoff (mirrors _connectFeedToHome)
+      // M-07 FIX: reconnect with max 20 retry cap
       ws.onclose = () => {
         const container = document.getElementById("feed-container");
-        if (!container) return;   // user navigated away -- stop retrying
+        if (!container) return;
+        if ((connectFeed._retries || 0) >= 20) {
+          const s = document.getElementById("feed-status");
+          if (s) s.textContent = "Feed unavailable -- refresh to retry";
+          return;
+        }
+        connectFeed._retries = (connectFeed._retries || 0) + 1;
         const s = document.getElementById("feed-status");
         if (s) s.textContent = "Reconnecting...";
         const nextDelay = Math.min(delay * 2, 30000);
