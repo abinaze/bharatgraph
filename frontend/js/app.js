@@ -300,6 +300,11 @@ const Views = {
       </div>
     `;
 
+    // C-01 FIX: pre-fill the search input with the current query
+    // so users can see what they searched and edit it
+    const _searchInput = document.getElementById("search-input");
+    if (_searchInput && query) _searchInput.value = query;
+
     document.getElementById("search-btn").addEventListener("click", () => {
       const q = document.getElementById("search-input").value.trim();
       if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
@@ -416,7 +421,7 @@ const Views = {
       if (!profile && !risk) {
         container.innerHTML = `
           <div style="text-align:center;padding:var(--space-16);color:var(--text-muted)">
-            Entity not found: ${id}
+            Entity not found: ${sanitize(id)}
           </div>
         `;
         return;
