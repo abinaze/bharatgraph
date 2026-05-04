@@ -578,3 +578,23 @@
   .container { padding: 0 var(--space-4); }
   .navbar__nav { display: none; }
 }
+
+/* M-03 FIX: inline style grid layouts in app.js bypass the .grid-N responsive
+   breakpoints. Add explicit overrides for the three known inline grids. */
+@media (max-width: 768px) {
+  /* Home page: How It Works + Live Feed */
+  #app-main > section > .container > div[style*="grid-template-columns:1fr 380px"],
+  #app-main > section > .container > div[style*="grid-template-columns: 1fr 380px"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Entity detail: findings + risk sidebar */
+  #entity-content > div[style*="grid-template-columns:1fr 320px"],
+  #entity-content > div[style*="grid-template-columns: 1fr 320px"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Connection map: graph + evidence list */
+  #app-main div[style*="grid-template-columns:1fr 340px"],
+  #app-main div[style*="grid-template-columns: 1fr 340px"] {
+    grid-template-columns: 1fr !important;
+  }
+}
