@@ -53,7 +53,7 @@ class SlidingWindowRateLimiter(BaseHTTPMiddleware):
 
         # Evict stale entries every 5 minutes to prevent memory leak (BUG-14)
         if now - self._evict_at > 300:
-            stale_keys = [k for k, ts in self._windows.items() if not ts or now - ts[-1] > window]
+            stale_keys = [k for k, ts in self._windows.items() if not ts or now - ts[0] > window]
             for k in stale_keys:
                 del self._windows[k]
             self._evict_at = now
