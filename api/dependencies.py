@@ -39,9 +39,16 @@ def get_driver():
 
     now = time.monotonic()
 
+    # H-06 FIX: lockless fast path -- if driver is valid and TTL fresh,
+    # return immediately without acquiring the lock. The lock is only needed
+    # for reconnection (rare). Under 50 concurrent requests this prevents
+    # all threads serializing behind the lock for a trivial pointer check.
+    if _driver is not None and (now - _last_verified_at) < _VERIFY_TTL:
+        return _driver
+
     with _driver_lock:
-        # Driver healthy and verified recently -- return immediately without
-        # calling verify_connectivity() again (BUG-20 key fix)
+        # Re-check inside lock in case another thread just reconnected
+        now = time.monotonic()
         if _driver is not None and (now - _last_verified_at) < _VERIFY_TTL:
             return _driver
 
