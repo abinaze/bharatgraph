@@ -21,7 +21,7 @@ class AffidavitAnalyzer:
     def analyze(self, entity_id: str, history: list[dict],
                  role: str = "Unknown") -> dict:
         logger.info(
-            f"[AffidavitAnalyzer] {entity_id}: "
+            f"[AffidavitAnalyzer] entity={entity_id[:8]}...: "
             f"{len(history)} affidavits role={role}"
         )
 
@@ -129,7 +129,7 @@ class AffidavitAnalyzer:
             )
 
         logger.success(
-            f"[AffidavitAnalyzer] {entity_id}: level={level} "
+            f"[AffidavitAnalyzer] entity={entity_id[:8]}...: level={level} "
             f"residual=Rs {residual:.1f} Cr findings={len(findings)}"
         )
 
