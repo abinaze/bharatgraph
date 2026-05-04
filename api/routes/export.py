@@ -58,8 +58,12 @@ def export_pdf(entity_id: str, driver=Depends(get_db)):
     if not output_path or not os.path.exists(output_path):
         raise HTTPException(status_code=500,
                             detail="Dossier generation failed")
-    allowed_dir = os.path.realpath("data/processed")
-    if not os.path.realpath(output_path).startswith(allowed_dir):
+    # H-07 / CodeQL fix: use file-anchored absolute path
+    _routes_dir   = os.path.dirname(os.path.abspath(__file__))
+    _project_root = os.path.dirname(os.path.dirname(_routes_dir))
+    allowed_dir   = os.path.realpath(os.path.join(_project_root, "data", "processed"))
+    real_out      = os.path.realpath(output_path)
+    if not real_out.startswith(allowed_dir + os.sep):
         raise HTTPException(status_code=400, detail="Invalid output path")
 
     media_type = (

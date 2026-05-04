@@ -166,9 +166,14 @@ class DossierGenerator:
 
     def generate(self, entity_id: str, multi_report: dict = None,
                   output_dir: str = "data/processed") -> dict:
-        allowed_base = os.path.realpath("data")
-        real_out_dir = os.path.realpath(output_dir)
-        if not real_out_dir.startswith(allowed_base):
+        # H-07 / CodeQL fix: use absolute path from this file, not CWD-relative
+        _this_dir    = os.path.dirname(os.path.abspath(__file__))
+        _project_root = os.path.dirname(_this_dir)
+        allowed_base = os.path.realpath(os.path.join(_project_root, "data"))
+        real_out_dir = os.path.realpath(
+            os.path.join(_project_root, output_dir) if not os.path.isabs(output_dir) else output_dir
+        )
+        if not real_out_dir.startswith(allowed_base + os.sep):
             raise ValueError(f"Output directory outside allowed path: {output_dir}")
         os.makedirs(output_dir, exist_ok=True)
         dossier_data = self.assemble_dossier_data(entity_id, multi_report)
