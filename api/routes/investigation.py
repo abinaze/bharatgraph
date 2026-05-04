@@ -27,7 +27,8 @@ def deep_investigate(entity_id: str, driver=Depends(get_db)):
                 ).single()
             name = (row["name"] if row else entity_id) or entity_id
         except Exception as name_err:
-            logger.debug(f"[Investigation] Name lookup failed: {name_err}")
+            # CodeQL #23 FIX: log type only, not full exception (may contain Neo4j URI/credentials)
+            logger.debug(f"[Investigation] Name lookup failed: {type(name_err).__name__}")
 
         return investigator.investigate(entity_id, name)
 
