@@ -48,7 +48,7 @@ const Router = {
   _updateNav: (path) => {
     document.querySelectorAll(".navbar__nav-link").forEach(link => {
       const href = link.getAttribute("data-route");
-      link.classList.toggle("active", href === path || (href !== "/" && path.startsWith(href)));
+      link.classList.toggle("active", href === path || (href !== "/" && (path === href || path.startsWith(href + "/"))));
     });
   },
 
