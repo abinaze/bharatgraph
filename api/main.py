@@ -119,8 +119,22 @@ def health_check():
     )
 
 
+# H-07 FIX: cache stats response to avoid full graph scan on every homepage load
+_stats_cache     = None
+_stats_cached_at = 0.0
+_STATS_TTL       = 60.0   # seconds
+
+
 @app.get("/stats", response_model=StatsResponse)
 def get_stats():
+    global _stats_cache, _stats_cached_at
+    import time as _time
+
+    now = _time.monotonic()
+    # Return cached result if fresh
+    if _stats_cache is not None and (now - _stats_cached_at) < _STATS_TTL:
+        return _stats_cache
+
     driver      = get_driver()
     node_counts = {}
     rel_counts  = {}
@@ -143,12 +157,16 @@ def get_stats():
                 last_run = meta["ts"] if meta else None
         except Exception as e:
             logger.debug(f"[Stats] Query error: {e}")
-    return StatsResponse(
+    import time as _time
+    result = StatsResponse(
         nodes=node_counts,
         relationships=rel_counts,
         last_pipeline_run=last_run,
         generated_at=datetime.now().isoformat(),
     )
+    _stats_cache = result
+    _stats_cached_at = _time.monotonic()
+    return result
 
 
 _FEED_LABELS = [
