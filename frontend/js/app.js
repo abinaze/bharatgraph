@@ -314,6 +314,11 @@ const Views = {
     const _searchInput = document.getElementById("search-input");
     if (_searchInput && query) _searchInput.value = query;
 
+    // C-01 FIX: pre-fill search input with current query
+    // Users could not see what they searched and could not edit it
+    const _si = document.getElementById("search-input");
+    if (_si && query) _si.value = query;
+
     document.getElementById("search-btn").addEventListener("click", () => {
       const q = document.getElementById("search-input").value.trim();
       if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
