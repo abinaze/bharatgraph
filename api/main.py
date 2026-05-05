@@ -125,8 +125,20 @@ _stats_cached_at = 0.0
 _STATS_TTL       = 60.0   # seconds
 
 
+# H-07 FIX: cache /stats for 60s -- MATCH(n) is a full graph scan
+_stats_cache     = None
+_stats_cached_at = 0.0
+_STATS_TTL       = 60.0
+
+
 @app.get("/stats", response_model=StatsResponse)
 def get_stats():
+    global _stats_cache, _stats_cached_at
+    import time as _time
+    _now = _time.monotonic()
+    if _stats_cache is not None and (_now - _stats_cached_at) < _STATS_TTL:
+        return _stats_cache
+    # fallthrough to compute
     global _stats_cache, _stats_cached_at
     import time as _time
 
