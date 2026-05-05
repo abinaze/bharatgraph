@@ -83,19 +83,19 @@ const Timeline = {
                       </span>
                       <span style="font-size:12px;font-weight:600;
                                    color:var(--text-primary)">
-                        ${event.title}
+                        ${sanitize(event.title || "")}
                       </span>
                     </div>
                     <div style="font-size:11px;color:var(--text-secondary);
-                                margin-bottom:3px">${event.detail||''}</div>
+                                margin-bottom:3px">${sanitize(event.detail || '')}</div>
                     <div style="display:flex;justify-content:space-between">
                       <span style="font-size:10px;color:var(--text-muted)">
-                        ${event.date}
+                        ${sanitize(event.date || "")}
                       </span>
                       <span style="font-size:10px;color:var(--text-muted);
                                    background:var(--bg-secondary);
                                    padding:1px 6px;border-radius:4px">
-                        ${event.source}
+                        ${sanitize(event.source || "")}
                       </span>
                     </div>
                   </div>
