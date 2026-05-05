@@ -942,6 +942,10 @@ const _langLabelCache = {};
 // causing multiple concurrent API calls during rapid language switching
 const _langLabelCache = {};
 
+// M-05 FIX: cache language labels -- applyLanguage() was re-fetching on every change
+// causing multiple concurrent API calls during rapid language switching
+const _langLabelCache = {};
+
 async function applyLanguage(lang) {
   const badge = document.getElementById("lang-badge");
   if (!lang || lang === "en") {
