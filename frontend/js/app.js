@@ -50,7 +50,7 @@ const Views = {
                       color:var(--text-muted)">
             <span>21 official data sources</span>
             <span>|</span>
-            <span>12 parallel investigators</span>
+            <span>15 parallel investigators</span>
             <span>|</span>
             <span>22 Indian languages</span>
           </div>
@@ -82,7 +82,7 @@ const Views = {
               <div style="display:flex;flex-direction:column;gap:var(--space-4)">
                 ${[
                   ["01", "Search", "Enter any politician, company, ministry, or scheme name in any Indian language."],
-                  ["02", "Investigate", "12 specialist AI investigators run in parallel across 21 official data sources."],
+                  ["02", "Investigate", "15 specialist AI investigators run in parallel across 21 official data sources."],
                   ["03", "Synthesise", "Findings are cross-validated. Agreed patterns are marked with high confidence."],
                   ["04", "Export", "Download a court-grade PDF dossier with a SHA-256 integrity hash."],
                 ].map(([num, title, desc]) => `
