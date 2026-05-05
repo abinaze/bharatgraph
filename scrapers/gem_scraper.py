@@ -41,22 +41,21 @@ class GeMScraper(BaseScraper):
     def fetch_gem_stats(self) -> dict:
         """
         Fetch public GeM platform statistics from gem.gov.in/statistics.
+        BUG-C5 FIX: never silently return fake/sample data.
+        Returns None on failure so the pipeline skips this source.
         """
         logger.info("[GeM] Fetching platform statistics...")
-
         html = self.get_html(self.GEM_STATS_URL)
-        if html and len(html) > 500:
-            logger.success("[GeM] Fetched GeM statistics page")
-            return {
-                "source":     "gem.gov.in/statistics",
-                "scraped_at": datetime.now().isoformat(),
-                "url":        self.GEM_STATS_URL,
-                "note":       "HTML fetched - using sample stats structure",
-                "stats":      self._get_sample_stats()["stats"],
-            }
-
-        logger.warning("[GeM] Could not fetch stats, using sample")
-        return self._get_sample_stats()
+        if not html or len(html) < 500:
+            logger.warning("[GeM] fetch_gem_stats: page too small or unavailable -- skipping")
+            return None
+        return {
+            "source":     "gem.gov.in/statistics",
+            "scraped_at": datetime.now().isoformat(),
+            "url":        self.GEM_STATS_URL,
+            "note":       "HTML fetched -- manual parsing required",
+            "stats":      {},
+        }
 
     def fetch_contracts_by_ministry(self, ministry: str = "all",
                                      limit: int = 50) -> list:
@@ -81,8 +80,9 @@ class GeMScraper(BaseScraper):
             logger.success(f"[GeM] Got {len(contracts)} contracts")
             return contracts
 
-        logger.warning("[GeM] API unavailable, using sample data")
-        return self._get_sample_contracts()
+        # BUG-C5 FIX: never silently inject fake contracts into Neo4j.
+        logger.warning("[GeM] API unavailable -- returning empty list (no fake data)")
+        return []
 
     def _normalize_contracts(self, records: list) -> list:
         """Normalize GeM contract records into standard format."""
