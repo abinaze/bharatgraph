@@ -598,3 +598,22 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* M-03 FIX: inline grid layouts in app.js use style attributes that bypass
+   .grid--N responsive CSS classes. Add explicit overrides for all 3 known
+   inline grids that overflow on mobile screens narrower than 700px. */
+@media (max-width: 768px) {
+  /* Home page: How It Works + Live Feed sidebar */
+  #app-main div[style*='grid-template-columns:1fr 380px'],
+  #app-main div[style*='grid-template-columns: 1fr 380px'] {
+  }
+  /* Entity detail: findings + risk sidebar */
+  #app-main div[style*='grid-template-columns:1fr 320px'],
+  #app-main div[style*='grid-template-columns: 1fr 320px'] {
+  }
+  /* Connection map: graph + evidence list */
+  #app-main div[style*='grid-template-columns:1fr 340px'],
+  #app-main div[style*='grid-template-columns: 1fr 340px'] {
+  }
+}
