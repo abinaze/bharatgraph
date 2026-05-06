@@ -164,7 +164,7 @@ const Views = {
       if (grid) grid.innerHTML = `
         <div style="grid-column:1/-1;text-align:center;color:var(--text-muted);
                     font-size:var(--font-size-sm);padding:var(--space-8)">
-          API unavailable. Start the backend: uvicorn api.main:app --reload
+          Live data unavailable -- backend may be starting up.
         </div>
       `;
     });
