@@ -95,6 +95,7 @@ _HONORIFICS = [
     "shri", "smt", "dr", "prof", "mr", "mrs", "ms", "adv", "er",
     "hon", "honble", "col", "gen", "brig", "maj", "capt", "late",
     "sri", "kumari", "km",
+    "sh",   "kum",  "shr",  "retd", "rtd",  "ex",
 ]
 
 _COMPANY_SUFFIXES = [
@@ -121,10 +122,14 @@ def normalise_indian_name(name: str, kind: str = "person") -> str:
     # Strip M/s prefix for companies
     name = re.sub(r"^m\s*/\s*s\.?\s*", "", name)
     if kind == "person":
-        for h in _HONORIFICS:
+        # FIX: while-loop strips stacked honorifics (e.g. Late Shri X -> X)
+        _changed = True
+        while _changed:
+            _prev = name
             name = re.sub(rf"^{re.escape(h)}\.?\s+", "", name)
             name = re.sub(rf"^{re.escape(h)}\.?\s*$", "", name)
-    else:
+            else:
+            _changed = name != _prev
         for old, new in _COMPANY_SUFFIXES:
             name = name.replace(old, new)
     # Remove punctuation except spaces and hyphens
