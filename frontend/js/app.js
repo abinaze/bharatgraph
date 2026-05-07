@@ -50,7 +50,7 @@ const Views = {
                       color:var(--text-muted)">
             <span>21 official data sources</span>
             <span>|</span>
-            <span>12 parallel investigators</span>
+            <span>15 parallel investigators</span>
             <span>|</span>
             <span>22 Indian languages</span>
           </div>
@@ -82,7 +82,7 @@ const Views = {
               <div style="display:flex;flex-direction:column;gap:var(--space-4)">
                 ${[
                   ["01", "Search", "Enter any politician, company, ministry, or scheme name in any Indian language."],
-                  ["02", "Investigate", "12 specialist AI investigators run in parallel across 21 official data sources."],
+                  ["02", "Investigate", "15 specialist AI investigators run in parallel across 21 official data sources."],
                   ["03", "Synthesise", "Findings are cross-validated. Agreed patterns are marked with high confidence."],
                   ["04", "Export", "Download a court-grade PDF dossier with a SHA-256 integrity hash."],
                 ].map(([num, title, desc]) => `
@@ -164,7 +164,7 @@ const Views = {
       if (grid) grid.innerHTML = `
         <div style="grid-column:1/-1;text-align:center;color:var(--text-muted);
                     font-size:var(--font-size-sm);padding:var(--space-8)">
-          API unavailable. Start the backend: uvicorn api.main:app --reload
+          Live data unavailable -- backend may be starting up.
         </div>
       `;
     });
@@ -313,6 +313,11 @@ const Views = {
     // so users can see what they searched and edit it
     const _searchInput = document.getElementById("search-input");
     if (_searchInput && query) _searchInput.value = query;
+
+    // C-01 FIX: pre-fill search input with current query
+    // Users could not see what they searched and could not edit it
+    const _si = document.getElementById("search-input");
+    if (_si && query) _si.value = query;
 
     document.getElementById("search-btn").addEventListener("click", () => {
       const q = document.getElementById("search-input").value.trim();
@@ -931,6 +936,14 @@ function toggleTheme() {
 // ?? Language Application ??????????????????????????????????????????????????????
 // BUG-10 FIX: full DOM translation via data-i18n attributes
 // M-05 FIX: cache language labels to avoid re-fetching on every change
+const _langLabelCache = {};
+
+// M-05 FIX: cache language labels -- applyLanguage() was re-fetching on every change
+// causing multiple concurrent API calls during rapid language switching
+const _langLabelCache = {};
+
+// M-05 FIX: cache language labels -- applyLanguage() was re-fetching on every change
+// causing multiple concurrent API calls during rapid language switching
 const _langLabelCache = {};
 
 async function applyLanguage(lang) {

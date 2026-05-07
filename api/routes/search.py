@@ -110,7 +110,17 @@ LABEL_QUERIES = {
         "MATCH (n:NGO) "
         "WHERE toLower(coalesce(n.ngo_name,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.ngo_name AS name, n.state AS state, null AS party LIMIT $limit"),
-    # BUG-18 FIX: key renamed from "pressrelease" to "pib" to match scraper key,
+    # M-08 FIX: frontend filter button sends type=pressrelease (lowercased label)
+    # but LABEL_QUERIES key is 'pib'. Add alias so both spellings work.
+    "pressrelease": ("PressRelease",
+        "MATCH (n:PressRelease) "
+        "WHERE toLower(coalesce(n.title, n.headline, '')) CONTAINS toLower($q) "
+        "   OR toLower(coalesce(n.ministry, '')) CONTAINS toLower($q) "
+        "RETURN n.id AS entity_id, 'PressRelease' AS entity_type, "
+        "coalesce(n.title, n.headline, n.id) AS name, n.source AS source "
+        "LIMIT $lim"
+    ),
+        # BUG-18 FIX: key renamed from "pressrelease" to "pib" to match scraper key,
     # so SOURCE_MAP lookup returns the correct PIB attribution.
     # M-08 FIX: frontend sends type=pressrelease but key is "pib".
     # Add alias so filter button works correctly.

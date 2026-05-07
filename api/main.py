@@ -119,20 +119,18 @@ def health_check():
     )
 
 
-# H-07 FIX: cache stats response to avoid full graph scan on every homepage load
-_stats_cache     = None
-_stats_cached_at = 0.0
-_STATS_TTL       = 60.0   # seconds
+# H-07 FIX: module-level cache vars (must be at module scope, not inside function)
+_stats_cache      = None
+_stats_cached_at  = 0.0
+_STATS_TTL        = 60.0
 
 
 @app.get("/stats", response_model=StatsResponse)
 def get_stats():
     global _stats_cache, _stats_cached_at
     import time as _time
-
-    now = _time.monotonic()
-    # Return cached result if fresh
-    if _stats_cache is not None and (now - _stats_cached_at) < _STATS_TTL:
+    _now = _time.monotonic()
+    if _stats_cache is not None and (_now - _stats_cached_at) < _STATS_TTL:
         return _stats_cache
 
     driver      = get_driver()
