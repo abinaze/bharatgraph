@@ -22,6 +22,14 @@ async def lifespan(app: FastAPI):
     driver = get_driver()
     if driver:
         logger.success("[API] Neo4j ready")
+        # SEARCH-1 FIX: ensure fulltext index exists on every startup.
+        # setup_schema() uses IF NOT EXISTS -- safe to call repeatedly.
+        try:
+            from graph.loader import GraphLoader
+            GraphLoader(driver=driver).setup_schema()
+            logger.info("[API] Schema/index verified")
+        except Exception as _se:
+            logger.warning(f"[API] Schema setup skipped: {type(_se).__name__}")
     else:
         logger.warning("[API] Starting without Neo4j -- set secrets to enable")
     yield
