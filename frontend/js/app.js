@@ -639,6 +639,17 @@ const Views = {
               _id: item.id,
               });
             });
+          } else if (data.message && data.message.includes("pipeline")) {
+            // FEED-1 FIX: liveFeed view had no pipeline-message guard.
+            // The admin system message was rendered as fake intelligence.
+            // Show user-friendly empty-state instead.
+            const container2 = document.getElementById("feed-container");
+              const callout = document.createElement("div");
+              callout.id = "lf-empty-callout";
+              callout.style.cssText = "padding:20px;text-align:center;color:var(--color-saffron);font-size:13px;border:1px solid rgba(255,153,51,0.25);border-radius:8px;margin:8px";
+              callout.textContent = "Intelligence database is being populated. Check back after the daily pipeline run completes.";
+              container2.appendChild(callout);
+            }
           } else {
             feedItems.unshift({
               headline: sanitize(data.message || "Feed update received"),
