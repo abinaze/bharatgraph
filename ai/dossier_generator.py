@@ -147,7 +147,7 @@ class DossierGenerator:
                 "[Dossier] WeasyPrint not available -- "
                 "saving HTML instead of PDF"
             )
-            html_path = output_path.replace(".pdf", ".html")
+            html_path = output_path.replace(".pdf", ".html")  # safe: output_path already validated
             with open(html_path, "w", encoding="utf-8") as f:
                 f.write(html)
             logger.info(f"[Dossier] HTML saved to: {html_path}")
@@ -175,7 +175,8 @@ class DossierGenerator:
         )
         if not real_out_dir.startswith(allowed_base + os.sep):
             raise ValueError(f"Output directory outside allowed path: {output_dir}")
-        os.makedirs(output_dir, exist_ok=True)
+        # CodeQL #12-15 FIX: use validated real_out_dir, not original output_dir
+        os.makedirs(real_out_dir, exist_ok=True)
         dossier_data = self.assemble_dossier_data(entity_id, multi_report)
         html         = self.render_html(dossier_data)
 
@@ -195,8 +196,9 @@ class DossierGenerator:
                 c if c.isalnum() else "_"
                 for c in dossier_data["entity_name"]
             )[:30]
+            # CodeQL #12-15 FIX: use real_out_dir for all path construction
             pdf_path    = os.path.join(
-                output_dir, f"dossier_{clean_name}_{ts}.pdf"
+                real_out_dir, f"dossier_{clean_name}_{ts}.pdf"
             )
             success     = self.render_pdf(html, pdf_path)
             if success:
