@@ -173,9 +173,9 @@ const Views = {
   },
 
   _connectFeedToHome: () => {
-    // BUG-6 FIX: added ws.onclose with exponential-backoff reconnect so the
-    // home-feed recovers automatically when the backend restarts, instead of
-    // going silent permanently until the user hard-refreshes.
+    // FEED-2 FIX: reset retry counter each time _connectFeedToHome is called
+    // so navigating Home -> elsewhere -> Home restarts the 20-retry budget
+    if (typeof connect !== 'undefined') connect._retries = 0;
     function connect(delay) {
       delay = delay || 2000;
       let ws;
