@@ -6,7 +6,7 @@ function sanitize(str) {
 
 const State = {
   theme: localStorage.getItem("bg-theme") || "dark",
-  language: "en",
+  language: localStorage.getItem("bg-lang") || "en",  // LOGIC-4 FIX: persist language
   searchResults: [],
   currentEntity: null,
   feedSocket: null,
@@ -952,6 +952,8 @@ const _langLabelCache = {};
 // causing multiple concurrent API calls during rapid language switching
 
 async function applyLanguage(lang) {
+  // LOGIC-4 FIX: save language preference so it survives page refresh
+  if (lang) localStorage.setItem("bg-lang", lang);
   const badge = document.getElementById("lang-badge");
   if (!lang || lang === "en") {
     document.querySelectorAll("[data-i18n]").forEach(el => {
