@@ -185,7 +185,7 @@ async def websocket_feed(websocket: WebSocket):
             payload = {"type": "feed", "at": datetime.now().isoformat()}
             if driver:
                 try:
-                    loop = asyncio.get_event_loop()
+                    loop = asyncio.get_running_loop()  # FEED-3 FIX: get_event_loop deprecated in 3.10+
 
                     def _query_feed():
                         # C-03 / BUG-C3 FIX: synchronous Neo4j driver MUST run
