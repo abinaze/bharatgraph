@@ -720,7 +720,7 @@ const Views = {
                 </span>
                 <div style="display:flex;gap:6px">
                   <span style="font-size:10px;color:var(--text-muted)">
-                    ? Strong  ? Medium  ? Weak
+                    &#9733; Strong &nbsp; &#9671; Medium &nbsp; &#9675; Weak
                   </span>
                 </div>
               </div>
@@ -781,7 +781,7 @@ const Views = {
             ${sanitize(e.why||"")}
           </div>
           <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-            ? ${sanitize(e.source||"")}
+            &#128196; ${sanitize(e.source||"")}
           </div>
         </div>`).join("") : `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px">
           No connections in current dataset</div>`;
