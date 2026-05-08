@@ -28,7 +28,7 @@ def _require_admin(x_admin_secret: str = Header(default="")):
     secret = os.getenv("ADMIN_SECRET", "")
     is_debug = os.getenv("DEBUG_MODE", "").lower() in ("1", "true", "yes")
 
-    if not secret:
+    if not secret or not secret.strip():  # SEC-6 FIX: empty string is not valid
         if not is_debug:
             raise HTTPException(
                 status_code=503,
