@@ -7,6 +7,18 @@ const Router = {
   },
 
   navigate: (path, pushState = true) => {
+    // JS-4 FIX: stop D3 force simulation before clearing main DOM.
+    // Without this, the simulation timer keeps running indefinitely after
+    // navigation, consuming CPU and holding references to removed elements.
+    if (window.GraphRenderer && GraphRenderer._currentSimulation) {
+      GraphRenderer._currentSimulation.stop();
+      GraphRenderer._currentSimulation = null;
+    }
+    // FEED-4 FIX: close open WebSocket feed socket on navigation
+    if (window._activeFeedSocket && window._activeFeedSocket.readyState <= 1) {
+      window._activeFeedSocket.close();
+      window._activeFeedSocket = null;
+    }
     if (pushState) {
       window.history.pushState({}, "", `#${path}`);
     }
