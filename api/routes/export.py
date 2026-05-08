@@ -68,7 +68,7 @@ def export_pdf(entity_id: str, driver=Depends(get_db)):
 
     media_type = (
         "application/pdf"
-        if output_path.endswith(".pdf")
+        if real_out.endswith(".pdf")
         else "text/html"
     )
     
@@ -84,10 +84,11 @@ def export_pdf(entity_id: str, driver=Depends(get_db)):
     except Exception as _bc_err:
         logger.debug(f"[Export] Blockchain audit step (optional): {_bc_err}")
 
+    # CodeQL #16-17 FIX: use validated real_out path for all file operations
     return FileResponse(
-        output_path,
+        real_out,
         media_type=media_type,
-        filename=os.path.basename(output_path),
+        filename=os.path.basename(real_out),
         headers={"X-Report-Hash": result["report_hash"]},
     )
 
