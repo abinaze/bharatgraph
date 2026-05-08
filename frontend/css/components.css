@@ -203,6 +203,7 @@
   letter-spacing: 0.08em;
 }
 
+.risk-badge--NONE      { background: var(--bg-tertiary);     color: var(--text-muted); }
 .risk-badge--LOW       { background: rgba(40,167,69,0.15);  color: var(--color-risk-low); }
 .risk-badge--MODERATE  { background: rgba(255,193,7,0.15);  color: #856404; }
 .risk-badge--HIGH      { background: rgba(253,126,20,0.15); color: var(--color-risk-high); }
