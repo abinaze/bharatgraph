@@ -74,7 +74,7 @@ const Views = {
             <div>
               <h2 class="section-title">How It Works</h2>
               <p class="section-subtitle">
-                Enter any entity. The platform runs 12 specialist investigators
+                Enter any entity. The platform runs 15 specialist investigators
                 in parallel, each analysing from a different angle.
                 Findings are synthesised -- where three or more investigators
                 agree, confidence is marked as high.
@@ -892,7 +892,7 @@ const Views = {
               ["Data Sources",
                "21 official Indian government data sources plus international datasets from OpenSanctions (sanctions and PEP screening), ICIJ Offshore Leaks (Panama, Pandora, Paradise Papers), and Wikidata (entity enrichment)."],
               ["Methodology",
-               "The BharatGraph Multi-Investigator Engine runs 12 specialist AI investigators in parallel. Each queries the knowledge graph independently. Findings confirmed by two or more investigators are marked as high-confidence (MODERATE when 2, HIGH when 3+). All language output is validated against a forbidden-words list that prohibits accusatory terminology."],
+               "The BharatGraph Multi-Investigator Engine runs 15 specialist AI investigators in parallel. Each queries the knowledge graph independently. Findings confirmed by two or more investigators are marked as high-confidence (MODERATE when 2, HIGH when 3+). All language output is validated against a forbidden-words list that prohibits accusatory terminology."],
             ].map(([title, body]) => `
               <div class="card">
                 <div class="card__header"><div class="card__title">${title}</div></div>
