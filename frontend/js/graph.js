@@ -202,7 +202,6 @@ const GraphRenderer = {
     GraphRenderer._currentSimulation = simulation;
     // L-06 FIX: store simulation ref so tab-switch can call .stop()
     // D3 force runs in background consuming CPU when graph tab is hidden
-    GraphRenderer._currentSimulation = simulation;
     return simulation;
   },
 
