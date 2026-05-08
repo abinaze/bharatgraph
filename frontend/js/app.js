@@ -267,27 +267,27 @@ const Views = {
                     border:1px solid var(--border-color);border-radius:6px;cursor:pointer"
                     onchange="State.language=this.value;applyLanguage(this.value);document.getElementById('navbar-lang-select')&&(document.getElementById('navbar-lang-select').value=this.value);(function(){const q=document.getElementById('search-input')&&document.getElementById('search-input').value.trim()||new URLSearchParams(window.location.hash.split('?')[1]||'').get('q')||'';if(q){const t=new URLSearchParams(window.location.hash.split('?')[1]||'').get('type')||'';Router.navigate('/search?q='+encodeURIComponent(q)+(t?'&type='+encodeURIComponent(t):'')+'&lang='+this.value);}}).call(this)">
               <option value="en">?? English</option>
-              <option value="hi">??????</option>
-              <option value="ta">?????</option>
-              <option value="te">??????</option>
-              <option value="kn">?????</option>
-              <option value="ml">??????</option>
-              <option value="mr">?????</option>
-              <option value="bn">?????</option>
-              <option value="gu">???????</option>
-              <option value="pa">??????</option>
-              <option value="or">?????</option>
-              <option value="as">???????</option>
-              <option value="ur">????</option>
-              <option value="kok">??????</option>
-              <option value="mai">??????</option>
-              <option value="mni">???????</option>
-              <option value="sat">???????</option>
-              <option value="ks">?????</option>
-              <option value="ne">??????</option>
-              <option value="doi">?????</option>
-              <option value="sa">?????????</option>
-              <option value="sd">????</option>
+              <option value="hi">HI -- हिन्दी</option>
+              <option value="ta">TA -- தமிழ்</option>
+              <option value="te">TE -- తెలుగు</option>
+              <option value="kn">KN -- ಕನ್ನಡ</option>
+              <option value="ml">ML -- മലയാളം</option>
+              <option value="mr">MR -- मराठी</option>
+              <option value="bn">BN -- বাংলা</option>
+              <option value="gu">GU -- ગુજરાતી</option>
+              <option value="pa">PA -- ਪੰਜਾਬੀ</option>
+              <option value="or">OR -- ଓଡ଼ିଆ</option>
+              <option value="as">AS -- অসমীয়া</option>
+              <option value="ur">UR -- اردو</option>
+              <option value="kok">KOK -- कोंकणी</option>
+              <option value="mai">MAI -- मैथिली</option>
+              <option value="mni">MNI -- মৈতৈলোন্</option>
+              <option value="sat">SAT -- ṥṁṭtāḷi</option>
+              <option value="ks">KS -- کٲشہر</option>
+              <option value="ne">NE -- नेपाली</option>
+              <option value="doi">DOI -- डोगरी</option>
+              <option value="sa">SA -- संस्कृतम्</option>
+              <option value="sd">SD -- سنڌي</option>
             </select>
           </div>
 
