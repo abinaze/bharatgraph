@@ -1,3 +1,8 @@
+# ARCH-2 FIX: This is entity_resolver v1 -- DEPRECATED.
+# Use processing/entity_resolver_v2.py (EntityResolverV2) instead.
+# This file is kept only for backward compatibility. Do not edit.
+# The pipeline already imports EntityResolverV2 via the alias:
+#   from processing.entity_resolver_v2 import EntityResolver
 """
 BharatGraph - Entity Resolver
 Matches the SAME person or company appearing under different names
