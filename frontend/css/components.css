@@ -618,3 +618,28 @@
   #app-main div[style*='grid-template-columns: 1fr 340px'] {
   }
 }
+
+/* UI-1 FIX: hamburger button and mobile navigation drawer */
+@media (max-width: 768px) {
+  .navbar__hamburger { display: block !important; }
+  .navbar__nav {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--space-4);
+    z-index: 490;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .navbar__nav--open {
+    display: flex !important;
+  }
+  .navbar__nav-link {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+  }
+}
