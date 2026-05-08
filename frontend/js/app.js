@@ -458,10 +458,10 @@ const Views = {
             <div style="margin-bottom:var(--space-6)">
               <div style="display:flex;align-items:center;gap:var(--space-3);
                           margin-bottom:var(--space-2)">
-                <span class="badge badge--${type.toLowerCase()}">${type}</span>
+                <span class="badge badge--${sanitize(type).toLowerCase()}">${sanitize(type)}</span>
               </div>
               <h1 style="font-size:var(--font-size-3xl);font-weight:700;
-                         color:var(--text-primary);margin-bottom:var(--space-2)">${name}</h1>
+                         color:var(--text-primary);margin-bottom:var(--space-2)">${sanitize(name)}</h1>
               ${profile?.overview
                 ? Object.entries(profile.overview)
                     .filter(([,v]) => v)
@@ -469,7 +469,7 @@ const Views = {
                       <span style="font-size:var(--font-size-sm);
                                    color:var(--text-secondary);
                                    margin-right:var(--space-4)">
-                        <strong>${k}:</strong> ${v}
+                        <strong>${sanitize(k)}:</strong> ${sanitize(String(v))}
                       </span>
                     `).join("")
                 : ""}
@@ -531,7 +531,7 @@ const Views = {
                 <div id="risk-badge-container" style="margin-bottom:var(--space-4)"></div>
                 <p style="font-size:var(--font-size-xs);color:var(--text-muted);
                           line-height:var(--line-height-relaxed)">
-                  ${risk?.explanation || "Risk explanation unavailable."}
+                  ${sanitize(risk?.explanation || "Risk explanation unavailable.")}
                 </p>
               </div>
             </div>
