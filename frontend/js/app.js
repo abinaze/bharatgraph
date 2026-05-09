@@ -749,7 +749,7 @@ const Views = {
                          placeholder="Target entity ID..."
                          style="font-size:12px;padding:8px 12px">
                   <button onclick="Views._findPath(this.dataset.eid)"
-                          data-eid="${entityId}"
+                          data-eid="${sanitize(entityId)}"
                           class="btn btn--secondary" style="font-size:12px">Find Shortest Path</button>
                 </div>
                 <div id="path-result" style="margin-top:10px"></div>
@@ -771,7 +771,9 @@ const Views = {
       listEl.innerHTML = edges.length ? edges.map(e => `
         <div style="padding:10px 12px;margin-bottom:6px;background:var(--bg-secondary);
                     border-radius:8px;border:1px solid var(--border-color);cursor:pointer"
-             onclick="EvidencePanel.open('${sanitize(e.connected_id||'')}','${sanitize(e.connected_to||'')}')">
+             data-eid="${sanitize(e.connected_id||'')}"
+             data-ename="${sanitize(e.connected_to||'')}"
+             onclick="EvidencePanel.open(this.getAttribute('data-eid'),this.getAttribute('data-ename'))">
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;
                       color:var(--color-saffron);margin-bottom:2px">${sanitize(e.rel_label||"")}</div>
           <div style="font-size:12px;font-weight:600;color:var(--text-primary)">
