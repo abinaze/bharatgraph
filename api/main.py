@@ -141,6 +141,12 @@ def get_stats():
     if _stats_cache is not None and (_now - _stats_cached_at) < _STATS_TTL:
         return _stats_cache
 
+    # BACKEND-2 FIX: lock prevents two concurrent requests both
+    # seeing _stats_cache is None and both running the full graph scan
+    with _stats_lock:
+        import time as _tc
+        if _stats_cache is not None and (_tc.monotonic() - _stats_cached_at) < _STATS_TTL:
+            return _stats_cache
     driver      = get_driver()
     node_counts = {}
     rel_counts  = {}
