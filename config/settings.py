@@ -6,7 +6,7 @@ load_dotenv()
 
 # Project Info
 PROJECT_NAME = "BharatGraph"
-VERSION      = "0.31.4"   # NEW-A7 FIX: bumped from 0.31.0 after 3 bug sprints
+VERSION      = "0.31.5"   # NEW-A7 FIX: bumped from 0.31.0 after 3 bug sprints
 DESCRIPTION  = "AI-powered public transparency platform for India"
 
 # Database

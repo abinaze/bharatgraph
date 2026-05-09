@@ -22,6 +22,14 @@ async def lifespan(app: FastAPI):
     driver = get_driver()
     if driver:
         logger.success("[API] Neo4j ready")
+        # SEARCH-1 FIX: ensure fulltext index exists on every startup.
+        # setup_schema() uses IF NOT EXISTS -- safe to call repeatedly.
+        try:
+            from graph.loader import GraphLoader
+            GraphLoader(driver=driver).setup_schema()
+            logger.info("[API] Schema/index verified")
+        except Exception as _se:
+            logger.warning(f"[API] Schema setup skipped: {type(_se).__name__}")
     else:
         logger.warning("[API] Starting without Neo4j -- set secrets to enable")
     yield
@@ -36,7 +44,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.31.4",
+    version="0.31.5",
     lifespan=lifespan,
 )
 
@@ -93,7 +101,7 @@ app.include_router(runtime.router,       tags=["Runtime"])
 def root():
     return {
         "name":        "BharatGraph API",
-        "version":     "0.31.4",
+        "version":     "0.31.5",
         "status":      "running",
         "docs":        "/docs",
         "health":      "/health",
@@ -114,7 +122,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.31.4",
+        version="0.31.5",
         generated_at=datetime.now().isoformat(),
     )
 
@@ -133,6 +141,12 @@ def get_stats():
     if _stats_cache is not None and (_now - _stats_cached_at) < _STATS_TTL:
         return _stats_cache
 
+    # BACKEND-2 FIX: lock prevents two concurrent requests both
+    # seeing _stats_cache is None and both running the full graph scan
+    with _stats_lock:
+        import time as _tc
+        if _stats_cache is not None and (_tc.monotonic() - _stats_cached_at) < _STATS_TTL:
+            return _stats_cache
     driver      = get_driver()
     node_counts = {}
     rel_counts  = {}
@@ -185,7 +199,7 @@ async def websocket_feed(websocket: WebSocket):
             payload = {"type": "feed", "at": datetime.now().isoformat()}
             if driver:
                 try:
-                    loop = asyncio.get_event_loop()
+                    loop = asyncio.get_running_loop()  # FEED-3 FIX: get_event_loop deprecated in 3.10+
 
                     def _query_feed():
                         # C-03 / BUG-C3 FIX: synchronous Neo4j driver MUST run

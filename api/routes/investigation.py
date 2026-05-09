@@ -35,7 +35,8 @@ def deep_investigate(entity_id: str, driver=Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"[Investigation] Error for {entity_id}: {type(e).__name__}: {e}")
+        # CodeQL #23 FIX: log type only -- full exception may contain Neo4j URI/credentials
+        logger.error(f"[Investigation] Error for {entity_id[:8]}...: {type(e).__name__}")
         return {
             "entity_id":   entity_id,
             "entity_name": entity_id,

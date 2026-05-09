@@ -43,3 +43,7 @@ neo4j/data/
 node_modules/data/processed/*.html
 data/processed/*.pdf
 data/processed/dossier_*
+
+# SEC-2 FIX: prevent audit/financial log files from being committed
+logs/*.jsonl
+logs/audit*

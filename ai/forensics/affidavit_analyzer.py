@@ -128,9 +128,11 @@ class AffidavitAnalyzer:
                 "and investment returns."
             )
 
+        # CodeQL #10,#11,#21 FIX: never log financial amounts (Rs residual)
+        # or detailed entity data -- use finding count and level only
         logger.success(
             f"[AffidavitAnalyzer] entity={entity_id[:8]}...: level={level} "
-            f"residual=Rs {residual:.1f} Cr findings={len(findings)}"
+            f"findings={len(findings)}"
         )
 
         return {

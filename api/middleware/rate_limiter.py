@@ -51,14 +51,16 @@ class SlidingWindowRateLimiter(BaseHTTPMiddleware):
         key = f"{ip}:{path.split('/')[1]}"
         now = time.time()
 
-        # Evict stale entries every 5 minutes to prevent memory leak (BUG-14)
+        # BACKEND-1 FIX: prune current key FIRST, THEN evict stale entries.
+        # Previous order evicted before pruning -- lost tracking on burst-after-idle keys.
+        self._windows[key] = [t for t in self._windows[key] if now - t < window]
+
+        # Evict stale entries every 5 minutes to prevent memory leak
         if now - self._evict_at > 300:
             stale_keys = [k for k, ts in self._windows.items() if not ts or now - ts[0] > window]
             for k in stale_keys:
                 del self._windows[k]
             self._evict_at = now
-
-        self._windows[key] = [t for t in self._windows[key] if now - t < window]
 
         if len(self._windows[key]) >= max_req:
             retry = int(window - (now - self._windows[key][0]))

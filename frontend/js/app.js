@@ -6,7 +6,7 @@ function sanitize(str) {
 
 const State = {
   theme: localStorage.getItem("bg-theme") || "dark",
-  language: "en",
+  language: localStorage.getItem("bg-lang") || "en",  // LOGIC-4 FIX: persist language
   searchResults: [],
   currentEntity: null,
   feedSocket: null,
@@ -74,7 +74,7 @@ const Views = {
             <div>
               <h2 class="section-title">How It Works</h2>
               <p class="section-subtitle">
-                Enter any entity. The platform runs 12 specialist investigators
+                Enter any entity. The platform runs 15 specialist investigators
                 in parallel, each analysing from a different angle.
                 Findings are synthesised -- where three or more investigators
                 agree, confidence is marked as high.
@@ -132,13 +132,15 @@ const Views = {
 
     document.getElementById("home-search-btn").addEventListener("click", () => {
       const q = document.getElementById("home-search-input").value.trim();
-      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+      const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
     });
 
     document.getElementById("home-search-input").addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const q = e.target.value.trim();
-        if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+        const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
       }
     });
 
@@ -173,9 +175,9 @@ const Views = {
   },
 
   _connectFeedToHome: () => {
-    // BUG-6 FIX: added ws.onclose with exponential-backoff reconnect so the
-    // home-feed recovers automatically when the backend restarts, instead of
-    // going silent permanently until the user hard-refreshes.
+    // FEED-2 FIX: reset retry counter each time _connectFeedToHome is called
+    // so navigating Home -> elsewhere -> Home restarts the 20-retry budget
+    if (typeof connect !== 'undefined') connect._retries = 0;
     function connect(delay) {
       delay = delay || 2000;
       let ws;
@@ -267,36 +269,36 @@ const Views = {
                     border:1px solid var(--border-color);border-radius:6px;cursor:pointer"
                     onchange="State.language=this.value;applyLanguage(this.value);document.getElementById('navbar-lang-select')&&(document.getElementById('navbar-lang-select').value=this.value);(function(){const q=document.getElementById('search-input')&&document.getElementById('search-input').value.trim()||new URLSearchParams(window.location.hash.split('?')[1]||'').get('q')||'';if(q){const t=new URLSearchParams(window.location.hash.split('?')[1]||'').get('type')||'';Router.navigate('/search?q='+encodeURIComponent(q)+(t?'&type='+encodeURIComponent(t):'')+'&lang='+this.value);}}).call(this)">
               <option value="en">?? English</option>
-              <option value="hi">??????</option>
-              <option value="ta">?????</option>
-              <option value="te">??????</option>
-              <option value="kn">?????</option>
-              <option value="ml">??????</option>
-              <option value="mr">?????</option>
-              <option value="bn">?????</option>
-              <option value="gu">???????</option>
-              <option value="pa">??????</option>
-              <option value="or">?????</option>
-              <option value="as">???????</option>
-              <option value="ur">????</option>
-              <option value="kok">??????</option>
-              <option value="mai">??????</option>
-              <option value="mni">???????</option>
-              <option value="sat">???????</option>
-              <option value="ks">?????</option>
-              <option value="ne">??????</option>
-              <option value="doi">?????</option>
-              <option value="sa">?????????</option>
-              <option value="sd">????</option>
+              <option value="hi">HI -- हिन्दी</option>
+              <option value="ta">TA -- தமிழ்</option>
+              <option value="te">TE -- తెలుగు</option>
+              <option value="kn">KN -- ಕನ್ನಡ</option>
+              <option value="ml">ML -- മലയാളം</option>
+              <option value="mr">MR -- मराठी</option>
+              <option value="bn">BN -- বাংলা</option>
+              <option value="gu">GU -- ગુજરાતી</option>
+              <option value="pa">PA -- ਪੰਜਾਬੀ</option>
+              <option value="or">OR -- ଓଡ଼ିଆ</option>
+              <option value="as">AS -- অসমীয়া</option>
+              <option value="ur">UR -- اردو</option>
+              <option value="kok">KOK -- कोंकणी</option>
+              <option value="mai">MAI -- मैथिली</option>
+              <option value="mni">MNI -- মৈতৈলোন্</option>
+              <option value="sat">SAT -- ṥṁṭtāḷi</option>
+              <option value="ks">KS -- کٲشہر</option>
+              <option value="ne">NE -- नेपाली</option>
+              <option value="doi">DOI -- डोगरी</option>
+              <option value="sa">SA -- संस्कृतम्</option>
+              <option value="sd">SD -- سنڌي</option>
             </select>
           </div>
 
           <div style="display:flex;align-items:center;gap:var(--space-2);
                       margin-bottom:var(--space-6);flex-wrap:wrap">
             <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Filter:</span>
-            ${["All","politician","company","audit","contract","ministry","party","scheme","tender","electoralbond","regulatory","enforcement","insolvency","ngo","parliamentquestion","vigilancecircular","icijentity","sanctionedentity","courtcase","localbody"].map(t => `
+            ${["All","politician","company","audit","contract","ministry","party","scheme","tender","electoralbond","regulatory","enforcement","insolvency","ngo","parliamentquestion","vigilancecircular","icijentity","sanctionedentity","courtcase","localbody","datagov","crimereport"].map(t => `
               <button class="btn btn--sm ${type === t || (!type && t==="All") ? "btn--primary" : "btn--secondary"}"
-                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!=="All"?"&type="+t.toLowerCase():""}')">
+                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!==\'All\'?"&type="+t.toLowerCase():""}'+(State.language&&State.language!=='en'?'&lang='+State.language:''))">
                 ${t.charAt(0).toUpperCase()+t.slice(1)}
               </button>
             `).join("")}
@@ -314,19 +316,17 @@ const Views = {
     const _searchInput = document.getElementById("search-input");
     if (_searchInput && query) _searchInput.value = query;
 
-    // C-01 FIX: pre-fill search input with current query
-    // Users could not see what they searched and could not edit it
-    const _si = document.getElementById("search-input");
-    if (_si && query) _si.value = query;
 
     document.getElementById("search-btn").addEventListener("click", () => {
       const q = document.getElementById("search-input").value.trim();
-      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+      const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
     });
     document.getElementById("search-input").addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const q = e.target.value.trim();
-        if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+        const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
       }
     });
 
@@ -462,10 +462,10 @@ const Views = {
             <div style="margin-bottom:var(--space-6)">
               <div style="display:flex;align-items:center;gap:var(--space-3);
                           margin-bottom:var(--space-2)">
-                <span class="badge badge--${type.toLowerCase()}">${type}</span>
+                <span class="badge badge--${sanitize(type).toLowerCase()}">${sanitize(type)}</span>
               </div>
               <h1 style="font-size:var(--font-size-3xl);font-weight:700;
-                         color:var(--text-primary);margin-bottom:var(--space-2)">${name}</h1>
+                         color:var(--text-primary);margin-bottom:var(--space-2)">${sanitize(name)}</h1>
               ${profile?.overview
                 ? Object.entries(profile.overview)
                     .filter(([,v]) => v)
@@ -473,7 +473,7 @@ const Views = {
                       <span style="font-size:var(--font-size-sm);
                                    color:var(--text-secondary);
                                    margin-right:var(--space-4)">
-                        <strong>${k}:</strong> ${v}
+                        <strong>${sanitize(k)}:</strong> ${sanitize(String(v))}
                       </span>
                     `).join("")
                 : ""}
@@ -535,7 +535,7 @@ const Views = {
                 <div id="risk-badge-container" style="margin-bottom:var(--space-4)"></div>
                 <p style="font-size:var(--font-size-xs);color:var(--text-muted);
                           line-height:var(--line-height-relaxed)">
-                  ${risk?.explanation || "Risk explanation unavailable."}
+                  ${sanitize(risk?.explanation || "Risk explanation unavailable.")}
                 </p>
               </div>
             </div>
@@ -643,6 +643,17 @@ const Views = {
               _id: item.id,
               });
             });
+          } else if (data.message && data.message.includes("pipeline")) {
+            // FEED-1 FIX: liveFeed view had no pipeline-message guard.
+            // The admin system message was rendered as fake intelligence.
+            // Show user-friendly empty-state instead.
+            const container2 = document.getElementById("feed-container");
+              const callout = document.createElement("div");
+              callout.id = "lf-empty-callout";
+              callout.style.cssText = "padding:20px;text-align:center;color:var(--color-saffron);font-size:13px;border:1px solid rgba(255,153,51,0.25);border-radius:8px;margin:8px";
+              callout.textContent = "Intelligence database is being populated. Check back after the daily pipeline run completes.";
+              container2.appendChild(callout);
+            }
           } else {
             feedItems.unshift({
               headline: sanitize(data.message || "Feed update received"),
@@ -713,7 +724,7 @@ const Views = {
                 </span>
                 <div style="display:flex;gap:6px">
                   <span style="font-size:10px;color:var(--text-muted)">
-                    ? Strong  ? Medium  ? Weak
+                    &#9733; Strong &nbsp; &#9671; Medium &nbsp; &#9675; Weak
                   </span>
                 </div>
               </div>
@@ -742,7 +753,7 @@ const Views = {
                          placeholder="Target entity ID..."
                          style="font-size:12px;padding:8px 12px">
                   <button onclick="Views._findPath(this.dataset.eid)"
-                          data-eid="${entityId}"
+                          data-eid="${sanitize(entityId)}"
                           class="btn btn--secondary" style="font-size:12px">Find Shortest Path</button>
                 </div>
                 <div id="path-result" style="margin-top:10px"></div>
@@ -764,7 +775,9 @@ const Views = {
       listEl.innerHTML = edges.length ? edges.map(e => `
         <div style="padding:10px 12px;margin-bottom:6px;background:var(--bg-secondary);
                     border-radius:8px;border:1px solid var(--border-color);cursor:pointer"
-             onclick="EvidencePanel.open('${sanitize(e.connected_id||'')}','${sanitize(e.connected_to||'')}')">
+             data-eid="${sanitize(e.connected_id||'')}"
+             data-ename="${sanitize(e.connected_to||'')}"
+             onclick="EvidencePanel.open(this.getAttribute('data-eid'),this.getAttribute('data-ename'))">
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;
                       color:var(--color-saffron);margin-bottom:2px">${sanitize(e.rel_label||"")}</div>
           <div style="font-size:12px;font-weight:600;color:var(--text-primary)">
@@ -774,7 +787,7 @@ const Views = {
             ${sanitize(e.why||"")}
           </div>
           <div style="font-size:10px;color:var(--text-muted);margin-top:2px">
-            ? ${sanitize(e.source||"")}
+            &#128196; ${sanitize(e.source||"")}
           </div>
         </div>`).join("") : `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px">
           No connections in current dataset</div>`;
@@ -885,7 +898,7 @@ const Views = {
               ["Data Sources",
                "21 official Indian government data sources plus international datasets from OpenSanctions (sanctions and PEP screening), ICIJ Offshore Leaks (Panama, Pandora, Paradise Papers), and Wikidata (entity enrichment)."],
               ["Methodology",
-               "The BharatGraph Multi-Investigator Engine runs 12 specialist AI investigators in parallel. Each queries the knowledge graph independently. Findings confirmed by two or more investigators are marked as high-confidence (MODERATE when 2, HIGH when 3+). All language output is validated against a forbidden-words list that prohibits accusatory terminology."],
+               "The BharatGraph Multi-Investigator Engine runs 15 specialist AI investigators in parallel. Each queries the knowledge graph independently. Findings confirmed by two or more investigators are marked as high-confidence (MODERATE when 2, HIGH when 3+). All language output is validated against a forbidden-words list that prohibits accusatory terminology."],
             ].map(([title, body]) => `
               <div class="card">
                 <div class="card__header"><div class="card__title">${title}</div></div>
@@ -940,13 +953,13 @@ const _langLabelCache = {};
 
 // M-05 FIX: cache language labels -- applyLanguage() was re-fetching on every change
 // causing multiple concurrent API calls during rapid language switching
-const _langLabelCache = {};
 
 // M-05 FIX: cache language labels -- applyLanguage() was re-fetching on every change
 // causing multiple concurrent API calls during rapid language switching
-const _langLabelCache = {};
 
 async function applyLanguage(lang) {
+  // LOGIC-4 FIX: save language preference so it survives page refresh
+  if (lang) localStorage.setItem("bg-lang", lang);
   const badge = document.getElementById("lang-badge");
   if (!lang || lang === "en") {
     document.querySelectorAll("[data-i18n]").forEach(el => {

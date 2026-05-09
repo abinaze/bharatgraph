@@ -33,7 +33,7 @@
           </div>
         </a>
 
-        <nav class="navbar__nav" aria-label="Main navigation">
+        <nav id="main-nav" class="navbar__nav" aria-label="Main navigation">
           <a class="navbar__nav-link" data-route="/"
              href="#/" onclick="Router.navigate('/');return false;" data-i18n="nav_home" data-i18n-default="Home">Home</a>
           <a class="navbar__nav-link" data-route="/search"
@@ -44,6 +44,13 @@
              href="#/about" onclick="Router.navigate('/about');return false;" data-i18n="nav_about" data-i18n-default="About">About</a>
         </nav>
 
+        <!-- UI-1 FIX: hamburger button for mobile navigation -->
+        <button id="nav-toggle" class="navbar__hamburger" aria-label="Open navigation"
+                onclick="document.getElementById('main-nav').classList.toggle('navbar__nav--open')"
+                style="display:none;background:none;border:none;cursor:pointer;
+                        padding:8px;color:var(--text-primary);font-size:20px">
+          &#9776;
+        </button>
         <div class="navbar__controls">
           <select id="navbar-lang-select"
                   style="background:var(--bg-tertiary);border:1px solid var(--border-color);
@@ -69,6 +76,9 @@
             <option value="ne">NE -- नेपाली</option>
             <option value="doi">DOI -- डोगरी</option>
             <option value="sa">SA -- संस्कृतम्</option>
+            <option value="mni">MNI -- মৈতৈলোন্</option>
+            <option value="sat">SAT -- ṥṁṭtāḷi</option>
+            <option value="ks">KS -- کٲشہر</option>
           </select>
           <button class="btn btn--ghost btn--sm" id="theme-btn"
                   onclick="toggleTheme()" aria-label="Toggle theme">

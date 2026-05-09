@@ -34,10 +34,16 @@ def run_investigator(investigator_class, entity_id: str,
                 "running with FakeSession -- DB offline, findings will be empty"
             )
             class FakeSession:
+                # INV-3 FIX: add context manager support so investigators
+                # using 'with session.run(...) as r:' don't crash silently
+                def __enter__(self): return self
+                def __exit__(self, *a): pass
                 def run(self, *a, **k):
                     class FakeResult:
                         def single(self):  return None
                         def data(self):    return []
+                        def __enter__(self): return self
+                        def __exit__(self, *a): pass
                     return FakeResult()
             return investigator.investigate(entity_id, entity_name, FakeSession())
     except Exception as e:

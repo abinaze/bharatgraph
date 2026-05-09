@@ -11,7 +11,7 @@ const EvidencePanel = {
     const panel = document.createElement("div");
     panel.id = "evidence-panel";
     panel.style.cssText = `
-      position:fixed;top:0;right:-480px;width:460px;height:100vh;
+      position:fixed;top:0;right:-100vw;width:min(460px,100vw);height:100vh;
       background:var(--bg-secondary);border-left:1px solid var(--border-color);
       box-shadow:-4px 0 32px rgba(0,0,0,0.4);z-index:500;
       display:flex;flex-direction:column;transition:right 0.3s cubic-bezier(.4,0,.2,1);
