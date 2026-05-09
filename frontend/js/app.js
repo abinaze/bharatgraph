@@ -132,13 +132,15 @@ const Views = {
 
     document.getElementById("home-search-btn").addEventListener("click", () => {
       const q = document.getElementById("home-search-input").value.trim();
-      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+      const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
     });
 
     document.getElementById("home-search-input").addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const q = e.target.value.trim();
-        if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+        const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
       }
     });
 
@@ -296,7 +298,7 @@ const Views = {
             <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Filter:</span>
             ${["All","politician","company","audit","contract","ministry","party","scheme","tender","electoralbond","regulatory","enforcement","insolvency","ngo","parliamentquestion","vigilancecircular","icijentity","sanctionedentity","courtcase","localbody","datagov","crimereport"].map(t => `
               <button class="btn btn--sm ${type === t || (!type && t==="All") ? "btn--primary" : "btn--secondary"}"
-                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!=="All"?"&type="+t.toLowerCase():""}')">
+                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!==\'All\'?"&type="+t.toLowerCase():""}'+(State.language&&State.language!=='en'?'&lang='+State.language:''))">
                 ${t.charAt(0).toUpperCase()+t.slice(1)}
               </button>
             `).join("")}
@@ -317,12 +319,14 @@ const Views = {
 
     document.getElementById("search-btn").addEventListener("click", () => {
       const q = document.getElementById("search-input").value.trim();
-      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+      const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
     });
     document.getElementById("search-input").addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const q = e.target.value.trim();
-        if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}`);
+        const _l=State.language&&State.language!=='en'?'&lang='+State.language:'';
+      if (q) Router.navigate(`/search?q=${encodeURIComponent(q)}${_l}`);
       }
     });
 
