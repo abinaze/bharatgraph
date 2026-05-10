@@ -59,7 +59,6 @@ patterns in public data.
 
 ---
 
-
 ## Architecture
 
 ```
