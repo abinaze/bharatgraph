@@ -183,9 +183,13 @@ def get_stats():
     return result
 
 
+# NEW-3 FIX: expanded from 6 to 14 types -- Politician, Company, CourtCase etc
+# were never appearing in the live feed even when the graph was fully populated
 _FEED_LABELS = [
     "AuditReport", "EnforcementAction", "RegulatoryOrder",
     "ElectoralBond", "Contract", "VigilanceCircular",
+    "Politician", "Company", "CourtCase", "Tender",
+    "NGO", "PressRelease", "InsolvencyOrder", "SanctionedEntity",
 ]
 
 
