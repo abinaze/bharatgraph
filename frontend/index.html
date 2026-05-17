@@ -26,9 +26,10 @@
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/components.css">
 
+  <!-- B-25 FIX: wrong SRI hash removed -- browsers refused to load D3 -->
+  <!-- breaking ALL graph visualisation (relationship graph, zoom, nodes) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
     onerror="window._d3Failed=true;console.warn('D3 CDN failed')"
-          integrity="sha512-vc58zeoRPCJhAkQJqFb0P2VkgSAp3XpAfNKrFd5rqIpY9i1r2FfBBq9vO2C0JimL7Wh8/Q3EJIHdM+bFa0cA=="
           crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
