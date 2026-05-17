@@ -653,7 +653,6 @@ const Views = {
               callout.style.cssText = "padding:20px;text-align:center;color:var(--color-saffron);font-size:13px;border:1px solid rgba(255,153,51,0.25);border-radius:8px;margin:8px";
               callout.textContent = "Intelligence database is being populated. Check back after the daily pipeline run completes.";
               container2.appendChild(callout);
-            }
           } else {
             feedItems.unshift({
               headline: sanitize(data.message || "Feed update received"),
