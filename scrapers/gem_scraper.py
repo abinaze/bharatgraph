@@ -214,7 +214,7 @@ class GeMScraper(BaseScraper):
         return result
 
 
-# ── Run directly to test ─────────────────────────────────────────────────────
+# -- Run directly to test -----------------------------------------------------
 if __name__ == "__main__":
     print("=" * 60)
     print("BharatGraph - GeM Contracts Scraper Test")

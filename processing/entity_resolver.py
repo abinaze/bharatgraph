@@ -248,7 +248,7 @@ class EntityResolver:
         logger.success(f"[Resolver] Saved {len(matches)} matches to {filepath}")
 
 
-# ── Run directly to test ─────────────────────────────────
+# -- Run directly to test ---------------------------------
 if __name__ == "__main__":
     print("=" * 55)
     print("BharatGraph - Entity Resolver Test")
@@ -268,7 +268,7 @@ if __name__ == "__main__":
     ]
     for a, b in pairs:
         score = resolver.similarity_score(a, b)
-        match = "✅ MATCH" if score >= 0.6 else "❌ no match"
+        match = "? MATCH" if score >= 0.6 else "? no match"
         print(f"  {match} ({score:.2f})  '{a}' vs '{b}'")
 
     print("\n[2] Deduplication within dataset:")

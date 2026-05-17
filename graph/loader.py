@@ -73,22 +73,22 @@ class GraphLoader:
         with self.driver.session() as session:
             # BUG-3 FIX: fulltext index now covers all 20 node types (was 8).
             try:
+                # NEW-1 FIX: modern CREATE FULLTEXT INDEX (Neo4j 4.3+ / AuraDB)
+                # CALL db.index.fulltext.createNodeIndex removed in Neo4j 5.x
                 session.run(
-                    "CALL db.index.fulltext.createNodeIndex("
-                    "'globalSearch',"
-                    "['Politician','Company','Contract','AuditReport',"
-                    " 'Scheme','Ministry','Party','PressRelease',"
-                    " 'NGO','ElectoralBond','InsolvencyOrder','Tender',"
-                    " 'RegulatoryOrder','EnforcementAction',"
-                    " 'ParliamentQuestion','VigilanceCircular',"
-                    " 'ICIJEntity','SanctionedEntity','CourtCase','LocalBody'],"
-                    "['name','title','aliases','item_desc','product','buyer_org',"
-                    " 'cin','ministry','summary','seller_name','ngo_name',"
-                    " 'purchaser_name','redeemed_by','company_name','accused',"
-                    " 'entity_name','subject','jurisdiction']"
-                    ")"
+                    "CREATE FULLTEXT INDEX globalSearch IF NOT EXISTS "
+                    "FOR (n:Politician|Company|Contract|AuditReport|Scheme|Ministry|"
+                    "     Party|PressRelease|NGO|ElectoralBond|InsolvencyOrder|Tender|"
+                    "     RegulatoryOrder|EnforcementAction|ParliamentQuestion|"
+                    "     VigilanceCircular|ICIJEntity|SanctionedEntity|"
+                    "     CourtCase|LocalBody|Affidavit) "
+                    "ON EACH [n.name, n.title, n.aliases, n.item_desc, n.product, "
+                    "         n.buyer_org, n.cin, n.ministry, n.summary, "
+                    "         n.seller_name, n.ngo_name, n.purchaser_name, "
+                    "         n.redeemed_by, n.company_name, n.accused, "
+                    "         n.entity_name, n.subject, n.jurisdiction]"
                 )
-                logger.info("[Loader] Full-text index created or verified (20 types)")
+                logger.info("[Loader] Full-text index created/verified (21 types, modern syntax)")
             except Exception as e:
                 logger.debug(f"[Loader] Full-text index note: {e}")
 
@@ -402,6 +402,54 @@ class GraphLoader:
                 logger.warning(f"[Loader] DIRECTOR_OF link {pol_name}->{co_name} failed: {e}")
 
         logger.info(f"[Loader] DIRECTOR_OF links created/updated: {count}")
+        return count
+
+    def load_affidavits(self, records: list) -> int:
+        """B-05 FIX: was missing -- affidavit data scraped but never written to graph.
+        Investigators query (p:Politician)-[:FILED_AFFIDAVIT]->(a:Affidavit)
+        but zero Affidavit nodes existed. All affidavit queries returned empty.
+        """
+        count = 0
+        for r in records:
+            pol_id = (r.get("politician_id") or "").strip()
+            year   = r.get("year")
+            if not pol_id or not year:
+                continue
+            aff_id = make_id(pol_id, str(year))
+            result = self._run(
+                """
+                MERGE (a:Affidavit {id: })
+                SET a.politician_id         = ,
+                    a.year                  = ,
+                    a.total_assets_crore    = ,
+                    a.movable_assets_crore  = ,
+                    a.liabilities_crore     = ,
+                    a.criminal_cases        = ,
+                    a.source                = ,
+                    a.scraped_at            = 
+                WITH a
+                MATCH (p:Politician {id: })
+                MERGE (p)-[:FILED_AFFIDAVIT]->(a)
+                """,
+                {
+                    "id":                   aff_id,
+                    "politician_id":        pol_id,
+                    "year":                 int(year),
+                    "total_assets_crore":   float(r.get("total_assets_crore") or 0),
+                    "movable_assets_crore": float(r.get("movable_assets_crore") or 0),
+                    "liabilities_crore":    float(r.get("liabilities_crore") or 0),
+                    "criminal_cases":       int(r.get("criminal_cases") or 0),
+                    "source":               r.get("source", "myneta"),
+                    "scraped_at":           r.get(
+                        "scraped_at",
+                        __import__("datetime").datetime.now().isoformat()
+                    ),
+                }
+            )
+            if result is not None:
+                count += 1
+                self.stats["nodes_created"] += 1
+        logger.info(f"[Loader] Affidavits loaded: {count}")
         return count
 
     def load_from_pipeline_output(self, filepath: str) -> dict:

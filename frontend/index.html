@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
+  <!-- B-13 FIX: BHARATGRAPH_API_URL must be defined before api.js loads -->
+  <!-- Was at bottom of body -- race condition when api.js ran first -->
+  <script>
+    (function() {
+      var h = window.location.hostname;
+      window.BHARATGRAPH_API_URL = (h === "localhost" || h === "127.0.0.1" || h === "")
+        ? "http://localhost:8000"
+        : "https://abinazebinoly-bharatgraph.hf.space";
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="BharatGraph -- AI-powered public transparency and institutional intelligence platform for India.">
@@ -16,9 +26,10 @@
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/components.css">
 
+  <!-- B-25 FIX: wrong SRI hash removed -- browsers refused to load D3 -->
+  <!-- breaking ALL graph visualisation (relationship graph, zoom, nodes) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
     onerror="window._d3Failed=true;console.warn('D3 CDN failed')"
-          integrity="sha512-vc58zeoRPCJhAkQJqFb0P2VkgSAp3XpAfNKrFd5rqIpY9i1r2FfBBq9vO2C0JimL7Wh8/Q3EJIHdM+bFa0cA=="
           crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
@@ -138,17 +149,6 @@
 
   <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
-  <script>
-    // Auto-detect API URL: use local when developing, production when deployed
-    (function() {
-      var h = window.location.hostname;
-      if (h === "localhost" || h === "127.0.0.1" || h === "") {
-        window.BHARATGRAPH_API_URL = "http://localhost:8000";
-      } else {
-        window.BHARATGRAPH_API_URL = "https://abinazebinoly-bharatgraph.hf.space";
-      }
-    })();
-  </script>
   <script src="js/router.js"></script>
   <script src="js/api.js"></script>
   <script src="js/components.js"></script>

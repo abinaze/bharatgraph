@@ -40,10 +40,14 @@ def run_investigator(investigator_class, entity_id: str,
                 def __exit__(self, *a): pass
                 def run(self, *a, **k):
                     class FakeResult:
-                        def single(self):  return None
-                        def data(self):    return []
-                        def __enter__(self): return self
-                        def __exit__(self, *a): pass
+                        # B-26 FIX: __iter__ + __getitem__ prevent crashes
+                        # when investigators iterate or index results offline
+                        def single(self):          return None
+                        def data(self):            return []
+                        def __iter__(self):        return iter([])
+                        def __getitem__(self, k):  raise IndexError(k)
+                        def __enter__(self):       return self
+                        def __exit__(self, *a):    pass
                     return FakeResult()
             return investigator.investigate(entity_id, entity_name, FakeSession())
     except Exception as e:

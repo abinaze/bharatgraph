@@ -26,7 +26,7 @@ def investigate(entity_id: str, entity_name: str,
         if sr.get("fiedler_value", 1.0) > 0.5:
             positive.append(
                 f"Spectral analysis: well-connected in institutional network "
-                f"(Fiedler λ₁ = {sr['fiedler_value']:.4f})"
+                f"(Fiedler lambda_val1 = {sr['fiedler_value']:.4f})"
             )
         evidence.append({
             "institution": "Mathematical Analysis",
@@ -113,18 +113,6 @@ def investigate(entity_id: str, entity_name: str,
 
 # BUG-C1 FIX: class wrapper -- MathematicalInvestigator is the display name
 # but the import expects MathInvestigator to match the __init__.py import
-class MathInvestigator:
-    NAME   = NAME
-    FOCUS  = FOCUS
-    WEIGHT = WEIGHT
-
-    def investigate(self, entity_id: str, entity_name: str,
-                    session=None, driver=None) -> dict:
-        return investigate(entity_id, entity_name,
-                           session=session, driver=driver)
-
-
-# BUG-C1 FIX: class wrapper to match __init__.py import expectation
 class MathInvestigator:
     NAME   = NAME
     FOCUS  = FOCUS

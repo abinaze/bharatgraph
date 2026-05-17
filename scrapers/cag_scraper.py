@@ -198,11 +198,11 @@ class CAGScraper(BaseScraper):
             r for r in reports
             if float(r.get("amount_crore", 0) or 0) >= min_crore
         ]
-        logger.info(f"[CAG] Reports >= ₹{min_crore}Cr: {len(flagged)}")
+        logger.info(f"[CAG] Reports >= Rs.{min_crore}Cr: {len(flagged)}")
         return flagged
 
 
-# ── Run directly to test ──────────────────────────────────────────────────────
+# -- Run directly to test ------------------------------------------------------
 if __name__ == "__main__":
     print("=" * 60)
     print("BharatGraph - CAG Audit Report Scraper Test")
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         print(f"    URL:         {r.get('url', 'N/A')[:60]}")
         print(f"    Alert kws:   {r.get('alert_keywords', [])}")
         if r.get("amount_crore"):
-            print(f"    Amount:      ₹{r.get('amount_crore')} Crore")
+            print(f"    Amount:      Rs.{r.get('amount_crore')} Crore")
 
     print("\n[2] Filtering high-value irregularities (>=10 Cr)...")
     big = scraper.get_high_value_irregularities(reports, min_crore=10.0)

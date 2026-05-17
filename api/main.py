@@ -131,6 +131,8 @@ def health_check():
 _stats_cache      = None
 _stats_cached_at  = 0.0
 _STATS_TTL        = 60.0
+import threading as _threading          # B-01 FIX: was missing entirely
+_stats_lock       = _threading.Lock()  # B-01 FIX: NameError on every GET /stats
 
 
 @app.get("/stats", response_model=StatsResponse)
@@ -181,9 +183,13 @@ def get_stats():
     return result
 
 
+# NEW-3 FIX: expanded from 6 to 14 types -- Politician, Company, CourtCase etc
+# were never appearing in the live feed even when the graph was fully populated
 _FEED_LABELS = [
     "AuditReport", "EnforcementAction", "RegulatoryOrder",
     "ElectoralBond", "Contract", "VigilanceCircular",
+    "Politician", "Company", "CourtCase", "Tender",
+    "NGO", "PressRelease", "InsolvencyOrder", "SanctionedEntity",
 ]
 
 

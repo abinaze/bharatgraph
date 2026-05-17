@@ -60,7 +60,7 @@ class SpectralAnalyzer:
                     "this entity acts as a structural bridge between institutional networks. "
                     "Removing this entity would disconnect major clusters."
                 ),
-                "evidence": [f"Algebraic connectivity λ₁ = {fiedler_value:.4f}",
+                "evidence": [f"Algebraic connectivity lambda_val1 = {fiedler_value:.4f}",
                              f"Graph bridges detected: {len(bridges)}"],
             })
 
@@ -69,7 +69,7 @@ class SpectralAnalyzer:
                 "type":        "high_betweenness",
                 "severity":    "MODERATE",
                 "description": (
-                    f"Betweenness centrality {centrality['betweenness']:.3f} — "
+                    f"Betweenness centrality {centrality['betweenness']:.3f} -- "
                     "entity controls many shortest paths between other nodes."
                 ),
                 "evidence": [f"Betweenness: {centrality['betweenness']:.3f}",
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     a = SpectralAnalyzer()
     r = a.analyze("test_entity_001")
     print(f"\n  Nodes:        {r['node_count']}")
-    print(f"  Fiedler λ₁:   {r['fiedler_value']}")
+    print(f"  Fiedler lambda_val1:   {r['fiedler_value']}")
     print(f"  Connectivity: {r['connectivity']}")
     print(f"  Role:         {r['structural_role']}")
     print(f"  Bridges:      {r['bridges']}")

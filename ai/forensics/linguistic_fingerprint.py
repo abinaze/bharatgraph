@@ -118,7 +118,7 @@ class LinguisticFingerprinter:
             "analyzed_at":     datetime.now().isoformat(),
         }
 
-    # ── Burrows Delta authorship attribution ──────────────────────────────────
+    # -- Burrows Delta authorship attribution ----------------------------------
 
     def _burrows_delta(self, documents: list[dict]) -> dict:
         if len(documents) < MIN_DOCS_FOR_DELTA:
@@ -182,7 +182,7 @@ class LinguisticFingerprinter:
         total  = max(len(tokens), 1)
         return {w: tokens.count(w) / total for w in self.FUNCTION_WORDS}
 
-    # ── Template reuse via structural fingerprinting ──────────────────────────
+    # -- Template reuse via structural fingerprinting --------------------------
 
     def _template_reuse(self, documents: list[dict]) -> dict:
         fingerprints = []
@@ -229,7 +229,7 @@ class LinguisticFingerprinter:
         union        = len(fp_a | fp_b)
         return intersection / union if union > 0 else 0.0
 
-    # ── Shadow drafting detection ─────────────────────────────────────────────
+    # -- Shadow drafting detection ---------------------------------------------
 
     def _shadow_drafting(self, documents: list[dict]) -> dict:
         submissions = [d for d in documents if d.get("type") == "submission"]
@@ -329,7 +329,7 @@ class LinguisticFingerprinter:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Linguistic Fingerprinter Test")
+    print("BharatGraph -- Linguistic Fingerprinter Test")
     print("=" * 55)
     lf = LinguisticFingerprinter()
     r  = lf.analyze("pol_001", [], driver=None)
