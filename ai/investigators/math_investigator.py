@@ -26,7 +26,7 @@ def investigate(entity_id: str, entity_name: str,
         if sr.get("fiedler_value", 1.0) > 0.5:
             positive.append(
                 f"Spectral analysis: well-connected in institutional network "
-                f"(Fiedler λ₁ = {sr['fiedler_value']:.4f})"
+                f"(Fiedler lambda_val1 = {sr['fiedler_value']:.4f})"
             )
         evidence.append({
             "institution": "Mathematical Analysis",

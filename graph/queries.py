@@ -18,7 +18,7 @@ from loguru import logger
 
 QUERIES = {
 
-    # ── Core corruption pattern ───────────────────────────
+    # -- Core corruption pattern ---------------------------
     "politician_company_contracts": {
         "description": "Find politicians linked to companies that won govt contracts",
         "cypher": """
@@ -37,7 +37,7 @@ QUERIES = {
         "risk_level": "HIGH",
     },
 
-    # ── Repeated contract winners ─────────────────────────
+    # -- Repeated contract winners -------------------------
     "repeated_contract_winners": {
         "description": "Companies that won multiple contracts - concentration risk",
         "cypher": """
@@ -53,7 +53,7 @@ QUERIES = {
         "risk_level": "MEDIUM",
     },
 
-    # ── Ministry audit flags ──────────────────────────────
+    # -- Ministry audit flags ------------------------------
     "ministry_audit_flags": {
         "description": "Ministries most flagged by CAG audit reports",
         "cypher": """
@@ -68,7 +68,7 @@ QUERIES = {
         "risk_level": "MEDIUM",
     },
 
-    # ── Scheme irregularities ─────────────────────────────
+    # -- Scheme irregularities -----------------------------
     "scheme_irregularities": {
         "description": "Government schemes with largest CAG-flagged irregularities",
         "cypher": """
@@ -83,7 +83,7 @@ QUERIES = {
         "risk_level": "HIGH",
     },
 
-    # ── Politicians with criminal cases ───────────────────
+    # -- Politicians with criminal cases -------------------
     "politicians_with_cases": {
         "description": "Politicians with declared criminal cases",
         "cypher": """
@@ -100,7 +100,7 @@ QUERIES = {
         "risk_level": "MEDIUM",
     },
 
-    # ── Full profile: one politician ──────────────────────
+    # -- Full profile: one politician ----------------------
     "politician_profile": {
         "description": "Full graph profile for a named politician",
         "cypher": """
@@ -122,7 +122,7 @@ QUERIES = {
         "params": {"name": "politician name to search"},
     },
 
-    # ── High value contracts ──────────────────────────────
+    # -- High value contracts ------------------------------
     "high_value_contracts": {
         "description": "All contracts above threshold crore value",
         "cypher": """
@@ -140,7 +140,7 @@ QUERIES = {
         "params": {"min_crore": 1.0},
     },
 
-    # ── Node counts (health check) ────────────────────────
+    # -- Node counts (health check) ------------------------
     "node_counts": {
         "description": "Count of all node types in the graph",
         "cypher": """
@@ -151,7 +151,7 @@ QUERIES = {
         "risk_level": "INFO",
     },
 
-    # ── Relationship counts (health check) ────────────────
+    # -- Relationship counts (health check) ----------------
     "relationship_counts": {
         "description": "Count of all relationship types in the graph",
         "cypher": """
@@ -220,11 +220,11 @@ class QueryRunner:
 def print_query_library():
     """Print all available queries."""
     print("=" * 55)
-    print("  BharatGraph — Cypher Query Library")
+    print("  BharatGraph -- Cypher Query Library")
     print("=" * 55)
     for name, q in QUERIES.items():
         risk  = q["risk_level"]
-        emoji = {"HIGH": "🔴", "MEDIUM": "🟡", "INFO": "🟢"}.get(risk, "⚪")
+        emoji = {"HIGH": "?", "MEDIUM": "?", "INFO": "?"}.get(risk, "?")
         print(f"\n  {emoji} {name}")
         print(f"     {q['description']}")
         if "params" in q:

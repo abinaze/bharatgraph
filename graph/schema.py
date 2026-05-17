@@ -18,7 +18,7 @@ This is the schema that makes BharatGraph powerful:
 - Query: Show audit reports flagging the same ministry
 """
 
-# ── Node Labels ───────────────────────────────────────────
+# -- Node Labels -------------------------------------------
 # Each dict defines the properties a node of that type can have.
 
 NODE_SCHEMAS = {
@@ -146,7 +146,7 @@ NODE_SCHEMAS = {
 }
 
 
-# ── Relationship Types ────────────────────────────────────
+# -- Relationship Types ------------------------------------
 
 RELATIONSHIP_SCHEMAS = {
 
@@ -206,10 +206,10 @@ RELATIONSHIP_SCHEMAS = {
 }
 
 
-# ── Cypher constraint + index statements ─────────────────
+# -- Cypher constraint + index statements -----------------
 # Run these once when setting up a new Neo4j database.
 
-# ── Full-text index (run once) ───────────────────────────────────────────────
+# -- Full-text index (run once) -----------------------------------------------
 # This powers instant search across all labels and fields simultaneously.
 FULLTEXT_INDEX_QUERY = (
     # BUG-19 FIX: expanded from 8 to 16 node types + 14 searchable fields.
@@ -253,12 +253,12 @@ SETUP_QUERIES = [
 def print_schema():
     """Print a human-readable summary of the graph schema."""
     print("=" * 55)
-    print("  BharatGraph — Neo4j Schema")
+    print("  BharatGraph -- Neo4j Schema")
     print("=" * 55)
     print(f"\nNode types ({len(NODE_SCHEMAS)}):")
     for label, schema in NODE_SCHEMAS.items():
         props = len(schema["properties"])
-        print(f"  ({label})  — {schema['description'][:50]}")
+        print(f"  ({label})  -- {schema['description'][:50]}")
         print(f"    {props} properties, indexes on: {schema['indexes']}")
     print(f"\nRelationship types ({len(RELATIONSHIP_SCHEMAS)}):")
     for rel, schema in RELATIONSHIP_SCHEMAS.items():
