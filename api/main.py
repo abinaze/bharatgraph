@@ -131,6 +131,8 @@ def health_check():
 _stats_cache      = None
 _stats_cached_at  = 0.0
 _STATS_TTL        = 60.0
+import threading as _threading          # B-01 FIX: was missing entirely
+_stats_lock       = _threading.Lock()  # B-01 FIX: NameError on every GET /stats
 
 
 @app.get("/stats", response_model=StatsResponse)
