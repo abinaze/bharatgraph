@@ -84,7 +84,7 @@ const Views = {
                   ["01", "Search", "Enter any politician, company, ministry, or scheme name in any Indian language."],
                   ["02", "Investigate", "15 specialist AI investigators run in parallel across 21 official data sources."],
                   ["03", "Synthesise", "Findings are cross-validated. Agreed patterns are marked with high confidence."],
-                  ["04", "Export", "Download a court-grade PDF dossier with a SHA-256 integrity hash."],
+                  ["04", "Export", "Download a tamper-evident PDF dossier with a SHA-256 integrity hash. (Not a legal document -- for research use only.)"],
                 ].map(([num, title, desc]) => `
                   <div style="display:flex;gap:var(--space-4);padding:var(--space-5);
                               background:var(--bg-card);border:1px solid var(--border-color);
