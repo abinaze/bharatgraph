@@ -196,9 +196,11 @@ RELATIONSHIP_SCHEMAS = {
         "properties": {},
     },
 
+    # B-07 FIX: was wrongly pointing to Scheme -- politicians contest
+    # elections in Constituencies, not government welfare schemes
     "CONTESTED_IN": {
-        "from": "Politician", "to": "Scheme",
-        "description": "Politician contested election from this state/constituency",
+        "from": "Politician", "to": "Constituency",
+        "description": "Politician contested election from this constituency",
         "properties": {"year": "Election year", "result": "Won/Lost"},
     },
 }
