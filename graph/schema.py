@@ -150,6 +150,13 @@ NODE_SCHEMAS = {
 
 RELATIONSHIP_SCHEMAS = {
 
+    # B-05 FIX: FILED_AFFIDAVIT relationship was missing
+    "FILED_AFFIDAVIT": {
+        "from": "Politician", "to": "Affidavit",
+        "description": "Politician filed this election affidavit with ECI",
+        "properties": {"year": "Election year"},
+    },
+
     "MEMBER_OF": {
         "from": "Politician", "to": "Party",
         "description": "Politician is a member of this party",
