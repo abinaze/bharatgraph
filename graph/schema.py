@@ -233,6 +233,9 @@ SETUP_QUERIES = [
     "CREATE CONSTRAINT ministry_id   IF NOT EXISTS FOR (n:Ministry)   REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT party_id      IF NOT EXISTS FOR (n:Party)      REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT scheme_id     IF NOT EXISTS FOR (n:Scheme)     REQUIRE n.id IS UNIQUE",
+    # B-05 FIX: Affidavit constraint and index
+    "CREATE CONSTRAINT affidavit_id IF NOT EXISTS FOR (n:Affidavit) REQUIRE n.id IS UNIQUE",
+    "CREATE INDEX affidavit_year    IF NOT EXISTS FOR (n:Affidavit) ON (n.year)",
     # Additional indexes for frequent lookups
     "CREATE INDEX politician_name IF NOT EXISTS FOR (n:Politician) ON (n.name)",
     "CREATE INDEX company_name    IF NOT EXISTS FOR (n:Company)    ON (n.name)",
