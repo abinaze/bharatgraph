@@ -210,20 +210,17 @@ RELATIONSHIP_SCHEMAS = {
 # Run these once when setting up a new Neo4j database.
 
 # -- Full-text index (run once) -----------------------------------------------
-# This powers instant search across all labels and fields simultaneously.
+# -- Full-text index (informational -- loader.py is the authoritative caller)
+# NEW-1 FIX: replaced deprecated CALL db.index.fulltext.createNodeIndex
+# (removed in Neo4j 5.x / AuraDB) with modern CREATE FULLTEXT INDEX syntax
 FULLTEXT_INDEX_QUERY = (
-    # BUG-19 FIX: expanded from 8 to 16 node types + 14 searchable fields.
-    # Auto-scales: add new node labels and field names to the lists below.
-    "CALL db.index.fulltext.createNodeIndex("
-    "  \'globalSearch\',"
-    "  [\'Politician\',\'Company\',\'Contract\',\'AuditReport\',\'Scheme\',"
-    "   \'Ministry\',\'Party\',\'PressRelease\',\'Tender\',\'RegulatoryOrder\',"
-    "   \'EnforcementAction\',\'ElectoralBond\',\'InsolvencyOrder\',"
-    "   \'NGO\',\'CourtCase\',\'LocalBody\'],"
-    "  [\'name\',\'title\',\'aliases\',\'description\',\'item_desc\',"
-    "   \'buyer_org\',\'seller_name\',\'ngo_name\',\'company_name\',"
-    "   \'purchaser_name\',\'accused\',\'ministry\',\'constituency\',\'state\']"
-    ")"
+    "CREATE FULLTEXT INDEX globalSearch IF NOT EXISTS "
+    "FOR (n:Politician|Company|Contract|AuditReport|Scheme|Ministry|"
+    "     Party|PressRelease|Tender|RegulatoryOrder|EnforcementAction|"
+    "     ElectoralBond|InsolvencyOrder|NGO|CourtCase|LocalBody|Affidavit) "
+    "ON EACH [n.name, n.title, n.aliases, n.description, n.item_desc, "
+    "         n.buyer_org, n.seller_name, n.ngo_name, n.company_name, "
+    "         n.accused, n.ministry, n.constituency, n.state]"
 )
 
 SETUP_QUERIES = [
@@ -242,11 +239,8 @@ SETUP_QUERIES = [
     "CREATE INDEX politician_name IF NOT EXISTS FOR (n:Politician) ON (n.name)",
     "CREATE INDEX company_name    IF NOT EXISTS FOR (n:Company)    ON (n.name)",
     "CREATE INDEX contract_date   IF NOT EXISTS FOR (n:Contract)   ON (n.order_date)",
-    # Full-text index across all searchable labels and fields
-    "CALL db.index.fulltext.createNodeIndex('globalSearch', "
-    "['Politician','Company','Contract','AuditReport','Scheme','Ministry','Party','PressRelease'], "
-    "['name','title','aliases','description','item_desc','buyer_org','cin','ministry','summary'])"
-    " IF NOT EXISTS",
+    # B-08 FIX: fulltext index managed by loader.py setup_schema() only
+    # Removed conflicting 8-type CALL -- loader has the authoritative 20-type version
 ]
 
 
