@@ -77,7 +77,7 @@ class NameCleaner:
         """
         Parse Indian currency strings to float in crore.
         '150 Cr' -> 150.0,  '500 lakh' -> 5.0,
-        '1500000' -> 1.5 (raw rupees),  '₹75cr' -> 75.0
+        '1500000' -> 1.5 (raw rupees),  'Rs.75cr' -> 75.0
         """
         if not amount_str:
             return 0.0
@@ -88,7 +88,7 @@ class NameCleaner:
         except ValueError:
             pass
         # Remove currency symbols and commas
-        s = re.sub(r"[₹,\s]", "", s)
+        s = re.sub(r"[Rs.,\s]", "", s)
         s = re.sub(r"^rs\.?", "", s, flags=re.IGNORECASE)
         # Detect suffix
         if re.search(r"crore|cr", s, re.IGNORECASE):
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         print(f"  '{n}' -> '{c.clean_company_name(n)}'")
 
     print("\n[3] Amounts (to crore):")
-    for a in ["150 Cr","500 lakh","1500000","Rs. 2,50,00,000","₹75cr"]:
+    for a in ["150 Cr","500 lakh","1500000","Rs. 2,50,00,000","Rs.75cr"]:
         print(f"  '{a}' -> {c.clean_amount(a)} Cr")
 
     print("\n[4] States:")

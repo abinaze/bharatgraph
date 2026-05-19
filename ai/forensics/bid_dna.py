@@ -42,7 +42,7 @@ class BidDNA:
                     f"coordinated submission."
                 ),
                 "evidence": [
-                    f"Bid '{p['a'][:40]}' ↔ '{p['b'][:40]}': "
+                    f"Bid '{p['a'][:40]}' <-> '{p['b'][:40]}': "
                     f"{p['similarity']:.1%} similar"
                     for p in suspicious[:3]
                 ],
@@ -154,7 +154,7 @@ class BidDNA:
                 "evidence": [
                     f"Mean: Rs {mean:.2f} Cr",
                     f"Std:  Rs {std:.2f} Cr",
-                    f"Range: Rs {min(amounts):.2f} – Rs {max(amounts):.2f} Cr",
+                    f"Range: Rs {min(amounts):.2f} -- Rs {max(amounts):.2f} Cr",
                 ],
             }
         return None
@@ -162,7 +162,7 @@ class BidDNA:
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("BharatGraph — Bid DNA Test")
+    print("BharatGraph -- Bid DNA Test")
     print("=" * 55)
     b = BidDNA()
     r = b.analyze("pol_001", driver=None)

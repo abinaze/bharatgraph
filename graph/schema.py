@@ -18,7 +18,7 @@ This is the schema that makes BharatGraph powerful:
 - Query: Show audit reports flagging the same ministry
 """
 
-# ── Node Labels ───────────────────────────────────────────
+# -- Node Labels -------------------------------------------
 # Each dict defines the properties a node of that type can have.
 
 NODE_SCHEMAS = {
@@ -146,9 +146,16 @@ NODE_SCHEMAS = {
 }
 
 
-# ── Relationship Types ────────────────────────────────────
+# -- Relationship Types ------------------------------------
 
 RELATIONSHIP_SCHEMAS = {
+
+    # B-05 FIX: FILED_AFFIDAVIT relationship was missing
+    "FILED_AFFIDAVIT": {
+        "from": "Politician", "to": "Affidavit",
+        "description": "Politician filed this election affidavit with ECI",
+        "properties": {"year": "Election year"},
+    },
 
     "MEMBER_OF": {
         "from": "Politician", "to": "Party",
@@ -189,32 +196,31 @@ RELATIONSHIP_SCHEMAS = {
         "properties": {},
     },
 
+    # B-07 FIX: was wrongly pointing to Scheme -- politicians contest
+    # elections in Constituencies, not government welfare schemes
     "CONTESTED_IN": {
-        "from": "Politician", "to": "Scheme",
-        "description": "Politician contested election from this state/constituency",
+        "from": "Politician", "to": "Constituency",
+        "description": "Politician contested election from this constituency",
         "properties": {"year": "Election year", "result": "Won/Lost"},
     },
 }
 
 
-# ── Cypher constraint + index statements ─────────────────
+# -- Cypher constraint + index statements -----------------
 # Run these once when setting up a new Neo4j database.
 
-# ── Full-text index (run once) ───────────────────────────────────────────────
-# This powers instant search across all labels and fields simultaneously.
+# -- Full-text index (run once) -----------------------------------------------
+# -- Full-text index (informational -- loader.py is the authoritative caller)
+# NEW-1 FIX: replaced deprecated CALL db.index.fulltext.createNodeIndex
+# (removed in Neo4j 5.x / AuraDB) with modern CREATE FULLTEXT INDEX syntax
 FULLTEXT_INDEX_QUERY = (
-    # BUG-19 FIX: expanded from 8 to 16 node types + 14 searchable fields.
-    # Auto-scales: add new node labels and field names to the lists below.
-    "CALL db.index.fulltext.createNodeIndex("
-    "  \'globalSearch\',"
-    "  [\'Politician\',\'Company\',\'Contract\',\'AuditReport\',\'Scheme\',"
-    "   \'Ministry\',\'Party\',\'PressRelease\',\'Tender\',\'RegulatoryOrder\',"
-    "   \'EnforcementAction\',\'ElectoralBond\',\'InsolvencyOrder\',"
-    "   \'NGO\',\'CourtCase\',\'LocalBody\'],"
-    "  [\'name\',\'title\',\'aliases\',\'description\',\'item_desc\',"
-    "   \'buyer_org\',\'seller_name\',\'ngo_name\',\'company_name\',"
-    "   \'purchaser_name\',\'accused\',\'ministry\',\'constituency\',\'state\']"
-    ")"
+    "CREATE FULLTEXT INDEX globalSearch IF NOT EXISTS "
+    "FOR (n:Politician|Company|Contract|AuditReport|Scheme|Ministry|"
+    "     Party|PressRelease|Tender|RegulatoryOrder|EnforcementAction|"
+    "     ElectoralBond|InsolvencyOrder|NGO|CourtCase|LocalBody|Affidavit) "
+    "ON EACH [n.name, n.title, n.aliases, n.description, n.item_desc, "
+    "         n.buyer_org, n.seller_name, n.ngo_name, n.company_name, "
+    "         n.accused, n.ministry, n.constituency, n.state]"
 )
 
 SETUP_QUERIES = [
@@ -226,27 +232,27 @@ SETUP_QUERIES = [
     "CREATE CONSTRAINT ministry_id   IF NOT EXISTS FOR (n:Ministry)   REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT party_id      IF NOT EXISTS FOR (n:Party)      REQUIRE n.id IS UNIQUE",
     "CREATE CONSTRAINT scheme_id     IF NOT EXISTS FOR (n:Scheme)     REQUIRE n.id IS UNIQUE",
+    # B-05 FIX: Affidavit constraint and index
+    "CREATE CONSTRAINT affidavit_id IF NOT EXISTS FOR (n:Affidavit) REQUIRE n.id IS UNIQUE",
+    "CREATE INDEX affidavit_year    IF NOT EXISTS FOR (n:Affidavit) ON (n.year)",
     # Additional indexes for frequent lookups
     "CREATE INDEX politician_name IF NOT EXISTS FOR (n:Politician) ON (n.name)",
     "CREATE INDEX company_name    IF NOT EXISTS FOR (n:Company)    ON (n.name)",
     "CREATE INDEX contract_date   IF NOT EXISTS FOR (n:Contract)   ON (n.order_date)",
-    # Full-text index across all searchable labels and fields
-    "CALL db.index.fulltext.createNodeIndex('globalSearch', "
-    "['Politician','Company','Contract','AuditReport','Scheme','Ministry','Party','PressRelease'], "
-    "['name','title','aliases','description','item_desc','buyer_org','cin','ministry','summary'])"
-    " IF NOT EXISTS",
+    # B-08 FIX: fulltext index managed by loader.py setup_schema() only
+    # Removed conflicting 8-type CALL -- loader has the authoritative 20-type version
 ]
 
 
 def print_schema():
     """Print a human-readable summary of the graph schema."""
     print("=" * 55)
-    print("  BharatGraph — Neo4j Schema")
+    print("  BharatGraph -- Neo4j Schema")
     print("=" * 55)
     print(f"\nNode types ({len(NODE_SCHEMAS)}):")
     for label, schema in NODE_SCHEMAS.items():
         props = len(schema["properties"])
-        print(f"  ({label})  — {schema['description'][:50]}")
+        print(f"  ({label})  -- {schema['description'][:50]}")
         print(f"    {props} properties, indexes on: {schema['indexes']}")
     print(f"\nRelationship types ({len(RELATIONSHIP_SCHEMAS)}):")
     for rel, schema in RELATIONSHIP_SCHEMAS.items():

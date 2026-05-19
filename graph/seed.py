@@ -1,5 +1,5 @@
 """
-BharatGraph — Seed Data
+BharatGraph -- Seed Data
 Loads sample nodes AND relationships into Neo4j for demonstration.
 Real data comes from POST /admin/pipeline which runs all 21 scrapers.
 """
@@ -12,7 +12,7 @@ from graph.loader import GraphLoader
 
 load_dotenv()
 
-# ── Politicians (ECI / MyNeta) ─────────────────────────────────────────────────
+# -- Politicians (ECI / MyNeta) -------------------------------------------------
 SAMPLE_POLITICIANS = [
     {"id":"pol_001","name":"Narendra Modi","state":"Gujarat","party":"BJP",
      "constituency":"Varanasi","criminal_cases":0,"criminal_case_count":"0",
@@ -46,7 +46,7 @@ SAMPLE_POLITICIANS = [
      "total_assets":33.87,"education":"BA History","year":2024,"source":"myneta","scraped_at":"2026-05-04T05:45:50Z"},
 ]
 
-# ── Companies (MCA21) ──────────────────────────────────────────────────────────
+# -- Companies (MCA21) ----------------------------------------------------------
 SAMPLE_COMPANIES = [
     {"id":"co_001","name":"Adani Enterprises Limited","state":"Gujarat",
      "cin":"L51100GJ1993PLC019067","status":"Active","paid_up_capital_crore":112.0,"source":"mca","scraped_at":"2026-05-04T05:45:50Z"},
@@ -64,7 +64,7 @@ SAMPLE_COMPANIES = [
      "cin":"L74899DL1993GOI054155","status":"Active","paid_up_capital_crore":1258.0,"source":"mca","scraped_at":"2026-05-04T05:45:50Z"},
 ]
 
-# ── Contracts (GeM) ────────────────────────────────────────────────────────────
+# -- Contracts (GeM) ------------------------------------------------------------
 SAMPLE_CONTRACTS = [
     {"id":"ct_001","order_id":"GEM/2024/B/001","item_desc":"Road Construction Supplies",
      "amount_crore":45.5,"buyer_org":"Ministry of Road Transport",
@@ -88,7 +88,7 @@ SAMPLE_CONTRACTS = [
      "seller_name":"Adani Enterprises Limited","seller_name_raw":"Adani Enterprises Limited","source":"gem","scraped_at":"2026-05-04T05:45:50Z"},
 ]
 
-# ── Audit Reports (CAG) ────────────────────────────────────────────────────────
+# -- Audit Reports (CAG) --------------------------------------------------------
 SAMPLE_AUDIT_REPORTS = [
     {"id":"ar_001","title":"Performance Audit of Pradhan Mantri Gram Sadak Yojana 2023",
      "year":2023,"ministry":"Ministry of Rural Development","state":"National",
@@ -104,9 +104,9 @@ SAMPLE_AUDIT_REPORTS = [
      "amount_crore":892.0,"url":"https://cag.gov.in/reports/2022","source":"cag","scraped_at":"2026-05-04T05:45:50Z"},
 ]
 
-# ── Politician-Company Director links (entity resolution) ──────────────────────
+# -- Politician-Company Director links (entity resolution) ----------------------
 SAMPLE_DIRECTOR_LINKS = [
-    # Keys must be name_a / name_b — these match graph/loader.py load_politician_company_links()
+    # Keys must be name_a / name_b -- these match graph/loader.py load_politician_company_links()
     {"name_a": "Amit Shah",      "name_b": "Adani Enterprises Limited",  "score": 0.92},
     {"name_a": "Narendra Modi",  "name_b": "ONGC Limited",               "score": 0.88},
     {"name_a": "Anurag Thakur",  "name_b": "Tata Consultancy Services",  "score": 0.81},

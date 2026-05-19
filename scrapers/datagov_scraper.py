@@ -86,7 +86,7 @@ class DataGovScraper(BaseScraper):
         return self.get_json(url, params=params)
 
 
-# ── Run directly to test ──────────────────────────────────────────────────────
+# -- Run directly to test ------------------------------------------------------
 if __name__ == "__main__":
     print("=" * 60)
     print("BharatGraph - DataGov Scraper Test")
@@ -100,12 +100,12 @@ if __name__ == "__main__":
     )
 
     if data:
-        print(f"    ✅ Success! Total records available: {data.get('total', '?')}")
+        print(f"    ? Success! Total records available: {data.get('total', '?')}")
         print(f"    Fields: {list(data.get('fields', [{}])[0].keys()) if data.get('fields') else 'N/A'}")
     else:
-        print("    ❌ Failed (check internet connection)")
+        print("    ? Failed (check internet connection)")
 
     print("\n[2] Fetching all configured datasets...")
     all_data = scraper.fetch_all_datasets(save=True)
-    print(f"    ✅ Fetched {len(all_data)} datasets")
+    print(f"    ? Fetched {len(all_data)} datasets")
     print("\nDone! Check data/samples/ folder for output files.")

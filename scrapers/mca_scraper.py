@@ -4,7 +4,7 @@ Fetches company and director data from India's corporate registry.
 Sources:
   - data.gov.in (MCA company master dataset - free, public)
   - MCA21 portal snapshots
-This links politicians → companies → contracts in the graph.
+This links politicians -> companies -> contracts in the graph.
 """
 
 import json
@@ -169,7 +169,7 @@ class MCAScraper(BaseScraper):
         return results
 
 
-# ── Run directly to test ──────────────────────────────────────────────────────
+# -- Run directly to test ------------------------------------------------------
 if __name__ == "__main__":
     print("=" * 60)
     print("BharatGraph - MCA Scraper Test")
