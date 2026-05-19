@@ -311,6 +311,10 @@ const Views = {
       </div>
     `;
 
+    // B-06 FIX: wire data-nav-path filter buttons after DOM is built
+    document.querySelectorAll("[data-nav-path]").forEach(function(btn) {
+      btn.addEventListener("click", function() { Router.navigate(btn.dataset.navPath); });
+    });
     // C-01 FIX: pre-fill the search input with the current query
     // so users can see what they searched and edit it
     const _searchInput = document.getElementById("search-input");
