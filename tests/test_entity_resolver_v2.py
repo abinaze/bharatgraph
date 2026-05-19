@@ -220,3 +220,144 @@ class TestCanonicalId:
         by_name = canonical_id_for_company(name="adani",  state="gj")
         assert by_cin != by_name   # CIN and name-based IDs differ
         assert len(by_cin) == 20
+
+
+# ---- Phase 32 additions: 15 new tests for missing coverage ----
+
+class TestJaroWinklerIdentical:
+    """BUG: test_identical_strings was missing from the original test file."""
+
+    def test_identical_strings(self):
+        from processing.entity_resolver_v2 import jaro_winkler
+        assert jaro_winkler("modi", "modi") == 1.0
+
+    def test_prefix_boost(self):
+        """Jaro-Winkler gives extra weight to common prefixes."""
+        from processing.entity_resolver_v2 import jaro_winkler
+        score_prefix = jaro_winkler("ramkumar", "ramesh")
+        score_no_pfx = jaro_winkler("kumar",    "ramesh")
+        assert score_prefix > score_no_pfx
+
+
+class TestNormaliseEdgeCases:
+
+    def test_empty_string(self):
+        from processing.entity_resolver_v2 import normalise_indian_name
+        result = normalise_indian_name("", "person")
+        assert result == ""
+
+    def test_stacked_honorifics(self):
+        """Late Shri -> both honorifics stripped."""
+        from processing.entity_resolver_v2 import normalise_indian_name
+        result = normalise_indian_name("Late Shri Ram Kumar", "person")
+        assert "late" not in result
+        assert "shri" not in result
+        assert "ram kumar" in result
+
+    def test_retd_honorific(self):
+        from processing.entity_resolver_v2 import normalise_indian_name
+        result = normalise_indian_name("Retd. Col. Priya Singh", "person")
+        assert "retd" not in result
+        assert "col" not in result
+
+    def test_pvt_ltd_canonical(self):
+        from processing.entity_resolver_v2 import normalise_indian_name
+        forms = [
+            "Sample Pvt. Ltd.",
+            "Sample Private Limited",
+            "Sample Pvt Ltd",
+            "Sample P. Ltd.",
+        ]
+        results = [normalise_indian_name(f, "company") for f in forms]
+        assert len(set(results)) == 1, f"Expected 1 canonical form, got: {set(results)}"
+
+
+class TestEntityResolverScoring:
+
+    def test_wikidata_id_exact_match(self):
+        from processing.entity_resolver_v2 import EntityResolverV2
+        r = EntityResolverV2()
+        rec1 = {"name": "Narendra Modi",  "wikidata_id": "Q658025"}
+        rec2 = {"name": "N. Modi",         "wikidata_id": "Q658025"}
+        assert r.combined_score("Narendra Modi", "N. Modi", rec1, rec2) == 1.0
+
+    def test_gstin_mismatch_returns_zero(self):
+        from processing.entity_resolver_v2 import EntityResolverV2
+        r = EntityResolverV2()
+        rec1 = {"name": "Company X", "gstin": "27AAACM0629R1ZU"}
+        rec2 = {"name": "Company X", "gstin": "29AAACM0629R1ZU"}
+        assert r.combined_score("Company X", "Company X", rec1, rec2) == 0.0
+
+    def test_threshold_boundary(self):
+        from processing.entity_resolver_v2 import EntityResolverV2
+        r = EntityResolverV2(threshold=0.90)
+        # Perfect match
+        assert r.is_same_entity("RAHUL KUMAR", "Rahul Kumar")
+        # Clearly different
+        assert not r.is_same_entity("Alpha Corp", "Beta Industries", kind="company")
+
+    def test_resolve_dataset_preserves_source_field(self):
+        from processing.entity_resolver_v2 import EntityResolverV2
+        r = EntityResolverV2(threshold=0.72)
+        records = [
+            {"name": "RAM KUMAR", "_source": "myneta", "state": "UP"},
+            {"name": "Ram Kumar", "_source": "mca",    "state": "UP"},
+        ]
+        resolved = r.resolve_dataset(records, "name")
+        assert len(resolved) == 1
+        assert resolved[0]["_source"] == "myneta"  # first record wins
+
+    def test_resolve_empty_dataset(self):
+        from processing.entity_resolver_v2 import EntityResolverV2
+        r = EntityResolverV2()
+        assert r.resolve_dataset([], "name") == []
+
+
+class TestAliasGraphEdgeCases:
+
+    def test_resolve_case_insensitive(self):
+        from processing.alias_graph import AliasGraph
+        ag = AliasGraph()
+        ag.add("Narendra Modi", "pol_001")
+        assert ag.resolve("NARENDRA MODI") == "pol_001"
+        assert ag.resolve("narendra modi") == "pol_001"
+
+    def test_overwrite_updates_canonical(self):
+        from processing.alias_graph import AliasGraph
+        ag = AliasGraph()
+        ag.add("Test Name", "old_id")
+        ag.add("Test Name", "new_id")
+        assert ag.resolve("test name") == "new_id"
+
+    def test_stats_empty_graph(self):
+        from processing.alias_graph import AliasGraph
+        ag = AliasGraph()
+        stats = ag.stats()
+        assert stats["total_aliases"] == 0
+        assert stats["unique_canonical_ids"] == 0
+        assert stats["avg_aliases_per_id"] == 0
+
+
+class TestCanonicalIdEdgeCases:
+
+    def test_separator_in_name(self):
+        from processing.canonical_id import canonical_id
+        # Pipe is the internal separator -- should still produce stable ID
+        id1 = canonical_id("test|name", "state")
+        id2 = canonical_id("test|name", "state")
+        assert id1 == id2
+        assert len(id1) == 20
+
+    def test_politician_vs_company_different_ids(self):
+        from processing.canonical_id import canonical_id_for_politician, canonical_id_for_company
+        pol = canonical_id_for_politician("Ram Kumar", "UP")
+        com = canonical_id_for_company(name="Ram Kumar", state="UP")
+        # Same name+state but different function prefix -> different IDs
+        assert pol != com
+
+    def test_ngo_with_darpan_id(self):
+        from processing.canonical_id import canonical_id_for_ngo
+        id1 = canonical_id_for_ngo(darpan_id="DL/2021/0012345")
+        id2 = canonical_id_for_ngo(darpan_id="DL/2021/0012345")
+        assert id1 == id2
+        assert len(id1) == 20
