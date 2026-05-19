@@ -379,6 +379,24 @@ class BharatGraphPipeline:
             companies   = self.resolver.resolve_dataset(companies,   "name")
             links       = self.find_politician_company_links(politicians, companies)
 
+            # Phase 32: rebuild alias graph from resolved records
+            try:
+                from processing.alias_graph import AliasGraph
+                _ag = AliasGraph()
+                _ag.bulk_add(politicians, "name", "id")
+                _ag.bulk_add(companies,   "name", "id")
+                # Also add aliases from resolution
+                for rec in politicians + companies:
+                    cid = rec.get("id", "")
+                    if cid:
+                        for alias in rec.get("aliases", []):
+                            if alias.get("name"):
+                                _ag.add(alias["name"], cid)
+                _ag.save()
+                logger.info(f"[Pipeline] Alias graph rebuilt: {len(_ag)} entries")
+            except Exception as _ag_e:
+                logger.warning(f"[Pipeline] Alias graph rebuild failed: {type(_ag_e).__name__}")
+
         duration   = (datetime.now() - start).seconds
         per_source = {name: len(records) for name, records in raw.items()}
 
