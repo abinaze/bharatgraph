@@ -11,8 +11,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from api.dependencies import get_driver, close_driver
-from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate, runtime
+from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate, runtime, resolve
 from api.models import HealthResponse, StatsResponse
+from processing.alias_graph import AliasGraph          # Phase 32
+from processing.entity_resolver_v2 import EntityResolverV2  # Phase 32
 from config.runtime_profile import PROFILE as _RUNTIME_PROFILE
 
 
@@ -32,6 +34,12 @@ async def lifespan(app: FastAPI):
             logger.warning(f"[API] Schema setup skipped: {type(_se).__name__}")
     else:
         logger.warning("[API] Starting without Neo4j -- set secrets to enable")
+    # Phase 32: load alias graph so /resolve/alias works immediately
+    try:
+        _alias_graph.load()
+        logger.info(f"[Startup] AliasGraph: {len(_alias_graph)} aliases loaded")
+    except Exception as _ag_err:
+        logger.warning(f"[Startup] AliasGraph load skipped: {type(_ag_err).__name__}")
     yield
     logger.info("[API] Shutting down")
     close_driver()
@@ -44,7 +52,7 @@ app = FastAPI(
         "All data sourced from official government records. "
         "Outputs are structural indicators, not legal findings."
     ),
-    version="0.32.0",
+    version="0.33.0",
     lifespan=lifespan,
 )
 
@@ -95,6 +103,7 @@ app.include_router(policy.router,        tags=["Policy"])
 app.include_router(adversarial.router,   tags=["Adversarial"])
 app.include_router(debate.router,        tags=["Debate"])
 app.include_router(runtime.router,       tags=["Runtime"])
+app.include_router(resolve.router,       tags=["Resolve"])   # Phase 32
 
 
 @app.get("/")
@@ -122,7 +131,7 @@ def health_check():
     return HealthResponse(
         status="ok" if connected else "degraded",
         neo4j_connected=connected,
-        version="0.32.0",
+        version="0.33.0",
         generated_at=datetime.now().isoformat(),
     )
 
@@ -133,6 +142,10 @@ _stats_cached_at  = 0.0
 _STATS_TTL        = 60.0
 import threading as _threading          # B-01 FIX: was missing entirely
 _stats_lock       = _threading.Lock()  # B-01 FIX: NameError on every GET /stats
+
+# Phase 32: shared AliasGraph instance (loaded once at startup)
+_alias_graph   = AliasGraph()
+_resolver_v2   = EntityResolverV2(threshold=0.82)
 
 
 @app.get("/stats", response_model=StatsResponse)
