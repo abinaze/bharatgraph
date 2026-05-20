@@ -34,6 +34,12 @@ async def lifespan(app: FastAPI):
             logger.warning(f"[API] Schema setup skipped: {type(_se).__name__}")
     else:
         logger.warning("[API] Starting without Neo4j -- set secrets to enable")
+    # Phase 32: load alias graph so /resolve/alias works immediately
+    try:
+        _alias_graph.load()
+        logger.info(f"[Startup] AliasGraph: {len(_alias_graph)} aliases loaded")
+    except Exception as _ag_err:
+        logger.warning(f"[Startup] AliasGraph load skipped: {type(_ag_err).__name__}")
     yield
     logger.info("[API] Shutting down")
     close_driver()
@@ -97,6 +103,7 @@ app.include_router(policy.router,        tags=["Policy"])
 app.include_router(adversarial.router,   tags=["Adversarial"])
 app.include_router(debate.router,        tags=["Debate"])
 app.include_router(runtime.router,       tags=["Runtime"])
+app.include_router(resolve.router,       tags=["Resolve"])   # Phase 32
 
 
 @app.get("/")
