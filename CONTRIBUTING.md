@@ -12,6 +12,7 @@ to discuss the approach. Small bug fixes can go straight to a pull request.
 
 ---
 
+
 ## Branch Strategy
 
 One long-lived branch: `main`. All work happens on short-lived branches
