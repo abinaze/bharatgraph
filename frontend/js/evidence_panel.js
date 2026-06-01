@@ -264,10 +264,11 @@ const EvidencePanel = {
     if (!el) return;
     el.innerHTML = `<div class="spinner" style="margin:60px auto"></div>`;
     try {
-      const data   = await Api._request(`/biography/${entityId}`);
-      const tl     = data.timeline || {};
-      const events = (tl.events || data.timeline_events || [])
-                       .sort((a,b) => (a.date||"").localeCompare(b.date||""));
+      // Phase 33 FIX: /biography returns narrative events, not structured ones.
+      // /timeline returns all time-stamped node activity.
+      const data   = await Api._request(`/timeline/${entityId}`);
+      const events = ((data && data.events) ? data.events : [])
+                       .sort((a,b) => (b.date||"").localeCompare(a.date||""));
       if (!events.length) {
         el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);font-size:12px">
           No timeline events indexed for this entity</div>`;
