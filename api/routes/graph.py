@@ -123,3 +123,149 @@ def politician_contracts_pattern(
     return {"pattern": "politician -> company -> contract",
             "total": len(rows), "results": rows,
             "generated_at": datetime.now().isoformat()}
+
+
+# ── Phase 33: Graph Intelligence endpoints ───────────────────────────────────
+
+@router.get("/graph/analytics/{entity_id}")
+def entity_graph_analytics(
+    entity_id: str,
+    depth: int = Query(3, ge=1, le=4),
+    driver=Depends(get_db),
+):
+    """
+    Run full graph analytics for one entity:
+    betweenness centrality, PageRank, and community detection
+    on the entity local sub-graph (up to depth hops out).
+    """
+    logger.info(f"[GraphAnalytics] entity={entity_id[:8]} depth={depth}")
+    try:
+        from ai.graph_analytics import GraphAnalytics
+        ga    = GraphAnalytics(driver=driver)
+        nodes, edges = ga._fetch_graph_from_neo4j(entity_id=entity_id, depth=depth)
+        if not nodes:
+            return {
+                "entity_id":   entity_id,
+                "status":      "no_data",
+                "note":        "Entity not found or graph has no connections at this depth",
+                "analyzed_at": datetime.now().isoformat(),
+            }
+        betweenness = ga.compute_betweenness_centrality(nodes, edges)
+        pagerank    = ga.compute_pagerank(nodes, edges)
+        communities = ga.detect_communities(nodes, edges)
+        return {
+            "entity_id":      entity_id,
+            "depth":          depth,
+            "node_count":     len(nodes),
+            "edge_count":     len(edges),
+            "betweenness":    betweenness[:10],
+            "pagerank":       pagerank[:10],
+            "communities":    communities[:5],
+            "analyzed_at":    datetime.now().isoformat(),
+        }
+    except ImportError:
+        return {"status": "error", "detail": "networkx not installed"}
+    except Exception as e:
+        logger.error(f"[GraphAnalytics] entity={entity_id[:8]}: {type(e).__name__}")
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail="Analytics failed")
+
+
+@router.get("/graph/centrality/betweenness")
+def global_betweenness(
+    limit: int = Query(20, ge=5, le=100),
+    driver=Depends(get_db),
+):
+    """
+    Top entities ranked by betweenness centrality across the entire graph.
+    High betweenness = acts as a bridge between institutional networks.
+    Expensive on large graphs -- cached by the caller for 10 minutes.
+    """
+    logger.info("[GraphAnalytics] global betweenness requested")
+    try:
+        from ai.graph_analytics import GraphAnalytics
+        ga    = GraphAnalytics(driver=driver)
+        nodes, edges = ga._fetch_graph_from_neo4j()
+        if not nodes:
+            return {"status": "no_data", "results": []}
+        results = ga.compute_betweenness_centrality(nodes, edges)
+        return {
+            "metric":      "betweenness_centrality",
+            "node_count":  len(nodes),
+            "edge_count":  len(edges),
+            "top":         results[:limit],
+            "analyzed_at": datetime.now().isoformat(),
+        }
+    except ImportError:
+        return {"status": "error", "detail": "networkx not installed"}
+    except Exception as e:
+        logger.error(f"[GraphAnalytics] betweenness error: {type(e).__name__}")
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail="Betweenness centrality failed")
+
+
+@router.get("/graph/centrality/pagerank")
+def global_pagerank(
+    limit: int = Query(20, ge=5, le=100),
+    driver=Depends(get_db),
+):
+    """
+    Top entities ranked by PageRank across the entire graph.
+    High PageRank = many high-influence entities point to this node.
+    """
+    logger.info("[GraphAnalytics] global pagerank requested")
+    try:
+        from ai.graph_analytics import GraphAnalytics
+        ga    = GraphAnalytics(driver=driver)
+        nodes, edges = ga._fetch_graph_from_neo4j()
+        if not nodes:
+            return {"status": "no_data", "results": []}
+        results = ga.compute_pagerank(nodes, edges)
+        return {
+            "metric":      "pagerank",
+            "node_count":  len(nodes),
+            "edge_count":  len(edges),
+            "top":         results[:limit],
+            "analyzed_at": datetime.now().isoformat(),
+        }
+    except ImportError:
+        return {"status": "error", "detail": "networkx not installed"}
+    except Exception as e:
+        logger.error(f"[GraphAnalytics] pagerank error: {type(e).__name__}")
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail="PageRank failed")
+
+
+@router.get("/graph/communities")
+def global_communities(
+    min_size: int = Query(3, ge=2, le=50),
+    driver=Depends(get_db),
+):
+    """
+    Detect institutional clusters (communities) in the full graph.
+    Returns communities with >= min_size members.
+    Large communities often indicate procurement clusters, shell company
+    networks, or party-linked directorships warranting investigation.
+    """
+    logger.info("[GraphAnalytics] community detection requested")
+    try:
+        from ai.graph_analytics import GraphAnalytics
+        ga    = GraphAnalytics(driver=driver)
+        nodes, edges = ga._fetch_graph_from_neo4j()
+        if not nodes:
+            return {"status": "no_data", "communities": []}
+        communities = ga.detect_communities(nodes, edges)
+        filtered    = [c for c in communities if c["size"] >= min_size]
+        return {
+            "total_communities": len(communities),
+            "shown":             len(filtered),
+            "min_size":          min_size,
+            "communities":       filtered,
+            "analyzed_at":       datetime.now().isoformat(),
+        }
+    except ImportError:
+        return {"status": "error", "detail": "networkx not installed"}
+    except Exception as e:
+        logger.error(f"[GraphAnalytics] communities error: {type(e).__name__}")
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail="Community detection failed")
