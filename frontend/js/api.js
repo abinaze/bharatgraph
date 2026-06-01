@@ -55,6 +55,32 @@ const Api = {
 
   nodeEvidence: (entityId) => Api._request(`/node-evidence/${entityId}`),
 
+  // Phase 33: timeline
+  timeline: function(entityId, category) {
+    var p = category ? "?category=" + encodeURIComponent(category) : "";
+    return Api._request("/timeline/" + entityId + p);
+  },
+  timelineByYear: function(entityId) {
+    return Api._request("/timeline/" + entityId + "/by-year");
+  },
+  // Phase 33: graph analytics
+  graphAnalytics: function(entityId, depth) {
+    var d = depth ? "?depth=" + depth : "";
+    return Api._request("/graph/analytics/" + entityId + d);
+  },
+  graphBetweenness: function(limit) {
+    var l = limit ? "?limit=" + limit : "";
+    return Api._request("/graph/centrality/betweenness" + l);
+  },
+  graphPagerank: function(limit) {
+    var l = limit ? "?limit=" + limit : "";
+    return Api._request("/graph/centrality/pagerank" + l);
+  },
+  graphCommunities: function(minSize) {
+    var m = minSize ? "?min_size=" + minSize : "";
+    return Api._request("/graph/communities" + m);
+  },
+
   /**
    * BUG-7 FIX: was always sending text as a URL query string on a POST,
    * which caused 414 URI Too Long for text > ~2000 chars and silently
