@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from api.dependencies import get_driver, close_driver
-from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate, runtime, resolve, timeline
+from api.routes import search, profile, graph, risk, multilingual, export, admin, investigation, affidavit, biography, benami, sources, procurement, conflict, linguistic, policy, adversarial, debate, runtime, resolve, timeline, forensics, self_learning, case_memory
 from api.models import HealthResponse, StatsResponse
 from processing.alias_graph import AliasGraph          # Phase 32
 from processing.entity_resolver_v2 import EntityResolverV2  # Phase 32
@@ -105,6 +105,9 @@ app.include_router(debate.router,        tags=["Debate"])
 app.include_router(runtime.router,       tags=["Runtime"])
 app.include_router(resolve.router,       tags=["Resolve"])   # Phase 32
 app.include_router(timeline.router,      tags=["Timeline"])  # Phase 33
+app.include_router(forensics.router,     tags=["Forensics"])  # Phase 34
+app.include_router(self_learning.router, tags=["SelfLearning"])  # Phase 34
+app.include_router(case_memory.router,   tags=["CaseMemory"])  # Phase 34
 
 
 @app.get("/")
