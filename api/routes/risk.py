@@ -7,6 +7,10 @@ from loguru import logger
 
 from api.models import RiskResponse, RiskFactor, SourceDocument
 from api.dependencies import get_db
+from ai.benfords_analyzer import BenfordsAnalyzer
+from ai.ghost_company    import GhostCompanyDetector
+from ai.shadow_director  import ShadowDirectorDetector
+from ai.explainer        import generate_explanation
 
 router = APIRouter()
 
@@ -164,6 +168,101 @@ def get_risk(entity_id: str, driver=Depends(get_db)):
                 ],
             ))
             total_score += raw
+
+        # Phase 34: Benford Law analysis on affidavit asset values
+        try:
+            ba = BenfordsAnalyzer()
+            asset_rows = session.run(
+                "MATCH (p {id:})-[:FILED_AFFIDAVIT]->(a:Affidavit)"
+                " RETURN a.total_assets_crore AS v",
+                id=entity_id
+            ).data()
+            asset_vals = [r["v"] for r in asset_rows if r.get("v")]
+            if len(asset_vals) >= 5:
+                bf = ba.analyze(asset_vals)
+                chi2 = bf.get("chi2_statistic", 0) or 0
+                if chi2 > 15.5:  # p<0.05 threshold
+                    raw = min(int(chi2 / 2), 20)
+                    factors.append(RiskFactor(
+                        name="benfords_law_anomaly",
+                        score=raw,
+                        weight=0.20,
+                        description=(
+                            f"Asset declarations deviate significantly from "
+                            f"Benford Law distribution (chi2={chi2:.1f}). "
+                            "Fabricated or rounded figures can cause this pattern."
+                        ),
+                        evidence=[
+                            f"Chi-squared statistic: {chi2:.2f} (threshold 15.5)",
+                            f"Analysed {len(asset_vals)} affidavit asset values",
+                            "Source: Election Commission affidavit data",
+                        ],
+                    ))
+                    total_score += raw
+        except Exception as _bf_e:
+            logger.debug(f"[Risk] Benford analysis skipped: {type(_bf_e).__name__}")
+
+        # Phase 34: ghost company detection
+        try:
+            co_rows = session.run(
+                "MATCH (co:Company)-[:DIRECTOR_OF|:LINKED_TO*1..2]-(n {id:})"
+                " RETURN co.id AS id, co.name AS name,"
+                "        co.employee_count AS emp,"
+                "        co.registered_capital_crore AS cap"
+                " LIMIT 20",
+                id=entity_id
+            ).data()
+            if co_rows:
+                gcd = GhostCompanyDetector(driver=driver)
+                scored = [gcd.score_company(r) for r in co_rows]
+                ghosts = [s for s in scored if s.get("ghost_score", 0) >= 70]
+                if ghosts:
+                    raw = min(len(ghosts) * 12, 24)
+                    factors.append(RiskFactor(
+                        name="ghost_company_association",
+                        score=raw,
+                        weight=0.24,
+                        description=(
+                            f"Entity is linked to {len(ghosts)} company/companies "
+                            "showing ghost company indicators (no employees, "
+                            "minimal capital, high contract volume)."
+                        ),
+                        evidence=[
+                            f"{len(ghosts)} ghost company indicator(s) detected",
+                            ", ".join(g.get("name","") for g in ghosts[:3]),
+                            "Source: MCA filings + GeM procurement records",
+                        ],
+                    ))
+                    total_score += raw
+        except Exception as _gc_e:
+            logger.debug(f"[Risk] Ghost company check skipped: {type(_gc_e).__name__}")
+
+        # Phase 34: shadow director detection
+        try:
+            dir_rows = session.run(
+                "MATCH (n {id:})-[:DIRECTOR_OF]->(co:Company)"
+                " RETURN count(co) AS dir_count",
+                id=entity_id
+            ).single()
+            dir_count = dir_rows["dir_count"] if dir_rows else 0
+            if dir_count >= 10:
+                raw = min(dir_count * 2, 15)
+                factors.append(RiskFactor(
+                    name="high_directorship_count",
+                    score=raw,
+                    weight=0.15,
+                    description=(
+                        f"Entity is director of {dir_count} companies. "
+                        "High directorship counts are a shadow director indicator."
+                    ),
+                    evidence=[
+                        f"{dir_count} DIRECTOR_OF relationships in graph",
+                        "Source: MCA company filings",
+                    ],
+                ))
+                total_score += raw
+        except Exception as _sd_e:
+            logger.debug(f"[Risk] Shadow director check skipped: {type(_sd_e).__name__}")
 
         final_score = max(0, min(total_score, 100))  # M-08 FIX: clamp both directions
         level = score_to_level(final_score)
