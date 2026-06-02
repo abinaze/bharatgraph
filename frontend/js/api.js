@@ -79,6 +79,41 @@ const Api = {
   graphCommunities: function(minSize) {
     var m = minSize ? "?min_size=" + minSize : "";
     return Api._request("/graph/communities" + m);
+
+  // Phase 34: forensic detection
+  forensicsCircularOwnership: function(maxLen) {
+    var p = maxLen ? "?max_cycle_length=" + maxLen : "";
+    return Api._request("/forensics/circular-ownership" + p);
+  },
+  forensicsGhostCompanies: function(minScore) {
+    var p = minScore ? "?min_score=" + minScore : "";
+    return Api._request("/forensics/ghost-companies" + p);
+  },
+  forensicsShadowDirectors: function(minCount) {
+    var p = minCount ? "?min_company_count=" + minCount : "";
+    return Api._request("/forensics/shadow-directors" + p);
+  },
+  forensicsBenfords: function(entityId) {
+    return Api._request("/forensics/benfords/" + entityId);
+  },
+  // Phase 34: self-learning
+  selfLearningPatterns: function() {
+    return Api._request("/self-learning/patterns");
+  },
+  selfLearningWeights: function() {
+    return Api._request("/self-learning/weights");
+  },
+  selfLearningAudit: function() {
+    return Api._request("/self-learning/audit");
+  },
+  // Phase 34: case memory
+  caseMemoryStats: function() {
+    return Api._request("/case-memory/stats");
+  },
+  caseMemorySimilar: function(findingTypes) {
+    var p = findingTypes ? "?finding_types=" + encodeURIComponent(findingTypes) : "";
+    return Api._request("/case-memory/similar" + p);
+  },
   },
 
   /**
