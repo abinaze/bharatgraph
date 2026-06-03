@@ -81,6 +81,11 @@ const Api = {
     return Api._request("/graph/communities" + m);
 
   // Phase 34: forensic detection
+
+  // Phase 35: investigation (multi-investigator results)
+  investigate: function(entityId) {
+    return Api._request("/investigate/" + entityId);
+  },
   forensicsCircularOwnership: function(maxLen) {
     var p = maxLen ? "?max_cycle_length=" + maxLen : "";
     return Api._request("/forensics/circular-ownership" + p);
