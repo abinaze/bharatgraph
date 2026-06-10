@@ -1014,6 +1014,7 @@ function initApp() {
   Router.register("/about",    Views.about);
   // BUG-11 FIX: register wildcard so unknown URLs show 404 page
   // instead of frozen spinner (router.js supports "*" but it was never called)
+  Router.register("/forensics", Views.forensics);
   Router.register("*", Views.notFound);
 
   // BUG-02 FIX: was single immediate check -- failed permanently on HF cold start.
