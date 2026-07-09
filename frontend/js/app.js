@@ -298,7 +298,7 @@ const Views = {
             <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Filter:</span>
             ${["All","politician","company","audit","contract","ministry","party","scheme","tender","electoralbond","regulatory","enforcement","insolvency","ngo","parliamentquestion","vigilancecircular","icijentity","sanctionedentity","courtcase","localbody","datagov","crimereport"].map(t => `
               <button class="btn btn--sm ${type === t || (!type && t==="All") ? "btn--primary" : "btn--secondary"}"
-                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!==\'All\'?"&type="+t.toLowerCase():""}'+(State.language&&State.language!=='en'?'&lang='+State.language:''))">
+                      onclick="Router.navigate('/search?q=${encodeURIComponent(query)}${t!=="All"?"&type="+t.toLowerCase():""}'+(State.language&&State.language!=='en'?'&lang='+State.language:''))">
                 ${t.charAt(0).toUpperCase()+t.slice(1)}
               </button>
             `).join("")}
