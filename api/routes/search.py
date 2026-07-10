@@ -110,22 +110,12 @@ LABEL_QUERIES = {
         "MATCH (n:NGO) "
         "WHERE toLower(coalesce(n.ngo_name,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, n.ngo_name AS name, n.state AS state, null AS party LIMIT $limit"),
-    # M-08 FIX: frontend filter button sends type=pressrelease (lowercased label)
-    # but LABEL_QUERIES key is 'pib'. Add alias so both spellings work.
-        # BUG-18 FIX: key renamed from "pressrelease" to "pib" to match scraper key,
-    # so SOURCE_MAP lookup returns the correct PIB attribution.
-    # M-08 FIX: frontend sends type=pressrelease but key is "pib".
-    # Add alias so filter button works correctly.
-    # M-08 / LOGIC-1 FIX: single canonical pressrelease entry (LIMIT $limit not $lim)
-    "pressrelease": ("PressRelease",
-        "MATCH (n:PressRelease) "
-        "WHERE toLower(coalesce(n.title, n.headline, '')) CONTAINS toLower($q) "
-        "   OR toLower(coalesce(n.ministry, '')) CONTAINS toLower($q) "
-        "RETURN n.id AS entity_id, 'PressRelease' AS entity_type, "
-        "coalesce(n.title, n.headline, n.id) AS name, n.source AS source "
-        "LIMIT $limit"
-    ),
-        "pib": ("PressRelease",
+    # M-08 FIX: the old "pressrelease" entry here returned entity_id/
+    # entity_type instead of id/name, so the shared result loop's
+    # `if not r.get("id")` check silently dropped every row from it, 100%
+    # of the time -- a dead branch that looked like a working filter.
+    # Removed; "pib" below is the single, correctly-shaped entry.
+    "pib": ("PressRelease",
         "MATCH (n:PressRelease) "
         "WHERE toLower(coalesce(n.title,'')) CONTAINS toLower($q) "
         "RETURN n.id AS id, coalesce(n.title, n.id) AS name, null AS state, null AS party LIMIT $limit"),
