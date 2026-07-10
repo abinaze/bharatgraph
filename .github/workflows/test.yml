@@ -37,6 +37,11 @@ jobs:
             -print0 | xargs -0 python3 -m py_compile
           echo "PASS: All Python files have valid syntax"
 
+      - name: syntax check all JS files
+        run: |
+          find frontend -name "*.js" -print0 | xargs -0 -n1 node --check
+          echo "PASS: All JS files have valid syntax"
+
       - name: run unit tests
         run: pytest tests/ -v --tb=short 2>/dev/null || echo "No tests found"
 

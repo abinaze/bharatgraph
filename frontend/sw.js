@@ -3,7 +3,7 @@
 // NEW-A5 FIX: host === "hf.space" never matches -- HF uses *.hf.space subdomains
 // SW-01 FIX: use relative paths so caching works on GitHub Pages
 
-const CACHE = "bharatgraph-v5";
+const CACHE = "bharatgraph-v6";
 const STATIC = [
   "./",
   "./index.html",

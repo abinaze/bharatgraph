@@ -31,9 +31,9 @@ class TimelineBuilder:
         if driver:
             events.extend(self._fetch_election_events(entity_id, driver))
             events.extend(self._fetch_contract_events(entity_id, driver))
-            events.extend(self._fetch_audit_events(entity_id, driver))
+            events.extend(self._fetch_audit_events(entity_id, entity_name, driver))
             events.extend(self._fetch_court_events(entity_id, driver))
-            events.extend(self._fetch_press_events(entity_id, driver))
+            events.extend(self._fetch_press_events(entity_id, entity_name, driver))
             events.extend(self._fetch_corporate_events(entity_id, driver))
         else:
             events = self._sample_events(entity_name)
@@ -110,7 +110,7 @@ class TimelineBuilder:
             logger.warning(f"[Timeline] Contract fetch failed: {e}")
             return []
 
-    def _fetch_audit_events(self, entity_id: str, driver) -> list:
+    def _fetch_audit_events(self, entity_id: str, entity_name: str, driver) -> list:
         try:
             with driver.session() as s:
                 rows = s.run(
@@ -120,7 +120,7 @@ class TimelineBuilder:
                     RETURN a.year AS year, a.title AS title,
                            a.irregularity_amount_crore AS amount
                     LIMIT 10
-                    """, name=entity_name  # BUG-18 FIX: was entity_id -- audit events search by name not ID
+                    """, name=entity_name
                 ).data()
                 return [{
                     "date":     str(r.get("year","")) + "-01-01",
@@ -158,7 +158,7 @@ class TimelineBuilder:
         except Exception as e:
             return []
 
-    def _fetch_press_events(self, entity_id: str, driver) -> list:
+    def _fetch_press_events(self, entity_id: str, entity_name: str, driver) -> list:
         try:
             with driver.session() as s:
                 rows = s.run(
@@ -167,7 +167,7 @@ class TimelineBuilder:
                     WHERE toLower(pr.title) CONTAINS toLower($name)
                     RETURN pr.date AS date, pr.title AS title
                     ORDER BY pr.date DESC LIMIT 10
-                    """, name=entity_name  # BUG-18 FIX: was entity_id -- audit events search by name not ID
+                    """, name=entity_name
                 ).data()
                 return [{
                     "date":     r.get("date",""),

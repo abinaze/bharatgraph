@@ -79,6 +79,7 @@ const Api = {
   graphCommunities: function(minSize) {
     var m = minSize ? "?min_size=" + minSize : "";
     return Api._request("/graph/communities" + m);
+  },
 
   // Phase 34: forensic detection
 
@@ -118,7 +119,6 @@ const Api = {
   caseMemorySimilar: function(findingTypes) {
     var p = findingTypes ? "?finding_types=" + encodeURIComponent(findingTypes) : "";
     return Api._request("/case-memory/similar" + p);
-  },
   },
 
   /**
